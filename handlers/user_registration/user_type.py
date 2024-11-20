@@ -1,12 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from handlers.user_registration.states import RegistrationStates
+from handlers.user_registration.states import UserRegistrationStates
 from models import User, UserType
-from utils.form_choice_item import FormChoiceItem
+from utils.form.form_choice_item import FormChoiceItem
 
 
 class UserRegistrationUserType(FormChoiceItem):
-    state = RegistrationStates.user_type
+    state = UserRegistrationStates.user_type
     prepare_text = "Ты ДМ или игрок?"
     form_name = "UserRegistration"
     form_item_name = "user_type"

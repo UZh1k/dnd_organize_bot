@@ -9,10 +9,11 @@ from handlers.user_registration.name import UserRegistrationName
 from handlers.user_registration.timezone import UserRegistrationTimezone
 from handlers.user_registration.user_type import UserRegistrationUserType
 from models import User
-from utils.form_text_item import FormTextItem
+from utils.form.form_text_item import FormTextItem
+from utils.handler.base_handler import BaseHandler
 
 
-class UserRegistrationHandler:
+class UserRegistrationHandler(BaseHandler):
     form_items: list[FormTextItem] = [
         UserRegistrationName,
         UserRegistrationAge,
@@ -22,9 +23,6 @@ class UserRegistrationHandler:
         UserRegistrationBio,
     ]
     command: str = "register"
-
-    def __init__(self, bot: AsyncTeleBot):
-        self.bot = bot
 
     async def first_step(
         self, message: Message, user: User, bot: AsyncTeleBot, state: StateContext

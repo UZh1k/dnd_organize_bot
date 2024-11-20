@@ -4,13 +4,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import Message
 
-from handlers.user_registration.states import RegistrationStates
+from handlers.user_registration.states import UserRegistrationStates
 from models import User
-from utils.form_choice_text_item import FormChoiceTextItem
+from utils.form.form_choice_text_item import FormChoiceTextItem
 
 
 class UserRegistrationTimezone(FormChoiceTextItem):
-    state = RegistrationStates.timezone
+    state = UserRegistrationStates.timezone
     prepare_text = (
         'Выберите часовой пояс из списка или отправьте сообщение с данными '
         'своего UTC пояса, к примеру, "+1", "-5", "-3:30".'

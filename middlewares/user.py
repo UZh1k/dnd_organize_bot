@@ -7,11 +7,13 @@ from controllers.user import UserController
 class UserMiddleware(BaseMiddleware):
     def __init__(self):
         # self.update_sensitive = True
-        self.update_types = ["message", "callback_query"]
+        self.update_types = ["message", "callback_query", "my_chat_member"]
 
     @classmethod
     async def _provide_user(cls, user: TGUser, data: dict):
-        if session := data.get("session"):
+        if not user:
+            data["user"] = None
+        elif session := data.get("session"):
             data["user"] = await UserController.get_or_create(
                 user.id,
                 "id",

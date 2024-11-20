@@ -4,7 +4,7 @@ from telebot.states.asyncio import StateContext
 from telebot.types import Message
 
 from models import User
-from utils.form_choice_text_item import FormChoiceTextItem
+from utils.form.form_choice_text_item import FormChoiceTextItem
 
 
 class FormChoiceItem(FormChoiceTextItem):

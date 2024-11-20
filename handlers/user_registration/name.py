@@ -1,16 +1,14 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from telebot import State
 from telebot.async_telebot import AsyncTeleBot
-from telebot.states.asyncio import StateContext
 from telebot.types import Message
 
-from handlers.user_registration.states import RegistrationStates
+from handlers.user_registration.states import UserRegistrationStates
 from models import User
-from utils.form_text_item import FormTextItem
+from utils.form.form_text_item import FormTextItem
 
 
 class UserRegistrationName(FormTextItem):
-    state = RegistrationStates.name
+    state = UserRegistrationStates.name
     prepare_text = "Введи имя"
 
     async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:

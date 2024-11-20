@@ -32,3 +32,10 @@ class CRUD(ABC):
         session.add(obj)
         await session.flush()
         return obj
+
+    @classmethod
+    async def get_one(
+        cls, value: int | str, session: AsyncSession, field: str = "id"
+    ) -> model:
+        query = select(cls.model).where(value == getattr(cls.model, field))
+        return (await session.execute(query)).scalars().first()

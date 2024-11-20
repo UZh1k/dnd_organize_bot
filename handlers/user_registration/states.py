@@ -1,7 +1,7 @@
 from telebot.states import StatesGroup, State
 
 
-class RegistrationStates(StatesGroup):
+class UserRegistrationStates(StatesGroup):
     name = State()
     age = State()
     city = State()

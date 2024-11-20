@@ -4,7 +4,7 @@ from telebot.states.asyncio import StateContext
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 from models import User
-from utils.form_text_item import FormTextItem
+from utils.form.form_text_item import FormTextItem
 
 
 class FormChoiceTextItem(FormTextItem):
@@ -41,7 +41,6 @@ class FormChoiceTextItem(FormTextItem):
         session: AsyncSession,
         state: StateContext,
     ):
-        print(call.data)
         text = call.data.split(":")[-1]
         await self.save_answer(text, user, session)
         await bot.answer_callback_query(

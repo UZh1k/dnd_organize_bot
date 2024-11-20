@@ -6,7 +6,7 @@ from db import async_session
 
 class SessionMiddleware(BaseMiddleware):
     def __init__(self):
-        self.update_types = ["message", "callback_query"]
+        self.update_types = ["message", "callback_query", "my_chat_member"]
 
     @classmethod
     async def _provide_session(cls, data: dict) -> dict:

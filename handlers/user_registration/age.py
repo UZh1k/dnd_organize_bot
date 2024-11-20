@@ -2,13 +2,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import Message
 
-from handlers.user_registration.states import RegistrationStates
+from handlers.user_registration.states import UserRegistrationStates
 from models import User
-from utils.form_text_item import FormTextItem
+from utils.form.form_text_item import FormTextItem
 
 
 class UserRegistrationAge(FormTextItem):
-    state = RegistrationStates.age
+    state = UserRegistrationStates.age
     prepare_text = "Введи свой возраст"
 
     @classmethod

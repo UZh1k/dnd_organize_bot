@@ -1,8 +1,8 @@
 """init
 
-Revision ID: f3836b34048b
+Revision ID: a3f79e97be14
 Revises: 
-Create Date: 2024-11-10 16:36:13.500804
+Create Date: 2024-11-19 16:28:54.622114
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "f3836b34048b"
+revision: str = "a3f79e97be14"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -30,7 +30,7 @@ def upgrade() -> None:
     )
     op.create_table(
         "user",
-        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("id", sa.BIGINT(), nullable=False),
         sa.Column("username", sa.String(), nullable=True),
         sa.Column("name", sa.String(), nullable=True),
         sa.Column("age", sa.Integer(), nullable=True),
@@ -50,12 +50,13 @@ def upgrade() -> None:
         "game",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("title", sa.String(), nullable=False),
-        sa.Column("creator_id", sa.Integer(), nullable=False),
-        sa.Column("group_id", sa.Integer(), nullable=True),
+        sa.Column("creator_id", sa.BIGINT(), nullable=False),
+        sa.Column("group_id", sa.BIGINT(), nullable=True),
+        sa.Column("post_id", sa.BIGINT(), nullable=True),
         sa.Column("format", sa.SMALLINT(), nullable=True),
         sa.Column("type", sa.SMALLINT(), nullable=True),
         sa.Column("system", sa.String(), nullable=True),
-        sa.Column("description", sa.String(), nullable=False),
+        sa.Column("description", sa.String(), nullable=True),
         sa.Column("min_players", sa.SMALLINT(), nullable=True),
         sa.Column("max_players", sa.SMALLINT(), nullable=True),
         sa.Column("free", sa.Boolean(), nullable=True),
@@ -66,6 +67,7 @@ def upgrade() -> None:
         sa.Column("other_requirements", sa.String(), nullable=True),
         sa.Column("image", sa.String(), nullable=True),
         sa.Column("city_id", sa.Integer(), nullable=True),
+        sa.Column("active", sa.Boolean(), nullable=True),
         sa.ForeignKeyConstraint(
             ["city_id"],
             ["city.id"],
@@ -78,7 +80,7 @@ def upgrade() -> None:
     )
     op.create_table(
         "game_member",
-        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.BIGINT(), nullable=False),
         sa.Column("game_id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
             ["game_id"],

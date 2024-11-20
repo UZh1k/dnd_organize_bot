@@ -1,0 +1,12 @@
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
+
+from models import Base
+
+
+class GameApplication(Base):
+    __tablename__ = "game_application"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
+    game_id: Mapped[int] = mapped_column(ForeignKey("game.id"), primary_key=True)
+    accepted: Mapped[bool | None]

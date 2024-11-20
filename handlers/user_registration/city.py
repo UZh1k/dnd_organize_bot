@@ -3,13 +3,13 @@ from telebot.async_telebot import AsyncTeleBot
 from telebot.types import Message
 
 from controllers.city import CityController
-from handlers.user_registration.states import RegistrationStates
+from handlers.user_registration.states import UserRegistrationStates
 from models import User
-from utils.form_choice_text_item import FormChoiceTextItem
+from utils.form.form_choice_text_item import FormChoiceTextItem
 
 
 class UserRegistrationCity(FormChoiceTextItem):
-    state = RegistrationStates.city
+    state = UserRegistrationStates.city
     prepare_text = (
         "Теперь город. Выбери из кнопок или напиши ссообщением, "
         "если твоего города в списке нет"

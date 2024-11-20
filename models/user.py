@@ -1,7 +1,7 @@
 from enum import IntEnum
 
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import ForeignKey, SMALLINT
+from sqlalchemy import ForeignKey, SMALLINT, BIGINT
 
 from models.base import Base
 
@@ -16,7 +16,7 @@ class UserType(IntEnum):
 class User(Base):
     __tablename__ = "user"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(BIGINT, primary_key=True)
     username: Mapped[str | None]
 
     name: Mapped[str | None]

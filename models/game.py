@@ -1,6 +1,6 @@
 from enum import IntEnum
 
-from sqlalchemy import ForeignKey, SMALLINT
+from sqlalchemy import ForeignKey, SMALLINT, BIGINT
 from sqlalchemy.orm import mapped_column, Mapped
 
 from models.base import Base
@@ -23,12 +23,13 @@ class Game(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str]
     creator_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
-    group_id: Mapped[int | None]
+    group_id: Mapped[int | None] = mapped_column(BIGINT)
+    post_id: Mapped[int | None] = mapped_column(BIGINT)
 
     format: Mapped[GameFormat | None] = mapped_column(SMALLINT)
     type: Mapped[GameType | None] = mapped_column(SMALLINT)
     system: Mapped[str | None]
-    description: Mapped[str]
+    description: Mapped[str | None]
     min_players: Mapped[int | None] = mapped_column(SMALLINT)
     max_players: Mapped[int | None] = mapped_column(SMALLINT)
     free: Mapped[bool | None]
@@ -39,3 +40,5 @@ class Game(Base):
     other_requirements: Mapped[str | None]
     image: Mapped[str | None]
     city_id: Mapped[int | None] = mapped_column(ForeignKey('city.id'))
+
+    active: Mapped[bool | None] = mapped_column(default=True)
