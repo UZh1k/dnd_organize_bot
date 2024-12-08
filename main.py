@@ -1,22 +1,27 @@
 import asyncio
 
+from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_filters import StateFilter
-from telebot.asyncio_storage import StateMemoryStorage
+from telebot.asyncio_storage import StateMemoryStorage, StateRedisStorage
 from telebot.states.asyncio import StateMiddleware
 from telebot.states.asyncio.context import StateContext
-from telebot.types import Message
+from telebot.types import Message, Update
 
 from consts import (
     BOT_TOKEN,
-    ENVIRONMENT,
     NEWS_CHANNEL_ID,
     ALLOWED_UPDATE_TYPES,
     START_IMAGE,
     ADMIN_IDS,
     ABOUT_IMAGE,
-    SEARCH_IMAGE, BOOSTY_LINK, CRYPTO_LINK,
+    SEARCH_IMAGE,
+    BOOSTY_LINK,
+    CRYPTO_LINK,
+    WEBHOOK_URL_PATH,
+    STATE_STORAGE,
+    REDIS_URL, REDIS_PORT,
 )
 from controllers.user import UserController
 from handlers.feedback import FeedbackHandler
@@ -30,8 +35,27 @@ from middlewares.user import UserMiddleware
 from models.user import User
 from utils.message_helpers import send_message_with_link_button
 
-state_storage = StateMemoryStorage() if ENVIRONMENT == "local" else None
+state_storage = (
+    StateRedisStorage(host=REDIS_URL, port=REDIS_PORT)
+    if STATE_STORAGE == "redis"
+    else StateMemoryStorage()
+)
 bot = AsyncTeleBot(BOT_TOKEN, state_storage=state_storage)
+
+
+app = FastAPI()
+
+
+@app.post(WEBHOOK_URL_PATH)
+async def process_webhook(update: dict):
+    """
+    Process webhook calls
+    """
+    if update:
+        update = Update.de_json(update)
+        await bot.process_new_updates([update])
+    else:
+        return
 
 
 @bot.message_handler(
@@ -98,13 +122,15 @@ async def find_game(message: Message, session: AsyncSession, user: User):
         photo=SEARCH_IMAGE,
     )
 
+
 @bot.message_handler(commands=["sneaky_library_bot"], chat_types="private")
 async def library_bot(message: Message, session: AsyncSession, user: User):
     await bot.send_message(
         message.chat.id,
         "Если ты искал справочную информацию по ДНД 2024, "
-        "то тебе лучше обратиться к Сники Справочнику - @sneaky_library_bot."
+        "то тебе лучше обратиться к Сники Справочнику - @sneaky_library_bot.",
     )
+
 
 @bot.message_handler(
     commands=["ban"], func=lambda message: message.chat.id in ADMIN_IDS
@@ -158,6 +184,7 @@ async def any_text(
     message: Message, session: AsyncSession, user: User, state: StateContext
 ):
     print(message)
+
     await bot.send_message(
         message.chat.id,
         "Ты ввел сообщение, но я не понимаю твою команду. Пожалуйста, "
@@ -171,6 +198,7 @@ bot.setup_middleware(ExceptionMiddleware(bot))
 bot.setup_middleware(SessionMiddleware())
 bot.setup_middleware(UserMiddleware())
 bot.setup_middleware(StateMiddleware(bot))
+
 
 if __name__ == "__main__":
     asyncio.run(bot.infinity_polling(allowed_updates=ALLOWED_UPDATE_TYPES))
