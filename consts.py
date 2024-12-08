@@ -11,7 +11,7 @@ WEBHOOK_PORT = os.getenv("WEBHOOK_PORT")
 
 BOT_USERNAME = os.getenv("BOT_USERNAME")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-WEBHOOK_URL_PATH = f"/{BOT_TOKEN}/"
+WEBHOOK_URL_PATH = "/webhook/"
 DB_URL = os.getenv("DB_URL")
 STATE_STORAGE = os.getenv("STATE_STORAGE")
 REDIS_URL = os.getenv("REDIS_URL")
