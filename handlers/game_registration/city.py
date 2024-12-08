@@ -4,19 +4,19 @@ from telebot.states.asyncio import StateContext
 from telebot.types import Message
 
 from controllers.city import CityController
-from handlers.user_registration.states import UserRegistrationStates
+from handlers.game_registration.states import GameRegistrationStates
 from models import User
 from utils.form.form_choice_text_item import FormChoiceTextItem
 from utils.other import generate_city_choices
 
 
-class UserRegistrationCity(FormChoiceTextItem):
-    state = UserRegistrationStates.city
+class GameRegistrationCity(FormChoiceTextItem):
+    state = GameRegistrationStates.city
     prepare_text = (
-        "В каком городе ты живешь? Выбери город из списка или напиши текстом название, "
-        "если твоего города нет в списке."
+        "В каком городе ты хочешь провести игру? Выбери город из списка или "
+        "напиши текстом название, если твоего города нет в списке."
     )
-    form_name = "UserRegistration"
+    form_name = "GameRegistration"
     form_item_name = "city"
 
     alert_message = "Город сохранен"
@@ -36,4 +36,4 @@ class UserRegistrationCity(FormChoiceTextItem):
         self, text: str, user: User, session: AsyncSession, state: StateContext
     ):
         city = await CityController.get_or_create(text, "name", session)
-        user.city_id = city.id
+        await state.add_data(city_id=city.id)

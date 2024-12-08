@@ -34,8 +34,17 @@ class CRUD(ABC):
         return obj
 
     @classmethod
+    def common_query(cls):
+        return select(cls.model)
+
+    @classmethod
     async def get_one(
         cls, value: int | str, session: AsyncSession, field: str = "id"
     ) -> model:
-        query = select(cls.model).where(value == getattr(cls.model, field))
+        query = cls.common_query().where(value == getattr(cls.model, field))
         return (await session.execute(query)).scalars().first()
+
+    @classmethod
+    async def create(cls, model_dict: dict, session: AsyncSession):
+        session.add(cls.model(**model_dict))
+        await session.flush()

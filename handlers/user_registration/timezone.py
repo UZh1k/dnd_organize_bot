@@ -2,6 +2,7 @@ import re
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
+from telebot.states.asyncio import StateContext
 from telebot.types import Message
 
 from handlers.user_registration.states import UserRegistrationStates
@@ -12,8 +13,8 @@ from utils.form.form_choice_text_item import FormChoiceTextItem
 class UserRegistrationTimezone(FormChoiceTextItem):
     state = UserRegistrationStates.timezone
     prepare_text = (
-        'Выберите часовой пояс из списка или отправьте сообщение с данными '
-        'своего UTC пояса, к примеру, "+1", "-5", "-3:30".'
+        "Выбери часовой пояс из списка или отправь сообщение с данными своего UTC "
+        'пояса, мне нужны только числа, например, "+1", "-5", "-3:30".'
     )
     form_name = "UserRegistration"
     form_item_name = "timezone"
@@ -38,10 +39,13 @@ class UserRegistrationTimezone(FormChoiceTextItem):
         if not re.compile("^[+-][1-2]{0,1}[0-9](:30){0,1}$").match(tz):
             await bot.send_message(
                 message.chat.id,
-                "Это не похоже на часовой пояс, попробуй еще раз.",
+                "Не смог разобрать твой ответ, пожалуйста, "
+                "попробуй написать по-другому",
             )
             return False
         return True
 
-    async def save_answer(cls, text: str, user: User, session: AsyncSession):
+    async def save_answer(
+        self, text: str, user: User, session: AsyncSession, state: StateContext
+    ):
         user.timezone = text if text.startswith("UTC") else f"UTC{text}"

@@ -10,6 +10,7 @@ from telebot.types import (
 
 from consts import NEWS_CHANNEL_ID, BOT_USERNAME
 from controllers.game import GameController
+from handlers.group_administration.post_game import create_game_post
 from models import Game, User
 
 GAME_LINK_PREFIX = "GameLink"
@@ -36,14 +37,13 @@ async def send_link_game(
     if not user_games:
         await bot.send_message(
             chat_id,
-            "Создай игру через бота и нажми /link, чтобы привязать игру",
+            "Создай игру через чат с ботом и нажми /link, чтобы привязать игру",
         )
     else:
         await bot.send_message(
             chat_id,
-            "Выбери, какую игру привязать. "
-            "Если игры нет в списке, добавь ее в самом боте, "
-            "а затем нажми /link здесь",
+            "Отлично. Теперь можем опубликовать твою игру. "
+            "Смотри, что мне удалось найти. Выбери нужную игру.",
             reply_markup=generate_games_markup(user_games),
         )
 
@@ -77,17 +77,23 @@ async def handle_link_game(
     game_id = int(call.data.split(":")[-1])
     game = await GameController.get_one(game_id, session)
     game.group_id = call.message.chat.id
-    await bot.answer_callback_query(callback_query_id=call.id, text="Группа привязана")
+    await bot.answer_callback_query(
+        callback_query_id=call.id, text="TBD Группа привязана"
+    )
     await bot.edit_message_reply_markup(
         call.message.chat.id, call.message.message_id, reply_markup=None
     )
-    await bot.send_message(call.message.chat.id, "Игра размещена в канале")
 
-    markup = InlineKeyboardMarkup()
-    markup.add(InlineKeyboardButton(
-        "Подать заявку", url=f"https://t.me/{BOT_USERNAME}?start={game.id}"
-    ))
-    post_message = await bot.send_message(
-        NEWS_CHANNEL_ID, f"Присоединяйтесь к игре {game.title}", reply_markup=markup
+    await create_game_post(bot, game)
+
+    await bot.send_message(
+        call.message.chat.id,
+        "Отлично. Я опубликовал твою игру в канале https://t.me/SneakyDiceGames. "
+        "Как только кто-то из игроков откликнется, "
+        "я пришлю тебе личное сообщение с анкетой.\n\n"
+        "Если игроки не наберутся за нужное время, то ты можешь поднять "
+        "публикацию в списке, отправив мне сюда команду /update. "
+        "Когда ты наберешь полную группу, то пришли, пожалуйста сюда команду "
+        "/done. Если передумаешь проводить игру, то пришли такую же команду "
+        "- /close",
     )
-    game.post_id = post_message.id

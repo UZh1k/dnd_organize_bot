@@ -16,6 +16,7 @@ class FormTextItem(ABC):
 
     with_message: bool = True
     with_callback: bool = False
+    with_photo: bool = False
 
     def __init__(self, next_step: Callable[..., Awaitable]):
         self.next_step = next_step
@@ -26,7 +27,12 @@ class FormTextItem(ABC):
 
     @classmethod
     async def prepare(
-        cls, chat_id: int, user: User, bot: AsyncTeleBot, state: StateContext
+        cls,
+        chat_id: int,
+        user: User,
+        session: AsyncSession,
+        bot: AsyncTeleBot,
+        state: StateContext,
     ):
         await state.set(cls.state)
         await bot.send_message(
@@ -36,7 +42,20 @@ class FormTextItem(ABC):
     async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
         return True
 
-    async def save_answer(self, text: str, user: User, session: AsyncSession): ...
+    async def save_answer(
+        self, text: str, user: User, session: AsyncSession, state: StateContext
+    ): ...
+
+    async def on_answered(
+        self,
+        answer: str,
+        chat_id: int,
+        user: User,
+        session: AsyncSession,
+        bot: AsyncTeleBot,
+        state: StateContext,
+    ):
+        await self.next_step(chat_id, user, session, bot, state)
 
     async def handle_message(
         self,
@@ -47,8 +66,19 @@ class FormTextItem(ABC):
         state: StateContext,
     ):
         if await self.validate_answer(message, bot):
-            await self.save_answer(message.text, user, session)
-            await self.next_step(message.chat.id, user, bot, state)
+            await self.save_answer(message.text, user, session, state)
+            await self.on_answered(
+                message.text, message.chat.id, user, session, bot, state
+            )
+
+    async def handle_photo(
+        self,
+        message: Message,
+        bot: AsyncTeleBot,
+        user: User,
+        session: AsyncSession,
+        state: StateContext,
+    ): ...
 
     async def handle_callback(
         self,

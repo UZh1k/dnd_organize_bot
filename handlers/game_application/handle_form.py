@@ -3,10 +3,11 @@ from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
 from telebot.types import CallbackQuery, Message, InlineKeyboardMarkup
 
+from controllers.city import CityController
 from controllers.game import GameController
 from controllers.game_application import GameApplicationController
 from handlers.game_application.accept_form import generate_accept_form_markup
-from models import User
+from models import User, UserTypeText, UserType
 
 
 async def send_application(
@@ -18,13 +19,24 @@ async def send_application(
 ):
     game = await GameController.get_one(game_id, session)
     if not game or not game.active:
-        await bot.send_message(user.id, "TBD Игра закрыта или не существует")
+        await bot.send_message(user.id, "Игра закрыта или не существует")
         return
     await GameApplicationController.create(game_id, user.id, session)
-    await bot.send_message(user.id, "TBD Заявка отправлена")
+    await bot.send_message(user.id, "Заявка отправлена")
+
+    city = await CityController.get_one(user.city_id, session)
+    user_type = UserTypeText[UserType(user.user_type).name].value
     await bot.send_message(
         game.creator_id,
-        f"TBD Заявка от игрока {user.name} {form_text}",
+        f"Я нашел тебе игрока на игру “{game.title}”. "
+        f"Жду твоего одобрения, чтобы пригласить его в группу.\n\n"
+        f"Имя: {user.name}\n"
+        f"Возраст: {user.age}\n"
+        f"Город: {city.name}\n"
+        f"Часовой пояс: {user.timezone}\n"
+        f"Роль в НРИ: {user_type}\n"
+        f"Об игроке: {user.bio}\n\n"
+        f"{form_text if form_text else ''}",
         reply_markup=generate_accept_form_markup(game_id, user.id),
     )
 
@@ -41,6 +53,24 @@ async def handle_application_letter_no_data(
     await state.delete()
     await bot.edit_message_reply_markup(
         call.message.chat.id, call.message.message_id, reply_markup=None
+    )
+
+
+async def handle_application_cancel(
+    call: CallbackQuery,
+    bot: AsyncTeleBot,
+    session: AsyncSession,
+    user: User,
+    state: StateContext,
+):
+    await state.delete()
+    await bot.edit_message_reply_markup(
+        call.message.chat.id, call.message.message_id, reply_markup=None
+    )
+    await bot.send_message(
+        call.message.chat.id,
+        "Ты отменил заявку на игру. Давай поищем другие игры в канале - "
+        "https://t.me/SneakyDiceGames",
     )
 
 

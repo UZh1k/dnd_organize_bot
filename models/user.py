@@ -1,4 +1,4 @@
-from enum import IntEnum
+from enum import IntEnum, Enum
 
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import ForeignKey, SMALLINT, BIGINT
@@ -11,6 +11,13 @@ class UserType(IntEnum):
     dm = 1
     player = 2
     both = 3
+
+
+class UserTypeText(Enum):
+    admin = "Админ"
+    dm = "Мастер игры"
+    player = "Игрок"
+    both = "Игрок и мастер игры"
 
 
 class User(Base):
@@ -28,3 +35,4 @@ class User(Base):
     bio: Mapped[str | None]
     registered: Mapped[bool] = mapped_column(default=False)
     banned: Mapped[bool] = mapped_column(default=False)
+    commands_count: Mapped[int] = mapped_column(default=0)
