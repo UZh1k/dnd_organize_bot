@@ -22,7 +22,6 @@ from consts import (
     WEBHOOK_URL_PATH,
     STATE_STORAGE,
     REDIS_URL,
-    REDIS_PORT,
 )
 from controllers.user import UserController
 from handlers.feedback import FeedbackHandler
