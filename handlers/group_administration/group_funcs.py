@@ -51,12 +51,12 @@ async def close_game(
     if chat_member.status not in ["administrator", "creator"]:
         await bot.send_message(
             message.chat.id,
-            "TBD Только администратор или создатель игры иожет ее закрыть",
+            "Только администратор или создатель игры иожет ее закрыть",
         )
         return
     game = await GameController.get_one(message.chat.id, session, "group_id")
     if not game.active:
-        await bot.send_message(message.chat.id, "TBD Игра уже неактивна")
+        await bot.send_message(message.chat.id, "Игра уже неактивна")
         return
     await on_close_game(bot, game, session)
     await bot.send_message(
@@ -74,12 +74,12 @@ async def done_game(
     if chat_member.status not in ["administrator", "creator"]:
         await bot.send_message(
             message.chat.id,
-            "TBD Только администратор или создатель игры иожет ее закрыть",
+            "Только администратор или создатель игры иожет ее закрыть",
         )
         return
     game = await GameController.get_one(message.chat.id, session, "group_id")
     if not game.active:
-        await bot.send_message(message.chat.id, "TBD Игра уже неактивна")
+        await bot.send_message(message.chat.id, "Игра уже неактивна")
         return
     game.active = False
     try:

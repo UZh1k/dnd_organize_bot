@@ -78,7 +78,7 @@ async def handle_link_game(
     game = await GameController.get_one(game_id, session)
     game.group_id = call.message.chat.id
     await bot.answer_callback_query(
-        callback_query_id=call.id, text="TBD Группа привязана"
+        callback_query_id=call.id, text="Группа привязана"
     )
     await bot.edit_message_reply_markup(
         call.message.chat.id, call.message.message_id, reply_markup=None
