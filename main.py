@@ -21,7 +21,8 @@ from consts import (
     CRYPTO_LINK,
     WEBHOOK_URL_PATH,
     STATE_STORAGE,
-    REDIS_URL, REDIS_PORT,
+    REDIS_URL,
+    REDIS_PORT,
 )
 from controllers.user import UserController
 from handlers.feedback import FeedbackHandler
@@ -56,6 +57,11 @@ async def process_webhook(update: dict):
         await bot.process_new_updates([update])
     else:
         return
+
+
+@app.get("/", status_code=201)
+async def health():
+    return {}
 
 
 @bot.message_handler(
