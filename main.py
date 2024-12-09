@@ -37,7 +37,7 @@ from models.user import User
 from utils.message_helpers import send_message_with_link_button
 
 state_storage = (
-    StateRedisStorage(host=REDIS_URL, port=REDIS_PORT)
+    StateRedisStorage(redis_url=REDIS_URL)
     if STATE_STORAGE == "redis"
     else StateMemoryStorage()
 )

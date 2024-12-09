@@ -15,7 +15,6 @@ WEBHOOK_URL_PATH = "/webhook/"
 DB_URL = os.getenv("DB_URL")
 STATE_STORAGE = os.getenv("STATE_STORAGE")
 REDIS_URL = os.getenv("REDIS_URL")
-REDIS_PORT = os.getenv("REDIS_PORT")
 
 NEWS_CHANNEL_ID: int = int(os.getenv("NEWS_CHANNEL_ID"))
 ADMIN_IDS: list[int] = list(map(int, os.getenv("ADMIN_IDS").split(",")))
