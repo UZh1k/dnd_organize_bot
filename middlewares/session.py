@@ -20,6 +20,8 @@ class SessionMiddleware(BaseMiddleware):
     async def _on_close(cls, data: dict, exception):
         if session := data.get("session"):
             if not exception:
+                if db_user := data.get("user"):
+                    db_user.commands_count += 1
                 await session.commit()
             await asyncio.shield(session.close())
 

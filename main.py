@@ -195,7 +195,6 @@ FeedbackHandler(bot).register_handlers()
 async def any_text(
     message: Message, session: AsyncSession, user: User, state: StateContext
 ):
-    print(message)
     await bot.send_message(
         message.chat.id,
         "Ты ввел сообщение, но я не понимаю твою команду. Пожалуйста, "
@@ -205,9 +204,9 @@ async def any_text(
 
 bot.add_custom_filter(StateFilter(bot))
 
-bot.setup_middleware(ExceptionMiddleware(bot))
 bot.setup_middleware(SessionMiddleware())
 bot.setup_middleware(UserMiddleware())
+bot.setup_middleware(ExceptionMiddleware(bot))
 bot.setup_middleware(StateMiddleware(bot))
 
 
