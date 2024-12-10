@@ -74,10 +74,10 @@ async def update_game_post(
     if not game or not game.active:
         await bot.send_message(message.chat.id, "Игра уже закрыта")
         return
-    if game.last_update and game.last_update + timedelta(days=7) > datetime.now():
+    if game.last_update and game.last_update + timedelta(minutes=10) > datetime.now():
         await bot.send_message(
             message.chat.id,
-            "Публикацию можно поднимать не чаще, чем раз в неделю. Попробуй позже.",
+            "Публикацию можно поднимать не чаще, чем раз в 10 минут. Попробуй позже.",
         )
         return
     try:
