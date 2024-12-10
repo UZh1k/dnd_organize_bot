@@ -17,7 +17,9 @@ class GameController(CRUD):
     async def get_unlinked_games(
         cls, user_id: int, session: AsyncSession
     ) -> list[Game]:
-        query = select(Game).where(Game.creator_id == user_id, Game.group_id.is_(None))
+        query = select(Game).where(
+            Game.creator_id == user_id, Game.group_id.is_(None), Game.active.is_(True)
+        )
         return (await session.execute(query)).scalars().all()
 
     @classmethod

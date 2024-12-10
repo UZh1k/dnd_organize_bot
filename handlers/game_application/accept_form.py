@@ -63,7 +63,8 @@ async def handle_decline_application(
         f"сбор на игру уже был закрыт. Не отчаивайся, посмотри еще игры - "
         f"https://t.me/SneakyDiceGames.",
     )
-    await bot.answer_callback_query(callback_query_id=call.id, text="Отправил отказ")
+    # await bot.answer_callback_query(callback_query_id=call.id, text="Отправил отказ")
+    await bot.send_message(call.message.chat.id, "Отправил отказ")
     await bot.edit_message_reply_markup(
         call.message.chat.id, call.message.message_id, reply_markup=None
     )
@@ -89,9 +90,10 @@ async def handle_accept_application(
         invite_link,
     )
 
-    await bot.answer_callback_query(
-        callback_query_id=call.id, text="Отправил приглашение"
-    )
+    # await bot.answer_callback_query(
+    #     callback_query_id=call.id, text="Отправил приглашение"
+    # )
+    await bot.send_message(call.message.chat.id, "Отправил приглашение")
     await bot.edit_message_reply_markup(
         call.message.chat.id, call.message.message_id, reply_markup=None
     )

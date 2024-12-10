@@ -23,6 +23,7 @@ class UserMiddleware(BaseMiddleware):
             if db_user.banned:
                 return SkipHandler()
             db_user.commands_count += 1
+            await session.flush()
             data["user"] = db_user
         return data
 

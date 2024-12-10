@@ -15,12 +15,15 @@ class FormPhotoItem(FormTextItem):
         return False
 
     async def handle_photo(
-            self,
-            message: Message,
-            bot: AsyncTeleBot,
-            user: User,
-            session: AsyncSession,
-            state: StateContext,
+        self,
+        message: Message,
+        bot: AsyncTeleBot,
+        user: User,
+        session: AsyncSession,
+        state: StateContext,
     ):
-        await self.save_answer(message.photo[-1].file_id, user, session, state)
-        await self.on_answered(message.text, message.chat.id, user, session, bot, state)
+        if await self.validate_answer(message, bot):
+            await self.save_answer(message.photo[-1].file_id, user, session, state)
+            await self.on_answered(
+                message.text, message.chat.id, user, session, bot, state
+            )

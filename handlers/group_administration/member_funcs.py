@@ -19,7 +19,7 @@ async def handle_player_added_to_group(
             update.chat.id,
             "Похоже, что необходимое количество участников уже набралось. "
             "Используй команду /done, чтобы закончить поиск игроков, "
-            "или команду /update, чтобы опустить игру в поиске.",
+            "или команду /update, чтобы поднять игру в поиске.",
         )
     elif game.min_players <= await GameMemberController.count_game_members(
         game.id, session
@@ -28,7 +28,7 @@ async def handle_player_added_to_group(
             update.chat.id,
             "Минимальное количество участников уже набралось. "
             "Используй команду /done, чтобы закончить поиск игроков, "
-            "команду /update, чтобы опустить игру в поиске, "
+            "команду /update, чтобы поднять игру в поиске, "
             "или /close, чтобы отменить игру.",
         )
 

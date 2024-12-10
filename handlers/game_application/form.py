@@ -36,6 +36,11 @@ async def handle_apply_for_game(
     if not game or not game.active:
         await bot.send_message(message.chat.id, "Игра уже неактивна")
         return
+    if game.creator_id == user.id:
+        await bot.send_message(
+            message.chat.id, "Ты уже состоишь в игре, потому что ты ее создал."
+        )
+        return
     game_application = await GameApplicationController.get_one(
         game_id, user.id, session
     )
@@ -59,9 +64,7 @@ async def handle_apply_for_game(
         InlineKeyboardButton(
             "Отправить без сообщения", callback_data=GAME_APPLICATION_NO_DATA
         ),
-        InlineKeyboardButton(
-            "Отмена", callback_data=GAME_APPLICATION_CANCEL
-        ),
+        InlineKeyboardButton("Отмена", callback_data=GAME_APPLICATION_CANCEL),
     )
     await bot.send_message(
         message.chat.id,

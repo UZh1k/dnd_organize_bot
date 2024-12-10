@@ -1,3 +1,5 @@
+import asyncio
+
 from telebot.asyncio_handler_backends import BaseMiddleware
 from telebot.types import Message, Update
 
@@ -15,13 +17,14 @@ class SessionMiddleware(BaseMiddleware):
         return data
 
     @classmethod
-    async def _on_close(cls, data: dict):
+    async def _on_close(cls, data: dict, exception):
         if session := data.get("session"):
-            await session.commit()
-            await session.close()
+            if not exception:
+                await session.commit()
+            await asyncio.shield(session.close())
 
     async def pre_process(self, update: Update | Message, data: dict):
         return await self._provide_session(data)
 
     async def post_process(self, update: Update | Message, data: dict, exception):
-        await self._on_close(data)
+        await self._on_close(data, exception)

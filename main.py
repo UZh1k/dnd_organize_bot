@@ -66,45 +66,50 @@ async def health():
 
 
 @bot.message_handler(
-    commands=["start"], func=lambda message: len(message.text.split()) == 1
+    commands=["start"],
+    func=lambda message: len(message.text.split()) == 1,
+    chat_types=["private"],
 )
 async def handle_start(message: Message, session: AsyncSession, user: User):
     await bot.send_photo(
         message.chat.id,
         START_IMAGE,
-        "Привет! Я Сники Бот! Давай помогу найти или "
-        "создать игру по твоим любимым НРИ. Для начала тебе "
-        "нужно зарегистрироваться. Сделать это очень просто и быстро. "
-        "Нажми в меню слева внизу кнопку "
-        "“Регистрация” или отправь команду /register.\n\n"
-        "Если хочешь узнать побольше обо мне или поддержать "
-        "мое развитие и сопровождение, то жми команду “О боте” или отправь /about.\n\n"
+        "Привет! Я Сники Бот! Давай помогу найти или создать игру "
+        "по твоим любимым НРИ. Для начала тебе нужно зарегистрироваться. "
+        "Сделать это очень просто и быстро. Нажми в меню слева внизу кнопку "
+        "“Регистрация” или отправь команду /register. \n\n"
+        "Если хочешь узнать побольше обо мне или поддержать мое развитие и "
+        "сопровождение, то жми команду “О боте” или отправь /about.\n\n"
         "Если нашел ошибку или у тебя есть предложение по развитию, "
-        "то жми команду  “Предложить исправление” или отправь /feedback.\n\n"
-        "Если ты искал справочную информацию по ДНД 2024, "
-        "то тебе лучше обратиться к Сники Библиотеке - @sneaky_library_bot.",
+        "то жми команду /feedback.\n\n"
+        "Если ты искал справочную информацию по ДНД 2024, то тебе лучше "
+        "обратиться к Сники Справочнику - @sneaky_library_bot.\n\n"
+        "Больше полезных материалов к ролевым играм ты "
+        "найдёшь тут: https://t.me/sneaky_dice",
     )
 
 
-@bot.message_handler(commands=["help", "about"])
+@bot.message_handler(commands=["help", "about"], chat_types=["private"])
 async def handle_about(message: Message, session: AsyncSession, user: User):
     await bot.send_photo(
         message.chat.id,
         ABOUT_IMAGE,
         "Я, Сники Бот, был создан небольшой командой энтузиастов. "
         "В меня вложили множество сил и времени, чтобы я мог появиться на свет. "
-        "Мое существование, а также дальнейшее развитие зависит только от вас.\n\n"
+        "Мое существование, а также дальнейшее развитие зависит только от вас. \n\n"
         "У меня есть множество нереализованных идей, которые, как я надеюсь, "
-        "вы сможете увидеть. Но на текущий момент я бы хотел, чтобы ваших "
-        "донатов хватило хотя бы на мое ежемесячное сопровождение платного хостинга. "
-        "Даже 100 рублей уже сильно мне помогут.\n\n"
+        "как я надеюсь, вы сможете увидеть. Но на текущий момент я бы хотел, "
+        "чтобы ваших донатов хватило хотя бы на мое ежемесячное сопровождение "
+        "платного хостинга. Даже 100 рублей уже сильно мне помогут.\n\n"
         "Буду очень вам благодарен. Ваш Сники Бот.\n\n"
         f"• Бусти - {BOOSTY_LINK}\n"
-        f"• Крипта - USDT (TRC20 | TRON) {CRYPTO_LINK}",
+        f"• Крипта - USDT (TRC20 | TRON) {CRYPTO_LINK} \n\n"
+        f"Больше полезных материалов к ролевым играм ты найдёшь "
+        f"тут: https://t.me/sneaky_dice",
     )
 
 
-@bot.message_handler(commands=["search"], chat_types="private")
+@bot.message_handler(commands=["search"], chat_types=["private"])
 async def find_game(message: Message, session: AsyncSession, user: User):
     invite_link = await bot.export_chat_invite_link(NEWS_CHANNEL_ID)
     if user.registered:
@@ -186,12 +191,11 @@ GameApplicationHandler(bot).register_handlers()
 FeedbackHandler(bot).register_handlers()
 
 
-@bot.message_handler(content_types=["text", "photo"])
+@bot.message_handler(content_types=["text", "photo", "file"], chat_types=["private"])
 async def any_text(
     message: Message, session: AsyncSession, user: User, state: StateContext
 ):
     print(message)
-
     await bot.send_message(
         message.chat.id,
         "Ты ввел сообщение, но я не понимаю твою команду. Пожалуйста, "

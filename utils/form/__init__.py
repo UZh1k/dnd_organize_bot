@@ -73,6 +73,6 @@ class RegistrationHandler(BaseHandler):
                 self.bot.register_message_handler(
                     current_item.handle_photo,
                     state=current_item.state,
-                    content_types=["photo"],
+                    content_types=["photo", "document"],
                     pass_bot=True,
                 )
