@@ -22,6 +22,8 @@ from consts import (
     WEBHOOK_URL_PATH,
     STATE_STORAGE,
     REDIS_URL,
+    REDIS_PORT,
+    REDIS_PASS,
 )
 from controllers.user import UserController
 from handlers.feedback import FeedbackHandler
@@ -36,7 +38,7 @@ from models.user import User
 from utils.message_helpers import send_message_with_link_button
 
 state_storage = (
-    StateRedisStorage(redis_url=REDIS_URL)
+    StateRedisStorage(host=REDIS_URL, port=REDIS_PORT, password=REDIS_PASS)
     if STATE_STORAGE == "redis"
     else StateMemoryStorage()
 )

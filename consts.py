@@ -12,9 +12,14 @@ WEBHOOK_PORT = os.getenv("WEBHOOK_PORT")
 BOT_USERNAME = os.getenv("BOT_USERNAME")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 WEBHOOK_URL_PATH = "/webhook/"
+
 DB_URL = os.getenv("DB_URL")
+DB_POOL_SIZE = int(os.getenv("DB_POOL_SIZE"))
+
 STATE_STORAGE = os.getenv("STATE_STORAGE")
 REDIS_URL = os.getenv("REDIS_URL")
+REDIS_PORT = os.getenv("REDIS_PORT")
+REDIS_PASS = os.getenv("REDIS_PASS")
 
 NEWS_CHANNEL_ID: int = int(os.getenv("NEWS_CHANNEL_ID"))
 ADMIN_IDS: list[int] = list(map(int, os.getenv("ADMIN_IDS").split(",")))
