@@ -7,8 +7,9 @@ from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 from controllers.game import GameController
 from controllers.game_application import GameApplicationController
+from controllers.user import UserController
 from handlers.game_application.states import GameApplicationStates
-from models import User
+from models import User, UserTypeText, UserType
 from utils.message_helpers import (
     send_message_with_link_button,
     generate_link_for_game_apply,
@@ -66,11 +67,22 @@ async def handle_apply_for_game(
         ),
         InlineKeyboardButton("Отмена", callback_data=GAME_APPLICATION_CANCEL),
     )
+
+    game_master = await UserController.get_one(game.creator_id, session)
+
+    user_role = UserTypeText[UserType(game_master.user_type).name].value
     await bot.send_message(
         message.chat.id,
         f"Вижу, что тебя заинтересовала игра “{game.title}”. "
-        f"Я отправлю твою анкету мастеру игры. Если хочешь приложить "
-        f"к анкете сопроводительное сообщение, то отправь в ответ текст "
-        f"вместо нажатия кнопок.",
+        f"Отправляю тебе анкету мастера этой игры.\n\n"
+        f"Имя: {game_master.name}\n"
+        f"Возраст: {game_master.age}\n"
+        f"Город: {game_master.city.name}\n"
+        f"Временная зона: {game_master.timezone}\n"
+        f"Роль: {user_role}\n"
+        f"О себе: {game_master.bio}\n\n"
+        f"Если тебя все устраивает, то я отправлю твою анкету мастеру. "
+        f"Если хочешь приложить к анкете сопроводительное сообщение, то "
+        f"отправь в ответ текст вместо нажатия кнопок.",
         reply_markup=markup,
     )

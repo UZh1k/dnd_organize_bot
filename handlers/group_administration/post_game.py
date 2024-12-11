@@ -30,8 +30,12 @@ async def create_game_post(bot: AsyncTeleBot, game: Game, for_update: bool = Fal
     )
     about_price = f" - {game.about_price}" if game.about_price else ""
 
-    city_tag = f"#{game.city.name} " if game.city in POPULAR_CITIES else ""
-    system_tag = f"#{game.system} " if game.system in POPULAR_SYSTEMS else ""
+    city_tag = (
+        f"#{game.city.name} " if game.city and game.city.name in POPULAR_CITIES else ""
+    )
+    system_tag = (
+        f"#{game.system.replace(' ', '')} " if game.system in POPULAR_SYSTEMS else ""
+    )
     free_status = "Платно" if not game.free else "Бесплатно"
 
     update_text = f"Идет донабор на игру!\n\n" if for_update else ""
@@ -82,8 +86,7 @@ async def update_game_post(
         return
     try:
         await bot.edit_message_caption(
-            f"*{game.title}*\n\n"
-            "Пост пересоздан",
+            f"*{game.title}*\n\n" "Пост пересоздан",
             NEWS_CHANNEL_ID,
             game.post_id,
             parse_mode="Markdown",

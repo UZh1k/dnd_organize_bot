@@ -1,6 +1,6 @@
 from enum import IntEnum, Enum
 
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, SMALLINT, BIGINT
 
 from models.base import Base
@@ -36,3 +36,5 @@ class User(Base):
     registered: Mapped[bool] = mapped_column(default=False)
     banned: Mapped[bool] = mapped_column(default=False)
     commands_count: Mapped[int] = mapped_column(default=0)
+
+    city: Mapped["City"] = relationship()

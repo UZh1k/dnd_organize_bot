@@ -13,8 +13,8 @@ from utils.form.form_choice_text_item import FormChoiceTextItem
 class UserRegistrationTimezone(FormChoiceTextItem):
     state = UserRegistrationStates.timezone
     prepare_text = (
-        "Выбери часовой пояс из списка или отправь сообщение с данными своего UTC "
-        'пояса, мне нужны только числа, например, "+1", "-5", "-3:30".'
+        'Выбери часовой пояс из списка или отправь сообщение с данными своего '
+        'UTC пояса, мне нужны только числа, например, "+1", "-5", "-3:30".'
     )
     form_name = "UserRegistration"
     form_item_name = "timezone"

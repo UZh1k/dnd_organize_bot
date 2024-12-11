@@ -3,6 +3,7 @@ from telebot.asyncio_handler_backends import BaseMiddleware
 from telebot.types import Update, Message
 
 from consts import ALLOWED_UPDATE_TYPES, EXCEPTION_CHAT_ID
+from utils.message_helpers import get_chunks
 
 
 class ExceptionMiddleware(BaseMiddleware):
@@ -16,4 +17,6 @@ class ExceptionMiddleware(BaseMiddleware):
 
     async def post_process(self, update: Update | Message, data: dict, exception):
         if exception:
-            await self.bot.send_message(EXCEPTION_CHAT_ID, str(exception))
+            error_log = f"{exception} {update}"
+            for chunk in get_chunks(error_log, 4000):
+                await self.bot.send_message(EXCEPTION_CHAT_ID, chunk)

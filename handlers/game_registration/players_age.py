@@ -33,19 +33,16 @@ class GameRegistrationPlayersAge(FormChoiceTextItem):
             return False
 
         if len(message_split := message.text.split("-")) != 2:
-            print(1)
             return await with_false()
         else:
             min_age_str, max_age_str = message_split
             if not min_age_str.isdigit() or not max_age_str.isdigit():
-                print(2)
                 return await with_false()
             else:
                 min_age = int(min_age_str)
                 max_age = int(max_age_str)
 
-        if min_age < 14 or max_age > 80:
-            print(3)
+        if min_age < 14 or max_age > 99:
             return await with_false()
         return True
 
