@@ -24,3 +24,7 @@ def generate_simple_choices(choices: tuple[str, ...]) -> tuple[tuple[str, str], 
 
 def generate_city_choices() -> tuple[tuple[str, str], ...]:
     return generate_simple_choices(POPULAR_CITIES)
+
+
+def create_tag(string: str) -> str:
+    return string.replace(" ", "").replace("-", "").replace("_", "")

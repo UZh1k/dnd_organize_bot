@@ -16,14 +16,7 @@ class GameRegistrationTitle(FormTextItem):
     )
 
     async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
-        if len(message.text) > 100:
-            await bot.send_message(
-                message.chat.id,
-                "Мне кажется, что твое название слишком большое и не "
-                "вместится в пост. Пожалуйста, напиши немного короче.",
-            )
-            return False
-        return True
+        return await self.check_message_length(message, bot, message_length=100)
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

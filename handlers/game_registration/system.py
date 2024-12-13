@@ -22,13 +22,7 @@ class GameRegistrationSystem(FormChoiceTextItem):
     choices = generate_simple_choices(POPULAR_SYSTEMS)
 
     async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
-        if message.text.isdigit() or len(message.text) > 100:
-            await bot.send_message(
-                message.chat.id,
-                "Это не похоже на название системы, попробуй еще раз.",
-            )
-            return False
-        return True
+        return await self.check_message_length(message, bot, message_length=50)
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

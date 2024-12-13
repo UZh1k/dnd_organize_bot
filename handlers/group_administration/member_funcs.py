@@ -11,6 +11,13 @@ async def handle_player_added_to_group(
 ):
     user_id = update.new_chat_member.user.id
     game = await GameController.get_one(update.chat.id, session, "group_id")
+    if not game:
+        await bot.send_message(
+            update.chat.id,
+            "Чтобы я отслеживал количество игроков, привяжи к "
+            "группе игру с помощью команды /link.",
+        )
+        return
     await GameMemberController.create(game.id, user_id, session)
     if game.max_players <= await GameMemberController.count_game_members(
         game.id, session

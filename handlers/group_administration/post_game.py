@@ -9,7 +9,7 @@ from consts import BOT_USERNAME, NEWS_CHANNEL_ID
 from controllers.game import GameController
 from models import Game, User, GameFormatText, GameTypeText, GameFormat, GameType
 from utils.message_helpers import generate_link_for_game_apply
-from utils.other import POPULAR_CITIES, POPULAR_SYSTEMS
+from utils.other import POPULAR_CITIES, POPULAR_SYSTEMS, create_tag
 
 
 async def create_game_post(bot: AsyncTeleBot, game: Game, for_update: bool = False):
@@ -31,10 +31,10 @@ async def create_game_post(bot: AsyncTeleBot, game: Game, for_update: bool = Fal
     about_price = f" - {game.about_price}" if game.about_price else ""
 
     city_tag = (
-        f"#{game.city.name} " if game.city and game.city.name in POPULAR_CITIES else ""
+        f"#{create_tag(game.city.name)} " if game.city and game.city.name in POPULAR_CITIES else ""
     )
     system_tag = (
-        f"#{game.system.replace(' ', '')} " if game.system in POPULAR_SYSTEMS else ""
+        f"#{create_tag(game.system)} " if game.system in POPULAR_SYSTEMS else ""
     )
     free_status = "Платно" if not game.free else "Бесплатно"
 
@@ -51,7 +51,7 @@ async def create_game_post(bot: AsyncTeleBot, game: Game, for_update: bool = Fal
         f"Формат: {format_name}\n"
         f"{city_text}"
         f"Количество игроков: {players_count}\n"
-        f"Платность: {free_status}{about_price}\n"
+        f"Доступ: {free_status}{about_price}\n"
         f"Время проведения: {game.time}\n\n"
         f"Игровая система: {game.system}\n"
         f"Тип игры:  {type_name}\n\n"
@@ -76,7 +76,7 @@ async def update_game_post(
 
     game = await GameController.get_one(message.chat.id, session, "group_id")
     if not game or not game.active:
-        await bot.send_message(message.chat.id, "Игра уже закрыта")
+        await bot.send_message(message.chat.id, "Игра еще не привязана или уже закрыта")
         return
     if game.last_update and game.last_update + timedelta(minutes=10) > datetime.now():
         await bot.send_message(

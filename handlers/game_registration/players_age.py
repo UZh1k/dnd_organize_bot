@@ -42,7 +42,7 @@ class GameRegistrationPlayersAge(FormChoiceTextItem):
                 min_age = int(min_age_str)
                 max_age = int(max_age_str)
 
-        if min_age < 14 or max_age > 99:
+        if min_age < 14 or max_age > 99 or min_age > max_age:
             return await with_false()
         return True
 

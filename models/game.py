@@ -27,7 +27,7 @@ class GameType(IntEnum):
 
 
 class GameTypeText(Enum):
-    company = "Компания"
+    company = "Кампания"
     one_shot = "Ваншот"
 
 

@@ -2,7 +2,8 @@ from consts import BOT_USERNAME
 from handlers.group_administration.group_funcs import (
     handle_bot_added_to_group,
     handle_bot_removed_group,
-    close_game, done_game,
+    close_game,
+    done_game,
 )
 from handlers.group_administration.link_game import (
     handle_bot_promoted_to_admin,
@@ -14,6 +15,7 @@ from handlers.group_administration.member_funcs import (
     handle_player_added_to_group,
     handle_player_left_group,
 )
+from handlers.group_administration.migration import handle_group_migrated
 from handlers.group_administration.post_game import update_game_post
 from utils.handler.base_handler import BaseHandler
 
@@ -23,7 +25,8 @@ class GroupAdministrationHandler(BaseHandler):
         self.bot.register_my_chat_member_handler(
             handle_bot_added_to_group,
             lambda update: (
-                update.new_chat_member.user.username == BOT_USERNAME
+                update.chat.type in ["group", "supergroup"]
+                and update.new_chat_member.user.username == BOT_USERNAME
                 and update.new_chat_member.status == "member"
             ),
             pass_bot=True,
@@ -32,7 +35,8 @@ class GroupAdministrationHandler(BaseHandler):
         self.bot.register_my_chat_member_handler(
             handle_bot_promoted_to_admin,
             lambda update: (
-                update.new_chat_member.user.username == BOT_USERNAME
+                update.chat.type in ["group", "supergroup"]
+                and update.new_chat_member.user.username == BOT_USERNAME
                 and update.new_chat_member.status == "administrator"
             ),
             pass_bot=True,
@@ -52,7 +56,8 @@ class GroupAdministrationHandler(BaseHandler):
         self.bot.register_my_chat_member_handler(
             handle_bot_removed_group,
             lambda update: (
-                update.new_chat_member.user.username == BOT_USERNAME
+                update.chat.type in ["group", "supergroup"]
+                and update.new_chat_member.user.username == BOT_USERNAME
                 and update.new_chat_member.status in ["kicked", "left"]
             ),
             pass_bot=True,
@@ -61,14 +66,18 @@ class GroupAdministrationHandler(BaseHandler):
         self.bot.register_chat_member_handler(
             handle_player_added_to_group,
             lambda update: (
-                update.new_chat_member.status == "member"
+                update.chat.type in ["group", "supergroup"]
+                and update.new_chat_member.status == "member"
                 and not update.new_chat_member.user.is_bot
             ),
             pass_bot=True,
         )
         self.bot.register_chat_member_handler(
             handle_player_left_group,
-            lambda update: (update.new_chat_member.status in ["kicked", "left"]),
+            lambda update: (
+                update.chat.type in ["group", "supergroup"]
+                and update.new_chat_member.status in ["kicked", "left"]
+            ),
             pass_bot=True,
         )
 
@@ -87,6 +96,13 @@ class GroupAdministrationHandler(BaseHandler):
         self.bot.register_message_handler(
             update_game_post,
             commands=["update"],
+            chat_types=["group", "supergroup"],
+            pass_bot=True,
+        )
+
+        self.bot.register_message_handler(
+            handle_group_migrated,
+            content_types=["migrate_to_chat_id"],
             chat_types=["group", "supergroup"],
             pass_bot=True,
         )

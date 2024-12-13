@@ -25,8 +25,7 @@ async def on_close_game(bot: AsyncTeleBot, game: Game, session: AsyncSession):
     await session.flush()
     try:
         await bot.edit_message_caption(
-            f"*{game.title}*\n\n"
-            f"Сбор на приключение прекращен.",
+            f"*{game.title}*\n\n" f"Сбор на приключение прекращен.",
             NEWS_CHANNEL_ID,
             game.post_id,
             reply_markup=None,
@@ -56,8 +55,10 @@ async def close_game(
         )
         return
     game = await GameController.get_one(message.chat.id, session, "group_id")
-    if not game.active:
-        await bot.send_message(message.chat.id, "Игра уже неактивна")
+    if not game or not game.active:
+        await bot.send_message(
+            message.chat.id, "Игра еще не привязана или уже неактивна"
+        )
         return
     await on_close_game(bot, game, session)
     await bot.send_message(
@@ -79,14 +80,13 @@ async def done_game(
         )
         return
     game = await GameController.get_one(message.chat.id, session, "group_id")
-    if not game.active:
-        await bot.send_message(message.chat.id, "Игра уже неактивна")
+    if not game or not game.active:
+        await bot.send_message(message.chat.id, "Игра еще не привязана уже неактивна")
         return
     game.active = False
     try:
         await bot.edit_message_caption(
-            f"*{game.title}*\n\n"
-            f"Команда собралась и отправилась в приключение!",
+            f"*{game.title}*\n\n" f"Команда собралась и отправилась в приключение!",
             NEWS_CHANNEL_ID,
             game.post_id,
             reply_markup=None,

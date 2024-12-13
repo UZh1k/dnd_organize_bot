@@ -24,6 +24,7 @@ from consts import (
     REDIS_URL,
     REDIS_PORT,
     REDIS_PASS,
+    ENVIRONMENT,
 )
 from controllers.user import UserController
 from handlers.feedback import FeedbackHandler
@@ -98,7 +99,7 @@ async def handle_about(message: Message, session: AsyncSession, user: User):
         "В меня вложили множество сил и времени, чтобы я мог появиться на свет. "
         "Мое существование, а также дальнейшее развитие зависит только от вас. \n\n"
         "У меня есть множество нереализованных идей, которые, как я надеюсь, "
-        "как я надеюсь, вы сможете увидеть. Но на текущий момент я бы хотел, "
+        "вы сможете увидеть. Но на текущий момент я бы хотел, "
         "чтобы ваших донатов хватило хотя бы на мое ежемесячное сопровождение "
         "платного хостинга. Даже 100 рублей уже сильно мне помогут.\n\n"
         "Буду очень вам благодарен. Ваш Сники Бот.\n\n"
@@ -111,7 +112,11 @@ async def handle_about(message: Message, session: AsyncSession, user: User):
 
 @bot.message_handler(commands=["search"], chat_types=["private"])
 async def find_game(message: Message, session: AsyncSession, user: User):
-    invite_link = await bot.export_chat_invite_link(NEWS_CHANNEL_ID)
+    invite_link = (
+        await bot.export_chat_invite_link(NEWS_CHANNEL_ID)
+        if ENVIRONMENT == "local"
+        else "https://t.me/SneakyDiceGames"
+    )
     if user.registered:
         text = (
             "Все активные игры ты можешь увидеть в канале "
@@ -181,14 +186,14 @@ async def unban_user(
         await bot.send_message(message.chat.id, "Такого пользователя не существует")
         return
     user.banned = False
-    await bot.send_message(message.chat.id, "Пользователь раззабанен")
+    await bot.send_message(message.chat.id, "Пользователь разбанен")
 
 
-UserRegistrationHandler(bot).register_handlers()
 GroupAdministrationHandler(bot).register_handlers()
-GameRegistrationHandler(bot).register_handlers()
 GameApplicationHandler(bot).register_handlers()
 FeedbackHandler(bot).register_handlers()
+UserRegistrationHandler(bot).register_handlers()
+GameRegistrationHandler(bot).register_handlers()
 
 
 @bot.message_handler(content_types=["text", "photo", "file"], chat_types=["private"])
