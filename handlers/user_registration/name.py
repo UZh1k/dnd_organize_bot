@@ -16,14 +16,14 @@ class UserRegistrationName(FormTextItem):
     )
 
     async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
-        if message.text.isdigit() or len(message.text) > 100:
+        if message.text.isdigit():
             await bot.send_message(
                 message.chat.id,
                 "Не смог разобрать твой ответ, пожалуйста, "
                 "попробуй написать по-другому",
             )
             return False
-        return True
+        return await self.check_message_length(message, bot, message_length=100)
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

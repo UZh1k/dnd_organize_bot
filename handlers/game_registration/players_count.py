@@ -45,7 +45,7 @@ class GameRegistrationPlayersCount(FormChoiceTextItem):
                 min_players = int(min_players_str)
                 max_players = int(max_players_str)
 
-        if min_players > 20 or max_players > 20:
+        if min_players > 20 or max_players > 20 or min_players > max_players:
             return await with_false()
         return True
 

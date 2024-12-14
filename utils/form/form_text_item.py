@@ -39,6 +39,19 @@ class FormTextItem(ABC):
             chat_id, cls.prepare_text, reply_markup=cls.prepare_markup()
         )
 
+    @classmethod
+    async def check_message_length(
+        cls, message: Message, bot: AsyncTeleBot, message_length: int = 100
+    ):
+        if message.text and len(message.text) > message_length:
+            await bot.send_message(
+                message.chat.id,
+                "Мне кажется, что твое сообщение слишком длинное. "
+                f"Пожалуйста, постарайся уместиться в {message_length} символов.",
+            )
+            return False
+        return True
+
     async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
         return True
 

@@ -24,7 +24,7 @@ class GameRegistrationDescription(FormTextItem):
                 "вместится в пост. Пожалуйста, напиши немного короче.",
             )
             return False
-        return True
+        return await self.check_message_length(message, bot, message_length=600)
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

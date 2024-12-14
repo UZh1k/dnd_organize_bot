@@ -85,7 +85,8 @@ async def handle_accept_application(
     await send_message_with_link_button(
         bot,
         user_id,
-        f"Мастер игры уже ждет тебя! Добавляйся в группу. Нажми на кнопку ниже.",
+        f"Мастер уже ждет тебя на игру “{game.title}”! "
+        f"Добавляйся в группу. Нажми на кнопку ниже.",
         "Присоединитья к игре",
         invite_link,
     )

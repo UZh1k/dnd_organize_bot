@@ -1,5 +1,3 @@
-import asyncio
-
 from telebot.asyncio_handler_backends import BaseMiddleware
 from telebot.types import Message, Update
 
@@ -23,7 +21,7 @@ class SessionMiddleware(BaseMiddleware):
                 if db_user := data.get("user"):
                     db_user.commands_count += 1
                 await session.commit()
-            await asyncio.shield(session.close())
+            await session.close()
 
     async def pre_process(self, update: Update | Message, data: dict):
         return await self._provide_session(data)
