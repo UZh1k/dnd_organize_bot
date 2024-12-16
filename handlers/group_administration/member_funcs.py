@@ -4,6 +4,7 @@ from telebot.types import Update, User
 
 from controllers.game import GameController
 from controllers.game_member import GameMemberController
+from handlers.group_administration.group_funcs import on_close_game
 
 
 async def handle_player_added_to_group(
@@ -45,4 +46,9 @@ async def handle_player_left_group(
 ):
     user_id = update.new_chat_member.user.id
     game = await GameController.get_one(update.chat.id, session, "group_id")
-    await GameMemberController.delete_game_member(game.id, user_id, session)
+    if not game:
+        return
+    if game.creator_id == user_id:
+        await on_close_game(bot, game, session)
+    else:
+        await GameMemberController.delete_game_member(game.id, user_id, session)

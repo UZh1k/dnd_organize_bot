@@ -18,19 +18,15 @@ class GameRegistrationCity(FormChoiceTextItem):
     )
     form_name = "GameRegistration"
     form_item_name = "city"
+    message_length = 50
 
     alert_message = "Город сохранен"
     choices = generate_city_choices()
 
     async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
-        if message.text.isdigit():
-            await bot.send_message(
-                message.chat.id,
-                "Не смог разобрать твой ответ, пожалуйста, "
-                "попробуй написать по-другому",
-            )
-            return False
-        return await self.check_message_length(message, bot, message_length=50)
+        if await self.check_is_not_digit(message, bot):
+            return await super().validate_answer(message, bot)
+        return False
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

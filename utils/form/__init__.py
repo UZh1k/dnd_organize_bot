@@ -6,6 +6,7 @@ from telebot.types import Message
 from models import User
 from utils.form.form_text_item import FormTextItem
 from utils.handler.base_handler import BaseHandler
+from utils.other import is_command
 
 
 class RegistrationHandler(BaseHandler):
@@ -59,6 +60,7 @@ class RegistrationHandler(BaseHandler):
             if current_item.with_message:
                 self.bot.register_message_handler(
                     current_item.handle_message,
+                    func=lambda message: not is_command(message.text),
                     state=current_item.state,
                     content_types=["text"],
                     pass_bot=True,

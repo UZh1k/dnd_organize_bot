@@ -17,12 +17,10 @@ class GameRegistrationSystem(FormChoiceTextItem):
     )
     form_name = "GameRegistration"
     form_item_name = "system"
+    message_length = 50
 
     alert_message = "Формат игры записан"
     choices = generate_simple_choices(POPULAR_SYSTEMS)
-
-    async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
-        return await self.check_message_length(message, bot, message_length=50)
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

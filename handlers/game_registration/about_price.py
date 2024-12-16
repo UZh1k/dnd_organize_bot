@@ -14,9 +14,7 @@ class GameRegistrationAboutPrice(FormTextItem):
         "Укажи стоимость своей игры. Если стоимость не фиксированная, "
         "то опиши от чего она зависит."
     )
-
-    async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
-        return await self.check_message_length(message, bot, message_length=50)
+    message_length = 50
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

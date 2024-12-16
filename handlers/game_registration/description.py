@@ -15,16 +15,7 @@ class GameRegistrationDescription(FormTextItem):
         "столкнутся? Игра будет динамичной или детективной, мистической или геройской? "
         "Раскажи подробнее. Напиши мне ответ в свободной форме."
     )
-
-    async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
-        if len(message.text) > 800:
-            await bot.send_message(
-                message.chat.id,
-                "Мне кажется, что твое описание слишком большое и не "
-                "вместится в пост. Пожалуйста, напиши немного короче.",
-            )
-            return False
-        return await self.check_message_length(message, bot, message_length=600)
+    message_length = 600
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

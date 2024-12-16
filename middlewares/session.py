@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from telebot.asyncio_handler_backends import BaseMiddleware
 from telebot.types import Message, Update
 
@@ -20,6 +22,7 @@ class SessionMiddleware(BaseMiddleware):
             if not exception:
                 if db_user := data.get("user"):
                     db_user.commands_count += 1
+                    db_user.last_update = datetime.now()
                 await session.commit()
             await session.close()
 

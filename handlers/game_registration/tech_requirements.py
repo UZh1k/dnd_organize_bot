@@ -14,9 +14,7 @@ class GameRegistrationTechRequirements(FormTextItem):
         "Какие у тебя требования к игрокам? Есть ли требования к технике? "
         "Напиши подробнее в свободной форме."
     )
-
-    async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
-        return await self.check_message_length(message, bot, message_length=100)
+    message_length = 100
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

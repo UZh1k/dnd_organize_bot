@@ -77,6 +77,7 @@ class GameRegistrationHandler(RegistrationHandler):
         async with state.data() as data:
             data["creator_id"] = user.id
             await GameController.create(data, session)
+        await state.delete()
         await bot.send_message(
             chat_id,
             "Твоя игра успешно сохранена. "

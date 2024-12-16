@@ -17,8 +17,7 @@ class UserRegistrationAge(FormTextItem):
         "когда подрастешь."
     )
 
-    @classmethod
-    async def validate_answer(cls, message: Message, bot: AsyncTeleBot) -> bool:
+    async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
         if not message.text.isdigit():
             await bot.send_message(message.chat.id, "Введи число")
             return False
