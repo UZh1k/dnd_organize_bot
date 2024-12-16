@@ -8,11 +8,13 @@ from telebot.states.asyncio import StateContext
 from telebot.types import Message, CallbackQuery
 
 from models import User
+from utils.other import contains_link
 
 
 class FormTextItem(ABC):
     state: State
     prepare_text: str
+    message_length: int | None = 100
 
     with_message: bool = True
     with_callback: bool = False
@@ -52,8 +54,34 @@ class FormTextItem(ABC):
             return False
         return True
 
-    async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
+    @classmethod
+    async def check_has_no_links(cls, message: Message, bot: AsyncTeleBot):
+        if contains_link(message.text):
+            await bot.send_message(
+                message.chat.id,
+                "Похоже, что текст содержит ссылку. Пожалуйста, перепиши без нее.",
+            )
+            return False
         return True
+
+    @classmethod
+    async def check_is_not_digit(cls, message: Message, bot: AsyncTeleBot) -> bool:
+        if message.text.isdigit():
+            await bot.send_message(
+                message.chat.id,
+                "Не смог разобрать твой ответ, пожалуйста, "
+                "попробуй написать по-другому",
+            )
+            return False
+        return True
+
+    async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
+        if await self.check_has_no_links(message, bot):
+            if self.message_length:
+                return await self.check_message_length(
+                    message, bot, message_length=self.message_length
+                )
+        return False
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

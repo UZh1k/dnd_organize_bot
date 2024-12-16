@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import IntEnum, Enum
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -36,5 +37,6 @@ class User(Base):
     registered: Mapped[bool] = mapped_column(default=False)
     banned: Mapped[bool] = mapped_column(default=False)
     commands_count: Mapped[int] = mapped_column(default=0)
+    last_update: Mapped[datetime | None]
 
     city: Mapped["City"] = relationship()

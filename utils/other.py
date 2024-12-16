@@ -1,3 +1,5 @@
+import re
+
 POPULAR_CITIES = (
     "Москва",
     "Санкт-Петербург",
@@ -28,3 +30,13 @@ def generate_city_choices() -> tuple[tuple[str, str], ...]:
 
 def create_tag(string: str) -> str:
     return string.replace(" ", "").replace("-", "").replace("_", "")
+
+
+def contains_link(text: str) -> bool:
+    # Regex pattern to match URLs, including those without http/https or www
+    link_pattern = r"(https?://[^\s]+|www\.[^\s]+|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})"
+    return re.search(link_pattern, text) is not None
+
+
+def is_command(text: str) -> bool:
+    return text.startswith("/")

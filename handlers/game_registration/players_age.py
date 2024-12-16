@@ -20,7 +20,7 @@ class GameRegistrationPlayersAge(FormChoiceTextItem):
 
     alert_message = "Требования по возрасту сохранены"
     choices = generate_simple_choices(
-        ("14-17", "18-25", "18-30", "30-40")
+        ("14-99", "14-17", "18-25", "18-30", "30-40")
     )
 
     async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:

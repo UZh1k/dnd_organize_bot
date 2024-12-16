@@ -190,8 +190,8 @@ async def unban_user(
 
 
 GroupAdministrationHandler(bot).register_handlers()
-GameApplicationHandler(bot).register_handlers()
 FeedbackHandler(bot).register_handlers()
+GameApplicationHandler(bot).register_handlers()
 UserRegistrationHandler(bot).register_handlers()
 GameRegistrationHandler(bot).register_handlers()
 

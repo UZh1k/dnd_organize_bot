@@ -15,9 +15,7 @@ class UserRegistrationBio(FormTextItem):
         "ведешь игры? Какие системы тебе нравятся? Какими вселенными увлекаешься? "
         "Напиши мне ответ в свободной форме. Ответ станет твоим описанием."
     )
-
-    async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
-        return await self.check_message_length(message, bot, message_length=800)
+    message_length = 800
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext
