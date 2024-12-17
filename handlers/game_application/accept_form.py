@@ -59,7 +59,7 @@ async def handle_decline_application(
     await GameApplicationController.set_status(game_id, user_id, False, session)
     await bot.send_message(
         user_id,
-        f"К сожалению, мастер игры {game.title} не принял твою анкету или "
+        f"К сожалению, мастер игры “{game.title}” не принял твою анкету или "
         f"сбор на игру уже был закрыт. Не отчаивайся, посмотри еще игры - "
         f"https://t.me/SneakyDiceGames.",
     )
@@ -85,7 +85,7 @@ async def handle_accept_application(
     await send_message_with_link_button(
         bot,
         user_id,
-        f"Мастер уже ждет тебя на игру “{game.title}”! "
+        f"Мастер игры уже ждет тебя на приключение “{game.title}”! "
         f"Добавляйся в группу. Нажми на кнопку ниже.",
         "Присоединитья к игре",
         invite_link,

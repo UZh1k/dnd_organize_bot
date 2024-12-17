@@ -1,8 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
-from telebot.types import Message
 
+from handlers.game_registration.redaction_and_setting import (
+    GameRegistrationRedactionAndSetting,
+)
 from handlers.game_registration.states import GameRegistrationStates
 from models import User
 from utils.form.form_choice_text_item import FormChoiceTextItem
@@ -26,3 +28,19 @@ class GameRegistrationSystem(FormChoiceTextItem):
         self, text: str, user: User, session: AsyncSession, state: StateContext
     ):
         await state.add_data(system=text)
+
+    async def on_answered(
+        self,
+        answer: str,
+        chat_id: int,
+        user: User,
+        session: AsyncSession,
+        bot: AsyncTeleBot,
+        state: StateContext,
+    ):
+        if answer == "DnD":
+            await self.next_step(chat_id, user, session, bot, state)
+        else:
+            await GameRegistrationRedactionAndSetting.prepare(
+                chat_id, user, session, bot, state
+            )

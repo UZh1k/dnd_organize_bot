@@ -38,7 +38,9 @@ class FormTextItem(ABC):
     ):
         await state.set(cls.state)
         await bot.send_message(
-            chat_id, cls.prepare_text, reply_markup=cls.prepare_markup()
+            chat_id,
+            cls.prepare_text.format(user=user),
+            reply_markup=cls.prepare_markup(),
         )
 
     @classmethod

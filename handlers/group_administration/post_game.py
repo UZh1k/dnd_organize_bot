@@ -24,14 +24,16 @@ async def create_game_post(bot: AsyncTeleBot, game: Game, for_update: bool = Fal
         else f"{game.min_players}-{game.max_players}"
     )
     players_age = (
-        f"{game.min_age}"
-        if game.min_age == game.max_age
-        else f"{game.min_age}-{game.max_age}"
+        f"{game.min_age}-{game.max_age}"
+        if game.max_age
+        else f"{game.min_age}+"
     )
     about_price = f" - {game.about_price}" if game.about_price else ""
 
     city_tag = (
-        f"#{create_tag(game.city.name)} " if game.city and game.city.name in POPULAR_CITIES else ""
+        f"#{create_tag(game.city.name)} "
+        if game.city and game.city.name in POPULAR_CITIES
+        else ""
     )
     system_tag = (
         f"#{create_tag(game.system)} " if game.system in POPULAR_SYSTEMS else ""
@@ -51,10 +53,13 @@ async def create_game_post(bot: AsyncTeleBot, game: Game, for_update: bool = Fal
         f"Формат: {format_name}\n"
         f"{city_text}"
         f"Количество игроков: {players_count}\n"
-        f"Доступ: {free_status}{about_price}\n"
+        f"Цена: {free_status}{about_price}\n"
         f"Время проведения: {game.time}\n\n"
         f"Игровая система: {game.system}\n"
-        f"Тип игры:  {type_name}\n\n"
+        f"Редакция и сеттинг: {game.redaction} "
+        f"{f', {game.setting}' if game.setting != game.redaction else ''}\n"
+        f"Тип игры:  {type_name}\n"
+        f"Уровень игроков на старте: {game.start_level}\n\n"
         f"Описание: {game.description}\n\n"
         f"Требование к возрасту: {players_age}\n"
         f"Требование к игрокам: {game.tech_requirements}\n\n"

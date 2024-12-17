@@ -6,9 +6,12 @@ from telebot.types import Message
 from consts import CREATE_IMAGE
 from controllers.game import GameController
 from handlers.game_registration.about_price import GameRegistrationAboutPrice
+from handlers.game_registration.accept_city import GameRegistrationAcceptCity
 from handlers.game_registration.accept_offline import GameRegistrationAcceptOffline
 from handlers.game_registration.city import GameRegistrationCity
 from handlers.game_registration.description import GameRegistrationDescription
+from handlers.game_registration.dnd_redaction import GameRegistrationDndRedaction
+from handlers.game_registration.dnd_setting import GameRegistrationDndSetting
 from handlers.game_registration.format import GameRegistrationFormat
 from handlers.game_registration.free import GameRegistrationFree
 from handlers.game_registration.game_time import GameRegistrationTime
@@ -16,6 +19,9 @@ from handlers.game_registration.game_type import GameRegistrationType
 from handlers.game_registration.image import GameRegistrationImage
 from handlers.game_registration.players_age import GameRegistrationPlayersAge
 from handlers.game_registration.players_count import GameRegistrationPlayersCount
+from handlers.game_registration.redaction_and_setting import \
+    GameRegistrationRedactionAndSetting
+from handlers.game_registration.start_level import GameRegistrationStartLevel
 from handlers.game_registration.system import GameRegistrationSystem
 from handlers.game_registration.tech_requirements import (
     GameRegistrationTechRequirements,
@@ -30,6 +36,7 @@ class GameRegistrationHandler(RegistrationHandler):
         GameRegistrationTitle,
         GameRegistrationFormat,
         GameRegistrationAcceptOffline,
+        GameRegistrationAcceptCity,
         GameRegistrationCity,
         GameRegistrationPlayersCount,
         GameRegistrationFree,
@@ -37,7 +44,11 @@ class GameRegistrationHandler(RegistrationHandler):
         GameRegistrationTime,
         GameRegistrationType,
         GameRegistrationSystem,
+        GameRegistrationDndRedaction,
+        GameRegistrationDndSetting,
+        GameRegistrationRedactionAndSetting,
         GameRegistrationDescription,
+        GameRegistrationStartLevel,
         GameRegistrationPlayersAge,
         GameRegistrationTechRequirements,
         GameRegistrationImage,

@@ -13,8 +13,8 @@ from utils.other import generate_city_choices
 class GameRegistrationCity(FormChoiceTextItem):
     state = GameRegistrationStates.city
     prepare_text = (
-        "В каком городе ты хочешь провести игру? Выбери город из списка или "
-        "напиши текстом название, если твоего города нет в списке."
+        "В каком городе ты хочешь провести игру? Выбери город из списка "
+        "или напиши текстом название, если нужного города нет в списке."
     )
     form_name = "GameRegistration"
     form_item_name = "city"
