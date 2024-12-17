@@ -14,7 +14,7 @@ class GameRegistrationTechRequirements(FormTextItem):
         "Какие у тебя требования к игрокам? Есть ли требования к технике? "
         "Напиши подробнее в свободной форме."
     )
-    message_length = 100
+    message_length = 50
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

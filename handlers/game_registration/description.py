@@ -15,7 +15,7 @@ class GameRegistrationDescription(FormTextItem):
         "столкнутся? Игра будет динамичной или детективной, мистической или геройской? "
         "Раскажи подробнее. Напиши мне ответ в свободной форме."
     )
-    message_length = 600
+    message_length = 500
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext
