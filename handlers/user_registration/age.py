@@ -13,8 +13,7 @@ class UserRegistrationAge(FormTextItem):
     state = UserRegistrationStates.age
     prepare_text = (
         "Сколько тебе лет? Введи значение от 14 до 99 лет. Если ты младше 14, "
-        "то к сожалению, тебе нельзя использовать бота. Но обязательно возвращайся, "
-        "когда подрастешь."
+        "то к сожалению, тебе нельзя использовать бота."
     )
 
     async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:

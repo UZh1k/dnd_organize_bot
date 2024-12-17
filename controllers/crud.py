@@ -23,8 +23,7 @@ class CRUD(ABC):
         other_values: dict | None = None,
     ) -> model:
         other_values = other_values or {}
-        query = select(cls.model).where(value == getattr(cls.model, field))
-        obj = (await session.execute(query)).scalars().first()
+        obj = await cls.get_one(value, session, field)
         if obj:
             return obj
 

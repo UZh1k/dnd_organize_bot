@@ -48,12 +48,15 @@ class Game(Base):
     max_players: Mapped[int] = mapped_column(SMALLINT)
     free: Mapped[bool]
     min_age: Mapped[int] = mapped_column(SMALLINT)
-    max_age: Mapped[int] = mapped_column(SMALLINT)
+    max_age: Mapped[int | None] = mapped_column(SMALLINT)
     time: Mapped[str]
     tech_requirements: Mapped[str]
     image: Mapped[str | None]
     city_id: Mapped[int | None] = mapped_column(ForeignKey("city.id"))
     about_price: Mapped[str | None]
+    redaction: Mapped[str | None]
+    setting: Mapped[str | None]
+    start_level: Mapped[str | None]
 
     active: Mapped[bool | None] = mapped_column(default=True)
 

@@ -1,3 +1,5 @@
+import re
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
@@ -12,16 +14,15 @@ from utils.other import generate_simple_choices
 class GameRegistrationPlayersAge(FormChoiceTextItem):
     state = GameRegistrationStates.players_age
     prepare_text = (
-        "Какие у тебя требования к возрасту игроков? Выбери из списка или пришли "
-        "ответ в формате двух чисел через дефис. Примеры: “18-20”, “20-30”."
+        "Какие у тебя требования к возрасту игроков? Выбери из списка или "
+        "пришли ответ в формате двух чисел через дефис или одно число со "
+        "знаком “+”. Примеры: “18-20”, “20-30”, “20+”."
     )
     form_name = "GameRegistration"
     form_item_name = "players_age"
 
     alert_message = "Требования по возрасту сохранены"
-    choices = generate_simple_choices(
-        ("14-99", "14-17", "18-25", "18-30", "30-40")
-    )
+    choices = generate_simple_choices(("14+", "14-17", "18+", "18-25", "25+"))
 
     async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
         async def with_false() -> bool:
@@ -32,22 +33,23 @@ class GameRegistrationPlayersAge(FormChoiceTextItem):
             )
             return False
 
-        if len(message_split := message.text.split("-")) != 2:
+        if not re.compile(
+            r"^(1[4-9]|[2-9][0-9])\s?(\+|-\s?(1[5-9]|[2-9][0-9]))$"
+        ).match(message.text):
             return await with_false()
-        else:
-            min_age_str, max_age_str = message_split
-            if not min_age_str.isdigit() or not max_age_str.isdigit():
-                return await with_false()
-            else:
-                min_age = int(min_age_str)
-                max_age = int(max_age_str)
 
-        if min_age < 14 or max_age > 99 or min_age > max_age:
-            return await with_false()
+        if "-" in message.text:
+            min_age, max_age = map(int, message.text.split("-"))
+            if min_age > max_age:
+                return await with_false()
         return True
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext
     ):
-        min_age, max_age = map(int, text.split("-"))
+        if "-" in text:
+            min_age, max_age = map(int, text.split("-"))
+        else:
+            min_age = int(text.replace("+", ""))
+            max_age = None
         await state.add_data(min_age=min_age, max_age=max_age)
