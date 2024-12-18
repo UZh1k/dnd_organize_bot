@@ -7,6 +7,7 @@ from controllers.city import CityController
 from controllers.game import GameController
 from controllers.game_application import GameApplicationController
 from handlers.game_application.accept_form import generate_accept_form_markup
+from handlers.user_profile.user_text import get_user_text
 from models import User, UserTypeText, UserType
 
 
@@ -24,18 +25,11 @@ async def send_application(
     await GameApplicationController.create(game_id, user.id, session)
     await bot.send_message(user.id, "Заявка отправлена")
 
-    city = await CityController.get_one(user.city_id, session)
-    user_type = UserTypeText[UserType(user.user_type).name].value
     await bot.send_message(
         game.creator_id,
         f"Я нашел тебе игрока на игру “{game.title}”. "
         f"Жду твоего одобрения, чтобы пригласить его в группу.\n\n"
-        f"Имя: {user.name}\n"
-        f"Возраст: {user.age}\n"
-        f"Город: {city.name}\n"
-        f"Часовой пояс: {user.timezone}\n"
-        f"Роль в НРИ: {user_type}\n"
-        f"Об игроке: {user.bio}\n\n"
+        f"{get_user_text(user)}\n\n"
         f"{form_text if form_text else ''}",
         reply_markup=generate_accept_form_markup(game_id, user.id),
     )

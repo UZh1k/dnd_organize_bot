@@ -9,6 +9,7 @@ from controllers.game import GameController
 from controllers.game_application import GameApplicationController
 from controllers.user import UserController
 from handlers.game_application.states import GameApplicationStates
+from handlers.user_profile.user_text import get_user_text
 from models import User, UserTypeText, UserType
 from utils.message_helpers import (
     send_message_with_link_button,
@@ -69,18 +70,11 @@ async def handle_apply_for_game(
     )
 
     game_master = await UserController.get_one(game.creator_id, session)
-
-    user_role = UserTypeText[UserType(game_master.user_type).name].value
     await bot.send_message(
         message.chat.id,
         f"Вижу, что тебя заинтересовала игра “{game.title}”. "
         f"Отправляю тебе анкету мастера этой игры.\n\n"
-        f"Имя: {game_master.name}\n"
-        f"Возраст: {game_master.age}\n"
-        f"Город: {game_master.city.name}\n"
-        f"Временная зона: {game_master.timezone}\n"
-        f"Роль: {user_role}\n"
-        f"О себе: {game_master.bio}\n\n"
+        f"{get_user_text(game_master)}\n\n"
         f"Если тебя все устраивает, то я отправлю твою анкету мастеру. "
         f"Если хочешь приложить к анкете сопроводительное сообщение, например, "
         f"ты уже знаешь за кого и какой класс хочешь играть, то отправь в "
