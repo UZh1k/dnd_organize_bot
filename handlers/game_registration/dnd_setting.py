@@ -6,7 +6,7 @@ from handlers.game_registration.description import GameRegistrationDescription
 from handlers.game_registration.states import GameRegistrationStates
 from models import User
 from utils.form.form_choice_text_item import FormChoiceTextItem
-from utils.other import generate_simple_choices
+from utils.other import generate_simple_choices, POPULAR_DND_SETTINGS
 
 
 class GameRegistrationDndSetting(FormChoiceTextItem):
@@ -20,17 +20,7 @@ class GameRegistrationDndSetting(FormChoiceTextItem):
     message_length = 50
 
     alert_message = None
-    choices = generate_simple_choices(
-        (
-            "Forgotten Realms",
-            "Dragonlance",
-            "Eberron",
-            "Planescape",
-            "Ravenloft",
-            "Greyhawk",
-            "Ravnica",
-        )
-    )
+    choices = generate_simple_choices(POPULAR_DND_SETTINGS)
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

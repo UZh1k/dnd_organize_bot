@@ -3,69 +3,20 @@ from datetime import datetime
 from asyncpg.pgproto.pgproto import timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
+from telebot.types import Message
 
-from consts import BOT_USERNAME, NEWS_CHANNEL_ID
+from consts import NEWS_CHANNEL_ID
 from controllers.game import GameController
-from models import Game, User, GameFormatText, GameTypeText, GameFormat, GameType
-from utils.message_helpers import generate_link_for_game_apply
-from utils.other import POPULAR_CITIES, POPULAR_SYSTEMS, create_tag
+from handlers.group_administration.game_text import create_game_text, create_game_markup
+from models import Game, User
 
 
-async def create_game_post(bot: AsyncTeleBot, game: Game, for_update: bool = False):
-    markup = InlineKeyboardMarkup()
-    markup.add(
-        InlineKeyboardButton("Подать заявку", url=generate_link_for_game_apply(game))
-    )
-    city_text = f"Город: {game.city.name}\n" if game.city else ""
-    players_count = (
-        f"{game.min_players}"
-        if game.min_players == game.max_players
-        else f"{game.min_players}-{game.max_players}"
-    )
-    players_age = (
-        f"{game.min_age}-{game.max_age}"
-        if game.max_age
-        else f"{game.min_age}+"
-    )
-    about_price = f" - {game.about_price}" if game.about_price else ""
-
-    city_tag = (
-        f"#{create_tag(game.city.name)} "
-        if game.city and game.city.name in POPULAR_CITIES
-        else ""
-    )
-    system_tag = (
-        f"#{create_tag(game.system)} " if game.system in POPULAR_SYSTEMS else ""
-    )
-    free_status = "Платно" if not game.free else "Бесплатно"
-
-    update_text = f"Идет донабор на игру!\n\n" if for_update else ""
-
-    format_name = GameFormatText[GameFormat(game.format).name].value
-    type_name = GameTypeText[GameType(game.type).name].value
-
+async def create_game_post(bot: AsyncTeleBot, game: Game, update_text: str = ""):
     post_message = await bot.send_photo(
         NEWS_CHANNEL_ID,
         game.image,
-        f"*{game.title}*\n\n"
-        f"{update_text}"
-        f"Формат: {format_name}\n"
-        f"{city_text}"
-        f"Количество игроков: {players_count}\n"
-        f"Цена: {free_status}{about_price}\n"
-        f"Время проведения: {game.time}\n\n"
-        f"Игровая система: {game.system}\n"
-        f"Редакция и сеттинг: {game.redaction} "
-        f"{f', {game.setting}' if game.setting != game.redaction else ''}\n"
-        f"Тип игры:  {type_name}\n"
-        f"Уровень игроков на старте: {game.start_level}\n\n"
-        f"Описание: {game.description}\n\n"
-        f"Требование к возрасту: {players_age}\n"
-        f"Требование к игрокам: {game.tech_requirements}\n\n"
-        f"#{format_name} {city_tag}"
-        f"#{free_status} {system_tag}#{type_name}",
-        reply_markup=markup,
+        create_game_text(game, update_text),
+        reply_markup=create_game_markup(game),
         parse_mode="Markdown",
     )
     game.post_id = post_message.id
@@ -96,7 +47,7 @@ async def update_game_post(
             game.post_id,
             parse_mode="Markdown",
         )
-        await create_game_post(bot, game, for_update=True)
+        await create_game_post(bot, game, update_text=f"Идет донабор на игру!\n\n")
         await bot.send_message(
             message.chat.id,
             "Я обновил твою публикацию. Постараюсь побыстрее найти игроков.",

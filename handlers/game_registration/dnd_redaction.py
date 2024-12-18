@@ -4,7 +4,7 @@ from telebot.states.asyncio import StateContext
 from handlers.game_registration.states import GameRegistrationStates
 from models import User
 from utils.form.form_choice_item import FormChoiceItem
-from utils.other import generate_simple_choices
+from utils.other import generate_simple_choices, POPULAR_DND_REDACTIONS
 
 
 class GameRegistrationDndRedaction(FormChoiceItem):
@@ -14,9 +14,7 @@ class GameRegistrationDndRedaction(FormChoiceItem):
     form_item_name = "dnd_redaction"
 
     alert_message = None
-    choices = generate_simple_choices(
-        ("DnD24", "DnD5e", "DnD3.5e", "DnD3e", "DnD2e", "ADnD", "ODnD")
-    )
+    choices = generate_simple_choices(POPULAR_DND_REDACTIONS)
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

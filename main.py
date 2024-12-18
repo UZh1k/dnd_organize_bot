@@ -31,6 +31,7 @@ from handlers.feedback import FeedbackHandler
 from handlers.game_application import GameApplicationHandler
 from handlers.game_registration import GameRegistrationHandler
 from handlers.group_administration import GroupAdministrationHandler
+from handlers.user_profile import UserProfileHandler
 from handlers.user_registration import UserRegistrationHandler
 from middlewares.exception import ExceptionMiddleware
 from middlewares.session import SessionMiddleware
@@ -191,6 +192,7 @@ async def unban_user(
 
 GroupAdministrationHandler(bot).register_handlers()
 FeedbackHandler(bot).register_handlers()
+UserProfileHandler(bot).register_handlers()
 GameApplicationHandler(bot).register_handlers()
 UserRegistrationHandler(bot).register_handlers()
 GameRegistrationHandler(bot).register_handlers()
