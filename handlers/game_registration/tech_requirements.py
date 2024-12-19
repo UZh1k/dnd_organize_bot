@@ -11,8 +11,10 @@ from utils.form.form_text_item import FormTextItem
 class GameRegistrationTechRequirements(FormTextItem):
     state = GameRegistrationStates.tech_requirements
     prepare_text = (
-        "Какие у тебя требования к игрокам? Есть ли требования к технике? "
-        "Напиши подробнее в свободной форме."
+        "Какие у тебя требования к игрокам? Есть ли требования к технике, например, "
+        "наличие микрофона и камеры? Есть ли особые правила, например, запрет на "
+        "алкоголь во время игры или запрет на использование телефона? Напиши подробнее "
+        "в свободной форме."
     )
     message_length = 50
 
