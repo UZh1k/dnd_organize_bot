@@ -4,7 +4,7 @@ from telebot.states.asyncio import StateContext
 from telebot.types import Message
 
 from controllers.city import CityController
-from handlers.user_registration.user_type import UserRegistrationUserType
+from handlers.user_registration.timezone import UserRegistrationTimezone
 from handlers.user_registration.states import UserRegistrationStates
 from models import User
 from utils.form.form_choice_text_item import FormChoiceTextItem
@@ -17,7 +17,6 @@ class UserRegistrationCity(FormChoiceTextItem):
         "В каком городе ты живешь? Выбери город из списка или напиши текстом название, "
         "если твоего города нет в списке."
     )
-    form_name = "UserRegistration"
     form_item_name = "city"
     message_length = 100
 
@@ -46,6 +45,8 @@ class UserRegistrationCity(FormChoiceTextItem):
     ):
         if known_timezone := CITY_TO_TIMEZONE.get(answer):
             user.timezone = known_timezone
-            await UserRegistrationUserType.prepare(chat_id, user, session, bot, state)
+            await self.next_step(chat_id, user, session, bot, state, self.form_prefix)
         else:
-            await self.next_step(chat_id, user, session, bot, state)
+            await UserRegistrationTimezone.prepare(
+                chat_id, user, session, bot, state, self.form_prefix
+            )

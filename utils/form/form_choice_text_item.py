@@ -10,26 +10,27 @@ from utils.form.form_text_item import FormTextItem
 class FormChoiceTextItem(FormTextItem):
     with_callback = True
     row_width: int = 1
-    form_name: str
     form_item_name: str
 
     alert_message: str
     choices: tuple[tuple[str, str], ...]
 
     @classmethod
-    def gen_callback_root(cls):
-        return f"{cls.form_name}:{cls.form_item_name}"
+    def gen_callback_root(cls, form_prefix: str):
+        return f"{form_prefix}:{cls.form_item_name}"
 
     @classmethod
-    def gen_callback_data(cls, data: str):
-        return f"{cls.gen_callback_root()}:{data}"
+    def gen_callback_data(cls, data: str, form_prefix: str):
+        return f"{cls.gen_callback_root(form_prefix)}:{data}"
 
     @classmethod
-    def prepare_markup(cls):
+    def prepare_markup(cls, form_prefix: str):
         markup = InlineKeyboardMarkup(row_width=cls.row_width)
         for name, data in cls.choices:
             markup.add(
-                InlineKeyboardButton(name, callback_data=cls.gen_callback_data(data))
+                InlineKeyboardButton(
+                    name, callback_data=cls.gen_callback_data(data, form_prefix)
+                )
             )
         return markup
 

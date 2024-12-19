@@ -16,7 +16,6 @@ class UserRegistrationTimezone(FormChoiceTextItem):
         'Выбери часовой пояс из списка или отправь сообщение с данными своего '
         'UTC пояса, мне нужны только числа, например, "+1", "-5", "-3:30".'
     )
-    form_name = "UserRegistration"
     form_item_name = "timezone"
 
     alert_message = "Часовой пояс сохранен"

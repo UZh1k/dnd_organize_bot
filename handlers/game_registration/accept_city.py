@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
 
-from handlers.game_registration.players_count import GameRegistrationPlayersCount
+from handlers.game_registration.city import GameRegistrationCity
 from handlers.game_registration.states import GameRegistrationStates
 from models import User
 from utils.form.form_choice_item import FormChoiceItem
@@ -11,7 +11,6 @@ from utils.form.form_choice_item import FormChoiceItem
 class GameRegistrationAcceptCity(FormChoiceItem):
     state = GameRegistrationStates.accept_city
     prepare_text = "Ты хочешь провести игру в своем городе - {user.city.name}?"
-    form_name = "GameRegistration"
     form_item_name = "accept_city"
 
     alert_message = None
@@ -36,8 +35,8 @@ class GameRegistrationAcceptCity(FormChoiceItem):
         state: StateContext,
     ):
         if answer == "no":
-            await self.next_step(chat_id, user, session, bot, state)
-        else:
-            await GameRegistrationPlayersCount.prepare(
-                chat_id, user, session, bot, state
+            await GameRegistrationCity.prepare(
+                chat_id, user, session, bot, state, self.form_prefix
             )
+        else:
+            await self.next_step(chat_id, user, session, bot, state, self.form_prefix)

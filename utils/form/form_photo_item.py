@@ -4,7 +4,7 @@ from telebot.states.asyncio import StateContext
 from telebot.types import Message
 
 from models import User
-from utils.form import FormTextItem
+from utils.form.form_text_item import FormTextItem
 
 
 class FormPhotoItem(FormTextItem):

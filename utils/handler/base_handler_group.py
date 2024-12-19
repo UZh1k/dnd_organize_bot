@@ -3,7 +3,7 @@ from abc import abstractmethod
 from telebot.async_telebot import AsyncTeleBot
 
 
-class BaseHandler:
+class BaseHandlerGroup:
     def __init__(self, bot: AsyncTeleBot):
         self.bot = bot
 

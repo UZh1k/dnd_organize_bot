@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
 
-from handlers.game_registration.game_time import GameRegistrationTime
+from handlers.game_registration.about_price import GameRegistrationAboutPrice
 from handlers.game_registration.states import GameRegistrationStates
 from models import User
 from utils.form.form_choice_item import FormChoiceItem
@@ -11,7 +11,6 @@ from utils.form.form_choice_item import FormChoiceItem
 class GameRegistrationFree(FormChoiceItem):
     state = GameRegistrationStates.free
     prepare_text = "Ты планируешь провести игру за деньги или бесплатно?"
-    form_name = "GameRegistration"
     form_item_name = "free"
 
     alert_message = "Ответ записан"
@@ -35,6 +34,8 @@ class GameRegistrationFree(FormChoiceItem):
         state: StateContext,
     ):
         if answer == "for_pay":
-            await self.next_step(chat_id, user, session, bot, state)
+            await GameRegistrationAboutPrice.prepare(
+                chat_id, user, session, bot, state, self.form_prefix
+            )
         else:
-            await GameRegistrationTime.prepare(chat_id, user, session, bot, state)
+            await self.next_step(chat_id, user, session, bot, state, self.form_prefix)

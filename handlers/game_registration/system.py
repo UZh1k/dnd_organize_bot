@@ -5,6 +5,7 @@ from telebot.states.asyncio import StateContext
 from handlers.game_registration.redaction_and_setting import (
     GameRegistrationRedactionAndSetting,
 )
+from handlers.game_registration.dnd_redaction import GameRegistrationDndRedaction
 from handlers.game_registration.states import GameRegistrationStates
 from models import User
 from utils.form.form_choice_text_item import FormChoiceTextItem
@@ -17,7 +18,6 @@ class GameRegistrationSystem(FormChoiceTextItem):
         "По какой игровой системе ты будешь проводить игру? "
         "Выбери из списка или напиши текстом, если твоей системы нет."
     )
-    form_name = "GameRegistration"
     form_item_name = "system"
     message_length = 50
 
@@ -39,8 +39,10 @@ class GameRegistrationSystem(FormChoiceTextItem):
         state: StateContext,
     ):
         if answer == "DnD":
-            await self.next_step(chat_id, user, session, bot, state)
+            await GameRegistrationDndRedaction.prepare(
+                chat_id, user, session, bot, state, self.form_prefix
+            )
         else:
             await GameRegistrationRedactionAndSetting.prepare(
-                chat_id, user, session, bot, state
+                chat_id, user, session, bot, state, self.form_prefix
             )

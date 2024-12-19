@@ -10,7 +10,6 @@ class UserRegistrationAcceptMinor(FormChoiceItem):
         "дома и сам не приглашай никого к себе домой. Можно собираться только "
         "в публичных местах или в онлайне. Это очень важно!"
     )
-    form_name = "UserRegistration"
     form_item_name = "accept_minor"
 
     alert_message = None
