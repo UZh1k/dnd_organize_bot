@@ -8,6 +8,14 @@ POPULAR_CITIES = (
     "Казань",
 )
 
+CITY_TO_TIMEZONE = {
+    "Москва": "UTC+3",
+    "Санкт-Петербург": "UTC+3",
+    "Новосибирск": "UTC+7",
+    "Екатеринбург": "UTC+5",
+    "Казань": "UTC+3",
+}
+
 POPULAR_SYSTEMS = (
     "DnD",
     "Pathfinder",
@@ -52,3 +60,16 @@ def contains_link(text: str) -> bool:
 
 def is_command(text: str) -> bool:
     return text.startswith("/")
+
+def utc_to_relative_msk(utc_offset_str: str) -> str:
+    msk_offset = 3
+    utc_offset = int(utc_offset_str.replace("UTC", ""))
+
+    relative_to_msk = utc_offset - msk_offset
+
+    if relative_to_msk > 0:
+        return f"МСК+{relative_to_msk}"
+    elif relative_to_msk < 0:
+        return f"МСК{relative_to_msk}"
+    else:
+        return "МСК"

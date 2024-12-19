@@ -27,7 +27,7 @@ async def send_application(
 
     await bot.send_message(
         game.creator_id,
-        f"Я нашел тебе игрока на игру “{game.title}”. "
+        f"Я нашел тебе игрока для приключения “{game.title}”. "
         f"Жду твоего одобрения, чтобы пригласить его в группу.\n\n"
         f"{get_user_text(user)}\n\n"
         f"{form_text if form_text else ''}",

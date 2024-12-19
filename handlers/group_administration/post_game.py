@@ -3,6 +3,7 @@ from datetime import datetime
 from asyncpg.pgproto.pgproto import timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
+from telebot.asyncio_helper import ApiTelegramException
 from telebot.types import Message
 
 from consts import NEWS_CHANNEL_ID
@@ -52,5 +53,5 @@ async def update_game_post(
             message.chat.id,
             "Я обновил твою публикацию. Постараюсь побыстрее найти игроков.",
         )
-    except Exception as e:
-        print(str(e))
+    except ApiTelegramException:
+        pass

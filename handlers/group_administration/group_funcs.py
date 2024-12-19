@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
+from telebot.asyncio_helper import ApiTelegramException
 from telebot.types import Update, Message
 
 from consts import NEWS_CHANNEL_ID, BOOSTY_LINK, CRYPTO_LINK
@@ -16,7 +17,8 @@ async def handle_bot_added_to_group(
         "работать, мне нужно получить права администратора. Зайди в список "
         "участников. Сделай долгое нажатие на моем имени и появится кнопка "
         "“Сделать админом”. Нажми на нее и поставь везде галочки. Если ты с ПК, "
-        "то зайди в настройки группы, в раздел администраторы и добавь меня там.",
+        "то зайди в настройки группы, в раздел администраторы и добавь меня там. "
+        "И не забудь открыть историю для участников чата в настройках.",
     )
 
 
@@ -31,8 +33,8 @@ async def on_close_game(bot: AsyncTeleBot, game: Game, session: AsyncSession):
             reply_markup=None,
             parse_mode="Markdown",
         )
-    except Exception as err:
-        print(str(err))
+    except ApiTelegramException:
+        pass
 
 
 async def handle_bot_removed_group(
@@ -92,8 +94,8 @@ async def done_game(
             reply_markup=None,
             parse_mode="Markdown",
         )
-    except Exception as err:
-        print(str(err))
+    except ApiTelegramException:
+        pass
     await bot.send_message(
         message.chat.id,
         "Поздравляю! Желаю всем приятной игры. Закрываю набор игроков.\n\n"
