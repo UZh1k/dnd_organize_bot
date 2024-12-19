@@ -16,7 +16,6 @@ class GameRegistrationCity(FormChoiceTextItem):
         "В каком городе ты хочешь провести игру? Выбери город из списка "
         "или напиши текстом название, если нужного города нет в списке."
     )
-    form_name = "GameRegistration"
     form_item_name = "city"
     message_length = 50
 

@@ -1,14 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
-from telebot.types import CallbackQuery, Message, InlineKeyboardMarkup
+from telebot.types import CallbackQuery, Message
 
-from controllers.city import CityController
 from controllers.game import GameController
 from controllers.game_application import GameApplicationController
 from handlers.game_application.accept_form import generate_accept_form_markup
-from handlers.user_profile.user_text import get_user_text
-from models import User, UserTypeText, UserType
+from models import User
+from utils.message_helpers import get_user_text
 
 
 async def send_application(

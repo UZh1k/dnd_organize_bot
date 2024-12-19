@@ -12,21 +12,20 @@ from handlers.user_registration.name import UserRegistrationName
 from handlers.user_registration.timezone import UserRegistrationTimezone
 from handlers.user_registration.user_type import UserRegistrationUserType
 from models import User
-from utils.form import RegistrationHandler
-from utils.form.form_text_item import FormTextItem
+from utils.form.form_item_group import FormItemGroup
+from utils.handler.registration_handler_group import RegistrationHandlerGroup
 
 
-class UserRegistrationHandler(RegistrationHandler):
-    form_items: list[FormTextItem] = [
-        UserRegistrationName,
-        UserRegistrationAge,
-        UserRegistrationAcceptMinor,
-        UserRegistrationCity,
-        UserRegistrationTimezone,
-        UserRegistrationUserType,
-        UserRegistrationBio,
-    ]
+class UserRegistrationHandler(RegistrationHandlerGroup):
+    form_item_groups: tuple[FormItemGroup] = (
+        FormItemGroup(main=UserRegistrationName),
+        FormItemGroup(main=UserRegistrationAge, side=(UserRegistrationAcceptMinor,)),
+        FormItemGroup(main=UserRegistrationCity, side=(UserRegistrationTimezone,)),
+        FormItemGroup(main=UserRegistrationUserType),
+        FormItemGroup(main=UserRegistrationBio),
+    )
     command: str = "register"
+    form_prefix: str = "UserRegistration"
 
     async def first_step(
         self,
@@ -53,6 +52,7 @@ class UserRegistrationHandler(RegistrationHandler):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        form_prefix: str,
     ):
         user.registered = True
         await state.delete()

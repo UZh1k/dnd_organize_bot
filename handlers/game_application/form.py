@@ -9,11 +9,11 @@ from controllers.game import GameController
 from controllers.game_application import GameApplicationController
 from controllers.user import UserController
 from handlers.game_application.states import GameApplicationStates
-from handlers.user_profile.user_text import get_user_text
-from models import User, UserTypeText, UserType
+from models import User
 from utils.message_helpers import (
     send_message_with_link_button,
     generate_link_for_game_apply,
+    get_user_text,
 )
 
 GAME_APPLICATION_CALLBACK_PREFIX = "GameApplication"

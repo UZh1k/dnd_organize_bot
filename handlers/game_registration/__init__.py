@@ -29,32 +29,41 @@ from handlers.game_registration.tech_requirements import (
 )
 from handlers.game_registration.title import GameRegistrationTitle
 from models import User
-from utils.form import RegistrationHandler, FormTextItem
+from utils.form.form_item_group import FormItemGroup
+from utils.handler.registration_handler_group import RegistrationHandlerGroup
 
 
-class GameRegistrationHandler(RegistrationHandler):
-    form_items: list[FormTextItem] = [
-        GameRegistrationTitle,
-        GameRegistrationFormat,
-        GameRegistrationAcceptOffline,
-        GameRegistrationAcceptCity,
-        GameRegistrationCity,
-        GameRegistrationPlayersCount,
-        GameRegistrationFree,
-        GameRegistrationAboutPrice,
-        GameRegistrationTime,
-        GameRegistrationType,
-        GameRegistrationSystem,
-        GameRegistrationDndRedaction,
-        GameRegistrationDndSetting,
-        GameRegistrationRedactionAndSetting,
-        GameRegistrationDescription,
-        GameRegistrationStartLevel,
-        GameRegistrationPlayersAge,
-        GameRegistrationTechRequirements,
-        GameRegistrationImage,
-    ]
+class GameRegistrationHandler(RegistrationHandlerGroup):
+    form_item_groups: tuple[FormItemGroup] = (
+        FormItemGroup(main=GameRegistrationTitle),
+        FormItemGroup(
+            main=GameRegistrationFormat,
+            side=(
+                GameRegistrationAcceptOffline,
+                GameRegistrationAcceptCity,
+                GameRegistrationCity,
+            ),
+        ),
+        FormItemGroup(main=GameRegistrationPlayersCount),
+        FormItemGroup(main=GameRegistrationFree, side=(GameRegistrationAboutPrice,)),
+        FormItemGroup(main=GameRegistrationTime),
+        FormItemGroup(main=GameRegistrationType),
+        FormItemGroup(
+            main=GameRegistrationSystem,
+            side=(
+                GameRegistrationDndRedaction,
+                GameRegistrationDndSetting,
+                GameRegistrationRedactionAndSetting,
+            ),
+        ),
+        FormItemGroup(main=GameRegistrationDescription),
+        FormItemGroup(main=GameRegistrationStartLevel),
+        FormItemGroup(main=GameRegistrationPlayersAge),
+        FormItemGroup(main=GameRegistrationTechRequirements),
+        FormItemGroup(main=GameRegistrationImage),
+    )
     command: str = "create"
+    form_prefix: str = "GameRegistration"
 
     async def first_step(
         self,
@@ -73,13 +82,13 @@ class GameRegistrationHandler(RegistrationHandler):
         await bot.send_photo(
             message.chat.id,
             CREATE_IMAGE,
-            "Ура! Время приключений! "
-            "Ответь на мои вопросы и я смогу опубликовать твою игру.\n\n"
+            "А теперь к приключениям! Ответь на мои вопросы и "
+            "я смогу опубликовать твою игру.\n\n"
             "Обрати внимание, что все публикации с рекламой, фотографиями людей, "
             "нецензурными или излишне жестокими картинками, политическими или "
             "религиозными высказываниями, пропагандой наркотиков, разжиганием "
             "национальной и прочей вражды будут удалены. Повторное нарушение "
-            "приведет к перманентному бану. ",
+            "приведет к перманентному бану.",
         )
         await super().first_step(message, user, session, bot, state)
 
@@ -90,6 +99,7 @@ class GameRegistrationHandler(RegistrationHandler):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        form_prefix: str,
     ):
         async with state.data() as data:
             data["creator_id"] = user.id

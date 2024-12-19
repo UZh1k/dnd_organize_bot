@@ -3,7 +3,7 @@ from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
 from telebot.types import Message
 
-from handlers.user_registration.city import UserRegistrationCity
+from handlers.user_registration.accept_minor import UserRegistrationAcceptMinor
 from handlers.user_registration.states import UserRegistrationStates
 from models import User
 from utils.form.form_text_item import FormTextItem
@@ -38,9 +38,11 @@ class UserRegistrationAge(FormTextItem):
         state: StateContext,
     ):
         if int(answer) < 18:
-            await self.next_step(chat_id, user, session, bot, state)
+            await UserRegistrationAcceptMinor.prepare(
+                chat_id, user, session, bot, state, self.form_prefix
+            )
         else:
-            await UserRegistrationCity.prepare(chat_id, user, session, bot, state)
+            await self.next_step(chat_id, user, session, bot, state, self.form_prefix)
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

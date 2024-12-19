@@ -3,7 +3,7 @@ from telebot.states.asyncio import StateContext
 
 from handlers.game_registration.states import GameRegistrationStates
 from models import User
-from utils.form import FormTextItem
+from utils.form.form_text_item import FormTextItem
 
 
 class GameRegistrationRedactionAndSetting(FormTextItem):

@@ -3,8 +3,8 @@ from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
 from telebot.types import Message
 
-from handlers.user_profile.user_text import get_user_text
 from models import User
+from utils.message_helpers import get_user_text
 
 
 async def handle_get_profile(

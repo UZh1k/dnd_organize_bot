@@ -10,10 +10,10 @@ from handlers.game_application.handle_form import (
     handle_application_letter, handle_application_cancel,
 )
 from handlers.game_application.states import GameApplicationStates
-from utils.handler.base_handler import BaseHandler
+from utils.handler.base_handler_group import BaseHandlerGroup
 
 
-class GameApplicationHandler(BaseHandler):
+class GameApplicationHandler(BaseHandlerGroup):
     def register_handlers(self):
         self.bot.register_message_handler(
             handle_apply_for_game,

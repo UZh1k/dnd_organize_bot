@@ -18,7 +18,6 @@ class GameRegistrationPlayersAge(FormChoiceTextItem):
         "пришли ответ в формате двух чисел через дефис или одно число со "
         "знаком “+”. Примеры: “18-20”, “20-30”, “20+”."
     )
-    form_name = "GameRegistration"
     form_item_name = "players_age"
 
     alert_message = "Требования по возрасту сохранены"

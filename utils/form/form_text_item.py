@@ -20,11 +20,12 @@ class FormTextItem(ABC):
     with_callback: bool = False
     with_photo: bool = False
 
-    def __init__(self, next_step: Callable[..., Awaitable]):
+    def __init__(self, next_step: Callable[..., Awaitable], form_prefix: str):
         self.next_step = next_step
+        self.form_prefix = form_prefix
 
     @classmethod
-    def prepare_markup(cls):
+    def prepare_markup(cls, form_prefix: str):
         return None
 
     @classmethod
@@ -35,12 +36,13 @@ class FormTextItem(ABC):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        form_prefix: str,
     ):
         await state.set(cls.state)
         await bot.send_message(
             chat_id,
             cls.prepare_text.format(user=user),
-            reply_markup=cls.prepare_markup(),
+            reply_markup=cls.prepare_markup(form_prefix),
         )
 
     @classmethod
@@ -98,7 +100,7 @@ class FormTextItem(ABC):
         bot: AsyncTeleBot,
         state: StateContext,
     ):
-        await self.next_step(chat_id, user, session, bot, state)
+        await self.next_step(chat_id, user, session, bot, state, self.form_prefix)
 
     async def handle_message(
         self,

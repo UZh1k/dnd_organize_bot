@@ -9,7 +9,6 @@ from utils.form.form_choice_item import FormChoiceItem
 class UserRegistrationUserType(FormChoiceItem):
     state = UserRegistrationStates.user_type
     prepare_text = "Какая у тебя роль в НРИ?"
-    form_name = "UserRegistration"
     form_item_name = "user_type"
 
     alert_message = "Ответ сохранен"

@@ -16,7 +16,6 @@ class GameRegistrationPlayersCount(FormChoiceTextItem):
         "пришли ответ текстом в формате числа или двух чисел через дефис. "
         "Примеры: “4”, “3-5”, “6”."
     )
-    form_name = "GameRegistration"
     form_item_name = "players_count"
 
     alert_message = "Количество игроков записано"

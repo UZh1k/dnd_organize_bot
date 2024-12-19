@@ -9,7 +9,6 @@ from utils.form.form_choice_item import FormChoiceItem
 class GameRegistrationType(FormChoiceItem):
     state = GameRegistrationStates.type
     prepare_text = "Это будет Кампания или Ваншот?"
-    form_name = "GameRegistration"
     form_item_name = "type"
 
     alert_message = "Тип игры записан"

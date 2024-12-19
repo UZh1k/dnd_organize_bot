@@ -15,7 +15,6 @@ class GameRegistrationDndSetting(FormChoiceTextItem):
         "В каком сеттинге DnD будет твоя игра? Выбери из списка или "
         "напиши ответ в текстовом сообщении."
     )
-    form_name = "GameRegistration"
     form_item_name = "dnd_setting"
     message_length = 50
 
@@ -36,4 +35,6 @@ class GameRegistrationDndSetting(FormChoiceTextItem):
         bot: AsyncTeleBot,
         state: StateContext,
     ):
-        await GameRegistrationDescription.prepare(chat_id, user, session, bot, state)
+        await GameRegistrationDescription.prepare(
+            chat_id, user, session, bot, state, self.form_prefix
+        )
