@@ -4,10 +4,11 @@ from telebot.states.asyncio import StateContext
 from telebot.types import Message
 
 from controllers.city import CityController
+from handlers.user_registration.user_type import UserRegistrationUserType
 from handlers.user_registration.states import UserRegistrationStates
 from models import User
 from utils.form.form_choice_text_item import FormChoiceTextItem
-from utils.other import generate_city_choices
+from utils.other import generate_city_choices, CITY_TO_TIMEZONE
 
 
 class UserRegistrationCity(FormChoiceTextItem):
@@ -33,3 +34,18 @@ class UserRegistrationCity(FormChoiceTextItem):
     ):
         city = await CityController.get_or_create(text, "name", session)
         user.city_id = city.id
+
+    async def on_answered(
+        self,
+        answer: str,
+        chat_id: int,
+        user: User,
+        session: AsyncSession,
+        bot: AsyncTeleBot,
+        state: StateContext,
+    ):
+        if known_timezone := CITY_TO_TIMEZONE.get(answer):
+            user.timezone = known_timezone
+            await UserRegistrationUserType.prepare(chat_id, user, session, bot, state)
+        else:
+            await self.next_step(chat_id, user, session, bot, state)

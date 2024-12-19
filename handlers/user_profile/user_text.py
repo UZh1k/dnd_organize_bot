@@ -1,4 +1,5 @@
 from models import User, UserTypeText, UserType
+from utils.other import utc_to_relative_msk
 
 
 def get_user_text(user: User):
@@ -7,7 +8,7 @@ def get_user_text(user: User):
         f"Имя: {user.name}\n"
         f"Возраст: {user.age}\n"
         f"Город: {user.city.name}\n"
-        f"Часовой пояс: {user.timezone}\n"
+        f"Часовой пояс: {utc_to_relative_msk(user.timezone)} ({user.timezone})\n"
         f"Роль в НРИ: {user_role}\n"
-        f"Об себе: {user.bio}"
+        f"Об игроке: {user.bio}"
     )

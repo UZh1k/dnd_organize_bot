@@ -19,8 +19,9 @@ from handlers.game_registration.game_type import GameRegistrationType
 from handlers.game_registration.image import GameRegistrationImage
 from handlers.game_registration.players_age import GameRegistrationPlayersAge
 from handlers.game_registration.players_count import GameRegistrationPlayersCount
-from handlers.game_registration.redaction_and_setting import \
-    GameRegistrationRedactionAndSetting
+from handlers.game_registration.redaction_and_setting import (
+    GameRegistrationRedactionAndSetting,
+)
 from handlers.game_registration.start_level import GameRegistrationStartLevel
 from handlers.game_registration.system import GameRegistrationSystem
 from handlers.game_registration.tech_requirements import (
@@ -73,7 +74,12 @@ class GameRegistrationHandler(RegistrationHandler):
             message.chat.id,
             CREATE_IMAGE,
             "Ура! Время приключений! "
-            "Ответь на мои вопросы и я смогу опубликовать твою игру.",
+            "Ответь на мои вопросы и я смогу опубликовать твою игру.\n\n"
+            "Обрати внимание, что все публикации с рекламой, фотографиями людей, "
+            "нецензурными или излишне жестокими картинками, политическими или "
+            "религиозными высказываниями, пропагандой наркотиков, разжиганием "
+            "национальной и прочей вражды будут удалены. Повторное нарушение "
+            "приведет к перманентному бану. ",
         )
         await super().first_step(message, user, session, bot, state)
 

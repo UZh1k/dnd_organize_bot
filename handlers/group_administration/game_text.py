@@ -20,17 +20,7 @@ def create_game_text(game: Game, update_text: str = "", players_count: int = 0) 
         else f"{game.min_players}-{game.max_players}"
     )
 
-    if players_count >= game.max_players:
-        players_count_left = ""
-    else:
-        if players_count < game.min_players and game.min_players != game.max_players:
-            count_between = (
-                f"от {game.min_players - players_count} "
-                f"до {game.max_players - players_count}"
-            )
-        else:
-            count_between = f"{game.max_players - players_count}"
-        players_count_left = f", требуется еще {count_between}"
+    players_count_left = f", уже в группе {players_count}" if players_count else ""
 
     players_age = (
         f"{game.min_age}-{game.max_age}" if game.max_age else f"{game.min_age}+"
