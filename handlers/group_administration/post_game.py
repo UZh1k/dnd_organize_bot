@@ -8,8 +8,8 @@ from telebot.types import Message
 
 from consts import NEWS_CHANNEL_ID
 from controllers.game import GameController
-from handlers.group_administration.game_text import create_game_text, create_game_markup
 from models import Game, User
+from utils.game_text import create_game_text, create_game_markup
 
 
 async def create_game_post(bot: AsyncTeleBot, game: Game, update_text: str = ""):

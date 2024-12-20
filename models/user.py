@@ -29,7 +29,9 @@ class User(Base):
 
     name: Mapped[str | None]
     age: Mapped[int | None]
-    city_id: Mapped[int | None] = mapped_column(ForeignKey("city.id"))
+    city_id: Mapped[int | None] = mapped_column(
+        ForeignKey("city.id", ondelete="CASCADE")
+    )
     timezone: Mapped[str | None]
 
     user_type: Mapped[UserType | None] = mapped_column(SMALLINT)

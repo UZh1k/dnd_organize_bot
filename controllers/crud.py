@@ -45,5 +45,16 @@ class CRUD(ABC):
 
     @classmethod
     async def create(cls, model_dict: dict, session: AsyncSession):
-        session.add(cls.model(**model_dict))
+        obj = cls.model(**model_dict)
+        session.add(obj)
         await session.flush()
+        await session.refresh(obj)
+        return obj
+
+    @classmethod
+    async def get_list(cls, session: AsyncSession):
+        return (
+            (await session.execute(cls.common_query().order_by(cls.model.id)))
+            .scalars()
+            .all()
+        )

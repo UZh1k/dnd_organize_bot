@@ -25,7 +25,7 @@ class FormTextItem(ABC):
         self.form_prefix = form_prefix
 
     @classmethod
-    def prepare_markup(cls, form_prefix: str):
+    async def prepare_markup(cls, form_prefix: str, session: AsyncSession):
         return None
 
     @classmethod
@@ -42,7 +42,7 @@ class FormTextItem(ABC):
         await bot.send_message(
             chat_id,
             cls.prepare_text.format(user=user),
-            reply_markup=cls.prepare_markup(form_prefix),
+            reply_markup=await cls.prepare_markup(form_prefix, session),
         )
 
     @classmethod

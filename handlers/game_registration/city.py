@@ -17,7 +17,7 @@ class GameRegistrationCity(FormChoiceTextItem):
         "или напиши текстом название, если нужного города нет в списке."
     )
     form_item_name = "city"
-    message_length = 50
+    message_length = 40
 
     alert_message = "Город сохранен"
     choices = generate_city_choices()

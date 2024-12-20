@@ -21,3 +21,4 @@ class GameRegistrationStates(StatesGroup):
     players_age = State()
     tech_requirements = State()
     image = State()
+    tag = State()

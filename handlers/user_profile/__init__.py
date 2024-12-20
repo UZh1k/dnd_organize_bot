@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
+from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
 from telebot.types import (
     Message,
@@ -53,7 +54,6 @@ class UserProfileHandler(RegistrationHandlerGroup):
         row_width: int = 1,
     ):
         markup = InlineKeyboardMarkup()
-        # for name, data in items:
         markup.add(
             *(
                 InlineKeyboardButton(
@@ -163,18 +163,21 @@ class UserProfileHandler(RegistrationHandlerGroup):
         bot: AsyncTeleBot,
         state: StateContext,
     ):
-        await bot.edit_message_reply_markup(
-            call.message.chat.id, call.message.message_id, reply_markup=None
-        )
-        edit_option = call.data.split(":")[-1]
-        await self.edit_option_handler_map[edit_option].prepare(
-            call.message.chat.id,
-            user,
-            session,
-            bot,
-            state,
-            self.form_prefix,
-        )
+        try:
+            await bot.edit_message_reply_markup(
+                call.message.chat.id, call.message.message_id, reply_markup=None
+            )
+            edit_option = call.data.split(":")[-1]
+            await self.edit_option_handler_map[edit_option].prepare(
+                call.message.chat.id,
+                user,
+                session,
+                bot,
+                state,
+                self.form_prefix,
+            )
+        except ApiTelegramException:
+            pass
 
     def register_handlers(self):
         self.bot.register_message_handler(

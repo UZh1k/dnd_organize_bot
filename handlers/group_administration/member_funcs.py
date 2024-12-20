@@ -6,9 +6,9 @@ from telebot.types import Update, User
 from consts import NEWS_CHANNEL_ID
 from controllers.game import GameController
 from controllers.game_member import GameMemberController
-from handlers.group_administration.game_text import create_game_text, create_game_markup
 from handlers.group_administration.group_funcs import on_close_game
 from models import Game
+from utils.game_text import create_game_text, create_game_markup
 
 
 async def on_players_count_change(game: Game, bot: AsyncTeleBot, players_count: int):
@@ -67,7 +67,5 @@ async def handle_player_left_group(
         await on_close_game(bot, game, session)
     else:
         await GameMemberController.delete_game_member(game.id, user_id, session)
-    players_count = await GameMemberController.count_game_members(
-        game.id, session
-    )
+    players_count = await GameMemberController.count_game_members(game.id, session)
     await on_players_count_change(game, bot, players_count)

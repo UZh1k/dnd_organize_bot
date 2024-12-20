@@ -12,7 +12,7 @@ class GameRegistrationRedactionAndSetting(FormTextItem):
         "По какой редакции и в каком сеттинге будет твоя игра? "
         "Пришли текст в ответном сообщении."
     )
-    message_length = 50
+    message_length = 40
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

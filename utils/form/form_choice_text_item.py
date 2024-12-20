@@ -24,7 +24,7 @@ class FormChoiceTextItem(FormTextItem):
         return f"{cls.gen_callback_root(form_prefix)}:{data}"
 
     @classmethod
-    def prepare_markup(cls, form_prefix: str):
+    async def prepare_markup(cls, form_prefix: str, session: AsyncSession):
         markup = InlineKeyboardMarkup(row_width=cls.row_width)
         for name, data in cls.choices:
             markup.add(

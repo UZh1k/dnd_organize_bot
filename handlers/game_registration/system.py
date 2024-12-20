@@ -19,7 +19,7 @@ class GameRegistrationSystem(FormChoiceTextItem):
         "Выбери из списка или напиши текстом, если твоей системы нет."
     )
     form_item_name = "system"
-    message_length = 50
+    message_length = 40
 
     alert_message = "Формат игры записан"
     choices = generate_simple_choices(POPULAR_SYSTEMS)

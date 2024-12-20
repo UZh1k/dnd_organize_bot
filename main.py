@@ -226,4 +226,8 @@ bot.setup_middleware(StateMiddleware(bot))
 
 
 if __name__ == "__main__":
-    asyncio.run(bot.infinity_polling(allowed_updates=ALLOWED_UPDATE_TYPES))
+    asyncio.run(
+        bot.infinity_polling(
+            allowed_updates=ALLOWED_UPDATE_TYPES, logger_level=logging.INFO
+        )
+    )

@@ -5,6 +5,7 @@ from sqlalchemy import ForeignKey, SMALLINT, BIGINT
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from models.base import Base
+from models.game_tag import GameTag, GameTagLink
 
 
 class GameFormat(IntEnum):
@@ -36,7 +37,7 @@ class Game(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str]
-    creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    creator_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     group_id: Mapped[int | None] = mapped_column(BIGINT)
     post_id: Mapped[int | None] = mapped_column(BIGINT)
 
@@ -52,7 +53,9 @@ class Game(Base):
     time: Mapped[str]
     tech_requirements: Mapped[str]
     image: Mapped[str | None]
-    city_id: Mapped[int | None] = mapped_column(ForeignKey("city.id"))
+    city_id: Mapped[int | None] = mapped_column(
+        ForeignKey("city.id", ondelete="CASCADE")
+    )
     about_price: Mapped[str | None]
     redaction: Mapped[str | None]
     setting: Mapped[str | None]
@@ -63,3 +66,4 @@ class Game(Base):
     last_update: Mapped[datetime | None]
 
     city: Mapped["City"] = relationship()
+    tags: Mapped[list[GameTag]] = relationship(GameTag, secondary="game_tag_link")

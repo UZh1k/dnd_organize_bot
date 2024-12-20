@@ -3,8 +3,8 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from models import Game, GameFormatText, GameFormat, GameType, GameTypeText
 from utils.message_helpers import generate_link_for_game_apply
 from utils.other import (
-    create_tag,
     POPULAR_CITIES,
+    create_tag,
     POPULAR_SYSTEMS,
     POPULAR_DND_SETTINGS,
     POPULAR_DND_REDACTIONS,
@@ -64,7 +64,8 @@ def create_game_text(game: Game, update_text: str = "", players_count: int = 0) 
         f"Требование к возрасту: {players_age}\n"
         f"Требование к игрокам: {game.tech_requirements}\n\n"
         f"#{format_name} {city_tag}"
-        f"#{free_status} {system_tag}{setting_tag}{redaction_tag}#{type_name}"
+        f"#{free_status} {system_tag}{setting_tag}{redaction_tag}#{type_name} "
+        f"{' '.join(f'#{tag.title}' for tag in game.tags)}\n"
     )
 
 

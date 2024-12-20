@@ -13,7 +13,7 @@ class GameRegistrationTime(FormTextItem):
         "Может дни недели? При написании времени укажи, пожалуйста, часовой пояс. "
         "Напиши мне ответ в свободной форме."
     )
-    message_length = 50
+    message_length = 40
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

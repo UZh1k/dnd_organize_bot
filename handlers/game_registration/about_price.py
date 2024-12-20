@@ -12,7 +12,7 @@ class GameRegistrationAboutPrice(FormTextItem):
         "Укажи стоимость своей игры. Если стоимость не фиксированная, "
         "то опиши от чего она зависит."
     )
-    message_length = 50
+    message_length = 40
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

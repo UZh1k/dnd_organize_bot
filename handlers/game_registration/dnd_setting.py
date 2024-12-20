@@ -16,7 +16,7 @@ class GameRegistrationDndSetting(FormChoiceTextItem):
         "напиши ответ в текстовом сообщении."
     )
     form_item_name = "dnd_setting"
-    message_length = 50
+    message_length = 40
 
     alert_message = None
     choices = generate_simple_choices(POPULAR_DND_SETTINGS)

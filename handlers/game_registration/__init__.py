@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
@@ -5,6 +7,7 @@ from telebot.types import Message
 
 from consts import CREATE_IMAGE
 from controllers.game import GameController
+from controllers.game_tag_link import GameTagLinkController
 from handlers.game_registration.about_price import GameRegistrationAboutPrice
 from handlers.game_registration.accept_city import GameRegistrationAcceptCity
 from handlers.game_registration.accept_offline import GameRegistrationAcceptOffline
@@ -24,6 +27,7 @@ from handlers.game_registration.redaction_and_setting import (
 )
 from handlers.game_registration.start_level import GameRegistrationStartLevel
 from handlers.game_registration.system import GameRegistrationSystem
+from handlers.game_registration.tag import GameRegistrationTag
 from handlers.game_registration.tech_requirements import (
     GameRegistrationTechRequirements,
 )
@@ -61,6 +65,7 @@ class GameRegistrationHandler(RegistrationHandlerGroup):
         FormItemGroup(main=GameRegistrationPlayersAge),
         FormItemGroup(main=GameRegistrationTechRequirements),
         FormItemGroup(main=GameRegistrationImage),
+        FormItemGroup(main=GameRegistrationTag),
     )
     command: str = "create"
     form_prefix: str = "GameRegistration"
@@ -103,7 +108,14 @@ class GameRegistrationHandler(RegistrationHandlerGroup):
     ):
         async with state.data() as data:
             data["creator_id"] = user.id
-            await GameController.create(data, session)
+            tags = data.pop("tags", [])
+
+        game = await GameController.create(data, session)
+        for tag_id in tags:
+            await GameTagLinkController.create(
+                {"tag_id": tag_id, "game_id": game.id}, session
+            )
+
         await state.delete()
         await bot.send_message(
             chat_id,
