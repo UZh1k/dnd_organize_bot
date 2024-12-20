@@ -69,6 +69,17 @@ class FormTextItem(ABC):
         return True
 
     @classmethod
+    async def check_has_no_bad_symbols(cls, message: Message, bot: AsyncTeleBot):
+        if "*" in message.text or "_" in message.text:
+            await bot.send_message(
+                message.chat.id,
+                "Похоже, что текст содержит символ “*” или “_”. "
+                "Пожалуйста, перепиши без нее.",
+            )
+            return False
+        return True
+
+    @classmethod
     async def check_is_not_digit(cls, message: Message, bot: AsyncTeleBot) -> bool:
         if message.text.isdigit():
             await bot.send_message(
@@ -80,7 +91,9 @@ class FormTextItem(ABC):
         return True
 
     async def validate_answer(self, message: Message, bot: AsyncTeleBot) -> bool:
-        if await self.check_has_no_links(message, bot):
+        if await self.check_has_no_links(
+            message, bot
+        ) and await self.check_has_no_bad_symbols(message, bot):
             if self.message_length:
                 return await self.check_message_length(
                     message, bot, message_length=self.message_length
