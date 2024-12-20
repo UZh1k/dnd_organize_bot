@@ -71,7 +71,7 @@ class GameRegistrationTag(FormChoiceItem):
                 if len(chosen_tags) >= self.max_tags_count:
                     await bot.answer_callback_query(
                         callback_query_id=call.id,
-                        text=f"Максимум {self.max_tags_count} тега",
+                        text=f"Максимум {self.max_tags_count} тегов",
                     )
                     return
                 chosen_tags.append(tag_id)
