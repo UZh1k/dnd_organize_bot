@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_filters import StateFilter
+from telebot.asyncio_helper import ApiTelegramException
 from telebot.asyncio_storage import StateMemoryStorage, StateRedisStorage
 from telebot.states.asyncio import StateMiddleware
 from telebot.states.asyncio.context import StateContext
@@ -27,6 +28,7 @@ from consts import (
     REDIS_PASS,
     ENVIRONMENT,
 )
+from controllers.game import GameController
 from controllers.user import UserController
 from handlers.feedback import FeedbackHandler
 from handlers.game_application import GameApplicationHandler
@@ -175,6 +177,32 @@ async def ban_user(
         return
     user.banned = True
     await bot.send_message(message.chat.id, "Пользователь забанен")
+
+
+@bot.message_handler(
+    commands=["ban_game"], func=lambda message: message.chat.id in ADMIN_IDS
+)
+async def ban_user(
+    message: Message, session: AsyncSession, user: User, state: StateContext
+):
+    message_split = message.text.split()
+    if len(message_split) == 1 or not message_split[1].isdigit():
+        await bot.send_message(
+            message.chat.id, 'Отправь сообщение в формате "/ban_game 123" '
+        )
+        return
+    game = await GameController.get_one(int(message_split[1]), session)
+    if not game:
+        await bot.send_message(message.chat.id, "Такой игры не существует")
+        return
+    game.active = False
+    user = await UserController.get_one(game.creator_id, session)
+    user.banned = True
+    await bot.send_message(message.chat.id, "Игра закрыта и пользователь забанен")
+    try:
+        await bot.delete_message(NEWS_CHANNEL_ID, game.post_id)
+    except ApiTelegramException:
+        pass
 
 
 @bot.message_handler(
