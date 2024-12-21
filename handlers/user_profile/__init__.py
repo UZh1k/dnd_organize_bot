@@ -121,9 +121,12 @@ class UserProfileHandler(RegistrationHandlerGroup):
         bot: AsyncTeleBot,
         state: StateContext,
     ):
-        await bot.edit_message_reply_markup(
-            call.message.chat.id, call.message.message_id, reply_markup=None
-        )
+        try:
+            await bot.edit_message_reply_markup(
+                call.message.chat.id, call.message.message_id, reply_markup=None
+            )
+        except ApiTelegramException:
+            pass
 
     async def handle_edit(
         self,
@@ -133,9 +136,12 @@ class UserProfileHandler(RegistrationHandlerGroup):
         bot: AsyncTeleBot,
         state: StateContext,
     ):
-        await bot.edit_message_reply_markup(
-            call.message.chat.id, call.message.message_id, reply_markup=None
-        )
+        try:
+            await bot.edit_message_reply_markup(
+                call.message.chat.id, call.message.message_id, reply_markup=None
+            )
+        except ApiTelegramException:
+            return
         edit_options = (
             ("Имя", "name"),
             ("Возраст", "age"),
@@ -167,17 +173,17 @@ class UserProfileHandler(RegistrationHandlerGroup):
             await bot.edit_message_reply_markup(
                 call.message.chat.id, call.message.message_id, reply_markup=None
             )
-            edit_option = call.data.split(":")[-1]
-            await self.edit_option_handler_map[edit_option].prepare(
-                call.message.chat.id,
-                user,
-                session,
-                bot,
-                state,
-                self.form_prefix,
-            )
         except ApiTelegramException:
-            pass
+            return
+        edit_option = call.data.split(":")[-1]
+        await self.edit_option_handler_map[edit_option].prepare(
+            call.message.chat.id,
+            user,
+            session,
+            bot,
+            state,
+            self.form_prefix,
+        )
 
     def register_handlers(self):
         self.bot.register_message_handler(

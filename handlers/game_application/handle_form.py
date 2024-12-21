@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from telebot.asyncio_helper import ApiTelegramException
 from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
 from telebot.types import CallbackQuery, Message
@@ -41,12 +42,15 @@ async def handle_application_letter_no_data(
     user: User,
     state: StateContext,
 ):
-    async with state.data() as data:
-        await send_application(bot, user, session, data["game_id"])
-    await state.delete()
-    await bot.edit_message_reply_markup(
-        call.message.chat.id, call.message.message_id, reply_markup=None
-    )
+    try:
+        await bot.edit_message_reply_markup(
+            call.message.chat.id, call.message.message_id, reply_markup=None
+        )
+        async with state.data() as data:
+            await send_application(bot, user, session, data["game_id"])
+        await state.delete()
+    except ApiTelegramException:
+        pass
 
 
 async def handle_application_cancel(
@@ -56,15 +60,18 @@ async def handle_application_cancel(
     user: User,
     state: StateContext,
 ):
-    await state.delete()
-    await bot.edit_message_reply_markup(
-        call.message.chat.id, call.message.message_id, reply_markup=None
-    )
-    await bot.send_message(
-        call.message.chat.id,
-        "Ты отменил заявку на игру. Давай поищем другие игры в канале - "
-        "https://t.me/SneakyDiceGames",
-    )
+    try:
+        await bot.edit_message_reply_markup(
+            call.message.chat.id, call.message.message_id, reply_markup=None
+        )
+        await state.delete()
+        await bot.send_message(
+            call.message.chat.id,
+            "Ты отменил заявку на игру. Давай поищем другие игры в канале - "
+            "https://t.me/SneakyDiceGames",
+        )
+    except ApiTelegramException:
+        pass
 
 
 async def handle_application_letter(

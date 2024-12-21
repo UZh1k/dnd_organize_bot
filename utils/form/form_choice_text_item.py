@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
+from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
@@ -43,12 +44,17 @@ class FormChoiceTextItem(FormTextItem):
         state: StateContext,
     ):
         text = call.data.split(":")[-1]
-        await self.save_answer(text, user, session, state)
-        if self.alert_message:
-            await bot.answer_callback_query(
-                callback_query_id=call.id, text=self.alert_message
+        try:
+            await bot.edit_message_reply_markup(
+                call.message.chat.id, call.message.message_id, reply_markup=None
             )
-        await bot.edit_message_reply_markup(
-            call.message.chat.id, call.message.message_id, reply_markup=None
-        )
-        await self.on_answered(text, call.message.chat.id, user, session, bot, state)
+            await self.save_answer(text, user, session, state)
+            if self.alert_message:
+                await bot.answer_callback_query(
+                    callback_query_id=call.id, text=self.alert_message
+                )
+            await self.on_answered(
+                text, call.message.chat.id, user, session, bot, state
+            )
+        except ApiTelegramException:
+            pass

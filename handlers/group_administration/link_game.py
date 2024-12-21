@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
+from telebot.asyncio_helper import ApiTelegramException
 from telebot.types import (
     InlineKeyboardMarkup,
     InlineKeyboardButton,
@@ -74,28 +75,31 @@ async def handle_link_game_command(
 async def handle_link_game(
     call: CallbackQuery, bot: AsyncTeleBot, session: AsyncSession, user: User
 ):
-    game_id = int(call.data.split(":")[-1])
-    game = await GameController.get_one(game_id, session)
-    game.group_id = call.message.chat.id
-    await bot.answer_callback_query(
-        callback_query_id=call.id, text="Группа привязана"
-    )
-    await bot.edit_message_reply_markup(
-        call.message.chat.id, call.message.message_id, reply_markup=None
-    )
+    try:
+        await bot.edit_message_reply_markup(
+            call.message.chat.id, call.message.message_id, reply_markup=None
+        )
+        game_id = int(call.data.split(":")[-1])
+        game = await GameController.get_one(game_id, session)
+        game.group_id = call.message.chat.id
+        await bot.answer_callback_query(
+            callback_query_id=call.id, text="Группа привязана"
+        )
 
-    await create_game_post(bot, game)
+        await create_game_post(bot, game)
 
-    await bot.send_message(
-        call.message.chat.id,
-        "Отлично. Я опубликовал твою игру в "
-        "[канале](https://t.me/SneakyDiceGames). "
-        "Как только кто-то из игроков откликнется, "
-        "я пришлю тебе личное сообщение с анкетой.\n\n"
-        "Если игроки не наберутся за нужное время, то ты можешь поднять "
-        "публикацию в списке, отправив мне сюда команду /update. "
-        "Когда ты наберешь полную группу, то пришли, пожалуйста сюда команду "
-        "/done. Если передумаешь проводить игру, то пришли такую же команду "
-        "- /close",
-        parse_mode="Markdown",
-    )
+        await bot.send_message(
+            call.message.chat.id,
+            "Отлично. Я опубликовал твою игру в "
+            "[канале](https://t.me/SneakyDiceGames). "
+            "Как только кто-то из игроков откликнется, "
+            "я пришлю тебе личное сообщение с анкетой.\n\n"
+            "Если игроки не наберутся за нужное время, то ты можешь поднять "
+            "публикацию в списке, отправив мне сюда команду /update. "
+            "Когда ты наберешь полную группу, то пришли, пожалуйста сюда команду "
+            "/done. Если передумаешь проводить игру, то пришли такую же команду "
+            "- /close",
+            parse_mode="Markdown",
+        )
+    except ApiTelegramException:
+        pass

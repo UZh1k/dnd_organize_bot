@@ -52,7 +52,7 @@ def create_game_text(game: Game, update_text: str = "", players_count: int = 0) 
         f"{update_text}"
         f"Формат: {format_name}\n"
         f"{city_text}"
-        f"Количество игроков: всего {players_at_all}{players_count_left}\n"
+        f"Количество игроков: {players_at_all}{players_count_left}\n"
         f"Цена: {free_status}{about_price}\n"
         f"Время проведения: {game.time}\n\n"
         f"Игровая система: {game.system}\n"
