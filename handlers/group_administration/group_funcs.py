@@ -24,6 +24,7 @@ async def handle_bot_added_to_group(
 
 async def on_close_game(bot: AsyncTeleBot, game: Game, session: AsyncSession):
     game.active = False
+    game.done = False
     await session.flush()
     try:
         await bot.edit_message_caption(
@@ -86,6 +87,7 @@ async def done_game(
         await bot.send_message(message.chat.id, "Игра еще не привязана уже неактивна")
         return
     game.active = False
+    game.done = True
     try:
         await bot.edit_message_caption(
             f"*{game.title}*\n\n" f"Команда собралась и отправилась в приключение!",

@@ -70,10 +70,10 @@ class FormTextItem(ABC):
 
     @classmethod
     async def check_has_no_bad_symbols(cls, message: Message, bot: AsyncTeleBot):
-        if "*" in message.text or "_" in message.text:
+        if "*" in message.text or "_" in message.text or "#" in message.text:
             await bot.send_message(
                 message.chat.id,
-                "Похоже, что текст содержит символ “*” или “_”. "
+                "Похоже, что текст содержит один из символов: “*”, “#” или “_”. "
                 "Пожалуйста, перепиши без нее.",
             )
             return False
