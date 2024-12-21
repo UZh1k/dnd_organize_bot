@@ -48,13 +48,14 @@ class FormChoiceTextItem(FormTextItem):
             await bot.edit_message_reply_markup(
                 call.message.chat.id, call.message.message_id, reply_markup=None
             )
-            await self.save_answer(text, user, session, state)
-            if self.alert_message:
-                await bot.answer_callback_query(
-                    callback_query_id=call.id, text=self.alert_message
+            if await state.get() == self.state.name:
+                await self.save_answer(text, user, session, state)
+                if self.alert_message:
+                    await bot.answer_callback_query(
+                        callback_query_id=call.id, text=self.alert_message
+                    )
+                await self.on_answered(
+                    text, call.message.chat.id, user, session, bot, state
                 )
-            await self.on_answered(
-                text, call.message.chat.id, user, session, bot, state
-            )
         except ApiTelegramException:
             pass

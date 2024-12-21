@@ -73,6 +73,7 @@ class UserProfileHandler(RegistrationHandlerGroup):
         bot: AsyncTeleBot,
         state: StateContext,
     ):
+        await state.delete()
         if not user.registered:
             await bot.send_message(
                 message.chat.id, "Не узнаю тебя. Ты точно зарегистрировался?"

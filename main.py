@@ -17,7 +17,6 @@ from consts import (
     ALLOWED_UPDATE_TYPES,
     START_IMAGE,
     ADMIN_IDS,
-    ABOUT_IMAGE,
     SEARCH_IMAGE,
     BOOSTY_LINK,
     CRYPTO_LINK,
@@ -75,7 +74,10 @@ async def health():
     func=lambda message: len(message.text.split()) == 1,
     chat_types=["private"],
 )
-async def handle_start(message: Message, session: AsyncSession, user: User):
+async def handle_start(
+    message: Message, session: AsyncSession, user: User, state: StateContext
+):
+    await state.delete()
     await bot.send_photo(
         message.chat.id,
         START_IMAGE,
@@ -95,7 +97,10 @@ async def handle_start(message: Message, session: AsyncSession, user: User):
 
 
 @bot.message_handler(commands=["help", "about"], chat_types=["private"])
-async def handle_about(message: Message, session: AsyncSession, user: User):
+async def handle_about(
+    message: Message, session: AsyncSession, user: User, state: StateContext
+):
+    await state.delete()
     await bot.send_message(
         message.chat.id,
         "Привет! Я Сники Бот! Для регистрации нажми в меню слева внизу кнопку "
@@ -121,7 +126,10 @@ async def handle_about(message: Message, session: AsyncSession, user: User):
 
 
 @bot.message_handler(commands=["search"], chat_types=["private"])
-async def find_game(message: Message, session: AsyncSession, user: User):
+async def find_game(
+    message: Message, session: AsyncSession, user: User, state: StateContext
+):
+    await state.delete()
     invite_link = (
         await bot.export_chat_invite_link(NEWS_CHANNEL_ID)
         if ENVIRONMENT == "local"
@@ -151,7 +159,10 @@ async def find_game(message: Message, session: AsyncSession, user: User):
 
 
 @bot.message_handler(commands=["sneaky_library_bot"], chat_types="private")
-async def library_bot(message: Message, session: AsyncSession, user: User):
+async def library_bot(
+    message: Message, session: AsyncSession, user: User, state: StateContext
+):
+    await state.delete()
     await bot.send_message(
         message.chat.id,
         "Если ты искал справочную информацию по ДНД 2024, "

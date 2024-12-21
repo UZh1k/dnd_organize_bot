@@ -17,6 +17,6 @@ class ExceptionMiddleware(BaseMiddleware):
 
     async def post_process(self, update: Update | Message, data: dict, exception):
         if exception:
-            error_log = f"{exception} {update}"
+            error_log = f"{exception} {type(exception).__name__} {update}"
             for chunk in get_chunks(error_log, 4000):
                 await self.bot.send_message(EXCEPTION_CHAT_ID, chunk)

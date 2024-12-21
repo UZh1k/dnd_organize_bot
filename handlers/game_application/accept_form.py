@@ -59,19 +59,19 @@ async def handle_decline_application(
         await bot.edit_message_reply_markup(
             call.message.chat.id, call.message.message_id, reply_markup=None
         )
-        game_id, user_id = get_data_from_accept_callback(call.data)
-        game = await GameController.get_one(game_id, session)
-        await GameApplicationController.set_status(game_id, user_id, False, session)
-        await bot.send_message(
-            user_id,
-            f"К сожалению, мастер игры “{game.title}” не принял твою анкету или "
-            f"сбор на игру уже был закрыт. Не отчаивайся, посмотри еще игры - "
-            f"https://t.me/SneakyDiceGames.",
-        )
-        # await bot.answer_callback_query(callback_query_id=call.id, text="Отправил отказ")
-        await bot.send_message(call.message.chat.id, "Отправил отказ")
     except ApiTelegramException:
-        pass
+        return
+    game_id, user_id = get_data_from_accept_callback(call.data)
+    game = await GameController.get_one(game_id, session)
+    await GameApplicationController.set_status(game_id, user_id, False, session)
+    await bot.send_message(
+        user_id,
+        f"К сожалению, мастер игры “{game.title}” не принял твою анкету или "
+        f"сбор на игру уже был закрыт. Не отчаивайся, посмотри еще игры - "
+        f"https://t.me/SneakyDiceGames.",
+    )
+    # await bot.answer_callback_query(callback_query_id=call.id, text="Отправил отказ")
+    await bot.send_message(call.message.chat.id, "Отправил отказ")
 
 
 async def handle_accept_application(
@@ -85,23 +85,23 @@ async def handle_accept_application(
         await bot.edit_message_reply_markup(
             call.message.chat.id, call.message.message_id, reply_markup=None
         )
-        game_id, user_id = get_data_from_accept_callback(call.data)
-        game = await GameController.get_one(game_id, session)
-        await GameApplicationController.set_status(game_id, user_id, True, session)
-
-        invite_link = await bot.export_chat_invite_link(game.group_id)
-        await send_message_with_link_button(
-            bot,
-            user_id,
-            f"Мастер игры уже ждет тебя на приключение “{game.title}”! "
-            f"Добавляйся в группу. Нажми на кнопку ниже.",
-            "Присоединитья к игре",
-            invite_link,
-        )
-
-        # await bot.answer_callback_query(
-        #     callback_query_id=call.id, text="Отправил приглашение"
-        # )
-        await bot.send_message(call.message.chat.id, "Отправил приглашение")
     except ApiTelegramException:
-        pass
+        return
+    game_id, user_id = get_data_from_accept_callback(call.data)
+    game = await GameController.get_one(game_id, session)
+    await GameApplicationController.set_status(game_id, user_id, True, session)
+
+    invite_link = await bot.export_chat_invite_link(game.group_id)
+    await send_message_with_link_button(
+        bot,
+        user_id,
+        f"Мастер игры уже ждет тебя на приключение “{game.title}”! "
+        f"Добавляйся в группу. Нажми на кнопку ниже.",
+        "Присоединитья к игре",
+        invite_link,
+    )
+
+    # await bot.answer_callback_query(
+    #     callback_query_id=call.id, text="Отправил приглашение"
+    # )
+    await bot.send_message(call.message.chat.id, "Отправил приглашение")

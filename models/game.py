@@ -64,6 +64,7 @@ class Game(Base):
     active: Mapped[bool | None] = mapped_column(default=True)
 
     last_update: Mapped[datetime | None]
+    done: Mapped[bool | None]
 
     city: Mapped["City"] = relationship()
     tags: Mapped[list[GameTag]] = relationship(GameTag, secondary="game_tag_link")
