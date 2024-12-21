@@ -11,7 +11,6 @@ from models import User, Game
 async def handle_bot_added_to_group(
     update: Update, bot: AsyncTeleBot, session: AsyncSession, user: User
 ):
-    print(update)
     await bot.send_message(
         update.chat.id,
         "Привет. Я Сники Бот! Спасибо, что добавил меня. Чтобы я мог "
