@@ -22,4 +22,5 @@ class UserProfileCity(UserRegistrationCity):
     ):
         if known_timezone := CITY_TO_TIMEZONE.get(answer):
             user.timezone = known_timezone
-            await self.next_step(chat_id, user, session, bot, state, self.form_prefix)
+        await session.refresh(user)
+        await self.next_step(chat_id, user, session, bot, state, self.form_prefix)

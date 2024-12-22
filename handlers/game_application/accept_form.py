@@ -9,6 +9,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQu
 
 from controllers.game import GameController
 from controllers.game_application import GameApplicationController
+from handlers.game_application.invite import send_invite
 from models import User
 from utils.message_helpers import send_message_with_link_button
 
@@ -91,15 +92,7 @@ async def handle_accept_application(
     game = await GameController.get_one(game_id, session)
     await GameApplicationController.set_status(game_id, user_id, True, session)
 
-    invite_link = await bot.export_chat_invite_link(game.group_id)
-    await send_message_with_link_button(
-        bot,
-        user_id,
-        f"Мастер игры уже ждет тебя на приключение “{game.title}”! "
-        f"Добавляйся в группу. Нажми на кнопку ниже.",
-        "Присоединитья к игре",
-        invite_link,
-    )
+    await send_invite(user_id, bot, game)
 
     # await bot.answer_callback_query(
     #     callback_query_id=call.id, text="Отправил приглашение"

@@ -207,6 +207,7 @@ async def ban_user(
         await bot.send_message(message.chat.id, "Такой игры не существует")
         return
     game.active = False
+    game.done = False
     user = await UserController.get_one(game.creator_id, session)
     user.banned = True
     await bot.send_message(message.chat.id, "Игра закрыта и пользователь забанен")

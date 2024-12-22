@@ -6,6 +6,7 @@ from telebot.types import Update, User
 from consts import NEWS_CHANNEL_ID
 from controllers.game import GameController
 from controllers.game_member import GameMemberController
+from controllers.user import UserController
 from handlers.group_administration.group_funcs import on_close_game
 from models import Game
 from utils.game_text import create_game_text, create_game_markup
@@ -13,13 +14,14 @@ from utils.game_text import create_game_text, create_game_markup
 
 async def on_players_count_change(game: Game, bot: AsyncTeleBot, players_count: int):
     try:
-        await bot.edit_message_caption(
-            create_game_text(game, players_count=players_count),
-            NEWS_CHANNEL_ID,
-            game.post_id,
-            parse_mode="Markdown",
-            reply_markup=create_game_markup(game),
-        )
+        if game.active:
+            await bot.edit_message_caption(
+                create_game_text(game, players_count=players_count),
+                NEWS_CHANNEL_ID,
+                game.post_id,
+                parse_mode="Markdown",
+                reply_markup=create_game_markup(game),
+            )
     except ApiTelegramException:
         pass
 
@@ -28,6 +30,11 @@ async def handle_player_added_to_group(
     update: Update, bot: AsyncTeleBot, session: AsyncSession, user: User
 ):
     user_id = update.new_chat_member.user.id
+    if not await UserController.get_one(user_id, session):
+        new_user = update.new_chat_member.user
+        await UserController.create(
+            {"id": user_id, "username": new_user.username}, session
+        )
     game = await GameController.get_one(update.chat.id, session, "group_id")
     if not game:
         await bot.send_message(
@@ -60,6 +67,11 @@ async def handle_player_left_group(
     update: Update, bot: AsyncTeleBot, session: AsyncSession, user: User
 ):
     user_id = update.new_chat_member.user.id
+    if not await UserController.get_one(user_id, session):
+        new_user = update.new_chat_member.user
+        await UserController.create(
+            {"id": user_id, "username": new_user.username}, session
+        )
     game = await GameController.get_one(update.chat.id, session, "group_id")
     if not game:
         return

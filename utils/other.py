@@ -49,7 +49,7 @@ def generate_city_choices() -> tuple[tuple[str, str], ...]:
 
 
 def create_tag(string: str) -> str:
-    return string.replace(" ", "").replace("-", "").replace("_", "")
+    return string.replace(" ", "").replace("-", "").replace("_", "").replace(".", "")
 
 
 def contains_link(text: str) -> bool:
@@ -60,6 +60,7 @@ def contains_link(text: str) -> bool:
 
 def is_command(text: str) -> bool:
     return text.startswith("/")
+
 
 def utc_to_relative_msk(utc_offset_str: str) -> str:
     msk_offset = 3
