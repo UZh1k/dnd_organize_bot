@@ -9,7 +9,6 @@ from telebot.types import (
     CallbackQuery,
 )
 
-from consts import NEWS_CHANNEL_ID, BOT_USERNAME
 from controllers.game import GameController
 from handlers.group_administration.post_game import create_game_post
 from models import Game, User
@@ -57,6 +56,18 @@ async def handle_bot_promoted_to_admin(
             update.chat.id, "Бот должен уметь приглашать других игроков"
         )
         return
+    if update.chat.type == "group":
+        await bot.send_message(
+            update.chat.id,
+            "Чтобы я мог работать без ошибок, нужно "
+            "открыть историю чата. Для этого зайди в настройки группы и поменяй "
+            "“Историю чата” на “Видна”.\n\n"
+            "Если вкратце, это самый простой способ, как сделать из "
+            "группы супергруппу, "
+            "чтобы при работе с ней не возникало никаких проблем. "
+            "Ты сможешь потом поменять эту настройку в любой момент.",
+        )
+        return
     await send_link_game(update.chat.id, bot, session, user)
 
 
@@ -67,6 +78,18 @@ async def handle_link_game_command(
     if chat_member.status not in ["administrator", "creator"]:
         await bot.send_message(
             message.chat.id, "Только администратор может привязывать к игре группу"
+        )
+        return
+    if message.chat.type == "group":
+        await bot.send_message(
+            message.chat.id,
+            "Чтобы я мог работать без ошибок, нужно "
+            "открыть историю чата. Для этого зайди в настройки группы и поменяй "
+            "“Историю чата” на “Видна”.\n\n"
+            "Если вкратце, это самый простой способ, как сделать из "
+            "группы супергруппу, "
+            "чтобы при работе с ней не возникало никаких проблем. "
+            "Ты сможешь потом поменять эту настройку в любой момент.",
         )
         return
     await send_link_game(message.chat.id, bot, session, user)
@@ -87,9 +110,7 @@ async def handle_link_game(
     game_id = int(call.data.split(":")[-1])
     game = await GameController.get_one(game_id, session)
     game.group_id = call.message.chat.id
-    await bot.answer_callback_query(
-        callback_query_id=call.id, text="Группа привязана"
-    )
+    await bot.answer_callback_query(callback_query_id=call.id, text="Группа привязана")
 
     await create_game_post(bot, game)
 

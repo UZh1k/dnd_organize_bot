@@ -8,6 +8,7 @@ from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from controllers.game import GameController
 from controllers.game_application import GameApplicationController
 from controllers.user import UserController
+from handlers.game_application.invite import send_invite
 from handlers.game_application.states import GameApplicationStates
 from models import User
 from utils.message_helpers import (
@@ -47,8 +48,12 @@ async def handle_apply_for_game(
         game_id, user.id, session
     )
     if game_application:
-        await bot.send_message(message.chat.id, "Ты уже подавал заявку на эту игру")
-        return
+        if not game_application.accepted:
+            await bot.send_message(message.chat.id, "Ты уже подавал заявку на эту игру")
+            return
+        else:
+            await send_invite(message.chat.id, bot, game)
+            return
     if not user.registered:
         await send_message_with_link_button(
             bot,

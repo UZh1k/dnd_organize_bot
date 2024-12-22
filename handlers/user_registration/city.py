@@ -33,6 +33,7 @@ class UserRegistrationCity(FormChoiceTextItem):
     ):
         city = await CityController.get_or_create(text, "name", session)
         user.city_id = city.id
+        await session.flush()
 
     async def on_answered(
         self,
