@@ -56,7 +56,7 @@ def create_game_text(game: Game, update_text: str = "", players_count: int = 0) 
         f"Цена: {free_status}{about_price}\n"
         f"Время проведения: {game.time}\n\n"
         f"Игровая система: {game.system}\n"
-        f"Редакция и сеттинг: {game.redaction} "
+        f"Редакция и сеттинг: {game.redaction}"
         f"{f', {game.setting}' if game.setting != game.redaction else ''}\n"
         f"Тип игры:  {type_name}\n"
         f"Уровень игроков на старте: {game.start_level}\n\n"

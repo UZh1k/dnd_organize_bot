@@ -16,7 +16,7 @@ class GameRegistrationTechRequirements(FormTextItem):
         "алкоголь во время игры или запрет на использование телефона? Напиши подробнее "
         "в свободной форме."
     )
-    message_length = 40
+    message_length = 70
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext
