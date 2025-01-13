@@ -249,11 +249,13 @@ GameRegistrationHandler(bot).register_handlers()
 async def any_text(
     message: Message, session: AsyncSession, user: User, state: StateContext
 ):
+    print(message)
     await bot.send_message(
         message.chat.id,
         "Ты ввел сообщение, но я не понимаю твою команду. Пожалуйста, "
         "проверь команду или выбери ее в меню слева внизу. Список всех команд "
         "ты можешь посмотреть, отправив /about.",
+        parse_mode="HTML",
     )
 
 
