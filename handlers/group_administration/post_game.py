@@ -35,10 +35,10 @@ async def update_game_post(
     if not game or not game.active:
         await bot.send_message(message.chat.id, "Игра еще не привязана или уже закрыта")
         return
-    if game.last_update and game.last_update + timedelta(days=7) > datetime.now():
+    if game.last_update and game.last_update + timedelta(days=5) > datetime.now():
         await bot.send_message(
             message.chat.id,
-            "Публикацию можно поднимать не чаще, чем раз в неделю. Попробуй позже.",
+            "Публикацию можно поднимать не чаще, чем раз в 5 дней. Попробуй позже.",
         )
         return
     try:
@@ -48,7 +48,7 @@ async def update_game_post(
             game.post_id,
             parse_mode="Markdown",
         )
-        await create_game_post(bot, game, update_text=f"Идет донабор на игру!\n\n")
+        await create_game_post(bot, game, update_text=f"Донабор!\n\n")
         await bot.send_message(
             message.chat.id,
             "Я обновил твою публикацию. Постараюсь побыстрее найти игроков.",

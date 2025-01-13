@@ -9,11 +9,6 @@ class GameMemberController(CRUD):
     model = GameMember
 
     @classmethod
-    async def create(cls, game_id: int, user_id: int, session: AsyncSession):
-        session.add(GameMember(game_id=game_id, user_id=user_id))
-        await session.flush()
-
-    @classmethod
     async def delete_game_member(
         cls, game_id: int, user_id: int, session: AsyncSession
     ):

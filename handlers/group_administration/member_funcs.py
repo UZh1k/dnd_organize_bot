@@ -1,3 +1,4 @@
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
@@ -43,7 +44,12 @@ async def handle_player_added_to_group(
             "группе игру с помощью команды /link.",
         )
         return
-    await GameMemberController.create(game.id, user_id, session)
+    try:
+        await GameMemberController.create(
+            {"game_id": game.id, "user_id": user_id}, session
+        )
+    except SQLAlchemyError:
+        pass
     players_count = await GameMemberController.count_game_members(game.id, session)
     if game.max_players <= players_count:
         await bot.send_message(
