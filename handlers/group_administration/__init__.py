@@ -17,10 +17,10 @@ from handlers.group_administration.member_funcs import (
 )
 from handlers.group_administration.migration import handle_group_migrated
 from handlers.group_administration.post_game import update_game_post
-from utils.handler.base_handler_group import BaseHandlerGroup
+from utils.handler_groups.base_handler_group import BaseHandlerGroup
 
 
-class GroupAdministrationHandler(BaseHandlerGroup):
+class GroupAdministrationHandlerGroup(BaseHandlerGroup):
     def register_handlers(self):
         self.bot.register_my_chat_member_handler(
             handle_bot_added_to_group,

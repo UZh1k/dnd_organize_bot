@@ -6,7 +6,7 @@ from telebot.types import Message
 from models import User
 from utils.form.form_choice_text_item import FormChoiceTextItem
 from utils.form.form_item_group import FormItemGroup
-from utils.handler.base_handler_group import BaseHandlerGroup
+from utils.handler_groups.base_handler_group import BaseHandlerGroup
 from utils.other import is_command
 
 

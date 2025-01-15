@@ -1,9 +1,9 @@
 from handlers.feedback.funcs import handle_feedback, forward_to_admins, FeedbackStates
-from utils.handler.base_handler_group import BaseHandlerGroup
+from utils.handler_groups.base_handler_group import BaseHandlerGroup
 from utils.other import is_command
 
 
-class FeedbackHandler(BaseHandlerGroup):
+class FeedbackHandlerGroup(BaseHandlerGroup):
     def register_handlers(self):
         self.bot.register_message_handler(
             handle_feedback,

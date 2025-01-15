@@ -29,12 +29,13 @@ from consts import (
 )
 from controllers.game import GameController
 from controllers.user import UserController
-from handlers.feedback import FeedbackHandler
-from handlers.game_application import GameApplicationHandler
-from handlers.game_registration import GameRegistrationHandler
-from handlers.group_administration import GroupAdministrationHandler
-from handlers.user_profile import UserProfileHandler
-from handlers.user_registration import UserRegistrationHandler
+from handlers.administration import AdministrationHandlerGroup
+from handlers.feedback import FeedbackHandlerGroup
+from handlers.game_application import GameApplicationHandlerGroup
+from handlers.game_registration import GameRegistrationHandlerGroup
+from handlers.group_administration import GroupAdministrationHandlerGroup
+from handlers.user_profile import UserProfileHandlerGroup
+from handlers.user_registration import UserRegistrationHandlerGroup
 from middlewares.exception import ExceptionMiddleware
 from middlewares.session import SessionMiddleware
 from middlewares.user import UserMiddleware
@@ -170,79 +171,13 @@ async def library_bot(
     )
 
 
-@bot.message_handler(
-    commands=["ban"], func=lambda message: message.chat.id in ADMIN_IDS
-)
-async def ban_user(
-    message: Message, session: AsyncSession, user: User, state: StateContext
-):
-    message_split = message.text.split()
-    if len(message_split) == 1:
-        await bot.send_message(
-            message.chat.id, 'Отправь сообщение в формате "/ban 123" '
-        )
-        return
-    user = await UserController.get_by_id_or_username(message_split[1], session)
-    if not user:
-        await bot.send_message(message.chat.id, "Такого пользователя не существует")
-        return
-    user.banned = True
-    await bot.send_message(message.chat.id, "Пользователь забанен")
-
-
-@bot.message_handler(
-    commands=["ban_game"], func=lambda message: message.chat.id in ADMIN_IDS
-)
-async def ban_user(
-    message: Message, session: AsyncSession, user: User, state: StateContext
-):
-    message_split = message.text.split()
-    if len(message_split) == 1 or not message_split[1].isdigit():
-        await bot.send_message(
-            message.chat.id, 'Отправь сообщение в формате "/ban_game 123" '
-        )
-        return
-    game = await GameController.get_one(int(message_split[1]), session)
-    if not game:
-        await bot.send_message(message.chat.id, "Такой игры не существует")
-        return
-    game.active = False
-    game.done = False
-    user = await UserController.get_one(game.creator_id, session)
-    user.banned = True
-    await bot.send_message(message.chat.id, "Игра закрыта и пользователь забанен")
-    try:
-        await bot.delete_message(NEWS_CHANNEL_ID, game.post_id)
-    except ApiTelegramException:
-        pass
-
-
-@bot.message_handler(
-    commands=["unban"], func=lambda message: message.chat.id in ADMIN_IDS
-)
-async def unban_user(
-    message: Message, session: AsyncSession, user: User, state: StateContext
-):
-    message_split = message.text.split()
-    if len(message_split) == 1:
-        await bot.send_message(
-            message.chat.id, 'Отправь сообщение в формате "/unban 123" '
-        )
-        return
-    user = await UserController.get_by_id_or_username(message_split[1], session)
-    if not user:
-        await bot.send_message(message.chat.id, "Такого пользователя не существует")
-        return
-    user.banned = False
-    await bot.send_message(message.chat.id, "Пользователь разбанен")
-
-
-GroupAdministrationHandler(bot).register_handlers()
-FeedbackHandler(bot).register_handlers()
-GameApplicationHandler(bot).register_handlers()
-UserRegistrationHandler(bot).register_handlers()
-UserProfileHandler(bot).register_handlers()
-GameRegistrationHandler(bot).register_handlers()
+AdministrationHandlerGroup(bot).register_handlers()
+GroupAdministrationHandlerGroup(bot).register_handlers()
+FeedbackHandlerGroup(bot).register_handlers()
+GameApplicationHandlerGroup(bot).register_handlers()
+UserRegistrationHandlerGroup(bot).register_handlers()
+UserProfileHandlerGroup(bot).register_handlers()
+GameRegistrationHandlerGroup(bot).register_handlers()
 
 
 @bot.message_handler(content_types=["text", "photo", "file"], chat_types=["private"])

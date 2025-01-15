@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
@@ -34,10 +32,10 @@ from handlers.game_registration.tech_requirements import (
 from handlers.game_registration.title import GameRegistrationTitle
 from models import User
 from utils.form.form_item_group import FormItemGroup
-from utils.handler.registration_handler_group import RegistrationHandlerGroup
+from utils.handler_groups.registration_handler_group import RegistrationHandlerGroup
 
 
-class GameRegistrationHandler(RegistrationHandlerGroup):
+class GameRegistrationHandlerGroup(RegistrationHandlerGroup):
     form_item_groups: tuple[FormItemGroup] = (
         FormItemGroup(main=GameRegistrationTitle),
         FormItemGroup(
@@ -78,6 +76,7 @@ class GameRegistrationHandler(RegistrationHandlerGroup):
         bot: AsyncTeleBot,
         state: StateContext,
     ):
+        await state.delete()
         if not user.registered:
             await bot.send_message(
                 message.chat.id,
