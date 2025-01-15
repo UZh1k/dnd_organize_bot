@@ -11,10 +11,10 @@ from controllers.game import GameController
 from controllers.game_application import GameApplicationController
 from handlers.game_application.invite import send_invite
 from models import User
-from utils.message_helpers import send_message_with_link_button
 
 ACCEPT_FORM_CALLBACK_PREFIX = "AcceptForm"
 
+from telebot.async_telebot import AsyncTeleBot
 
 class ApplyAnswer(Enum):
     yes = "yes"

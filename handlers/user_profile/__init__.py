@@ -19,12 +19,12 @@ from handlers.user_profile.timezone import UserProfileTimezone
 from handlers.user_profile.user_type import UserProfileUserType
 from models import User
 from utils.form.form_item_group import FormItemGroup
-from utils.handler.registration_handler_group import RegistrationHandlerGroup
+from utils.handler_groups.registration_handler_group import RegistrationHandlerGroup
 from utils.message_helpers import get_user_text
 from utils.other import is_command
 
 
-class UserProfileHandler(RegistrationHandlerGroup):
+class UserProfileHandlerGroup(RegistrationHandlerGroup):
     form_item_groups: tuple[FormItemGroup] = (
         FormItemGroup(main=UserProfileName),
         FormItemGroup(main=UserProfileAge, side=(UserProfileAcceptMinor,)),

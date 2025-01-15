@@ -13,10 +13,10 @@ from handlers.user_registration.timezone import UserRegistrationTimezone
 from handlers.user_registration.user_type import UserRegistrationUserType
 from models import User
 from utils.form.form_item_group import FormItemGroup
-from utils.handler.registration_handler_group import RegistrationHandlerGroup
+from utils.handler_groups.registration_handler_group import RegistrationHandlerGroup
 
 
-class UserRegistrationHandler(RegistrationHandlerGroup):
+class UserRegistrationHandlerGroup(RegistrationHandlerGroup):
     form_item_groups: tuple[FormItemGroup] = (
         FormItemGroup(main=UserRegistrationName),
         FormItemGroup(main=UserRegistrationAge, side=(UserRegistrationAcceptMinor,)),

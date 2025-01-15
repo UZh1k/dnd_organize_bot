@@ -10,10 +10,11 @@ from handlers.game_application.handle_form import (
     handle_application_letter, handle_application_cancel,
 )
 from handlers.game_application.states import GameApplicationStates
-from utils.handler.base_handler_group import BaseHandlerGroup
+from utils.handler_groups.base_handler_group import BaseHandlerGroup
+from utils.other import is_command
 
 
-class GameApplicationHandler(BaseHandlerGroup):
+class GameApplicationHandlerGroup(BaseHandlerGroup):
     def register_handlers(self):
         self.bot.register_message_handler(
             handle_apply_for_game,
@@ -34,6 +35,7 @@ class GameApplicationHandler(BaseHandlerGroup):
         )
         self.bot.register_message_handler(
             handle_application_letter,
+            func=lambda message: not message.text or not is_command(message.text),
             state=GameApplicationStates.letter,
             pass_bot=True,
         )
