@@ -82,7 +82,8 @@ async def handle_player_left_group(
     if not game:
         return
     if game.creator_id == user_id:
-        await on_close_game(bot, game, session)
+        if not game.done:
+            await on_close_game(bot, game, session)
     else:
         await GameMemberController.delete_game_member(game.id, user_id, session)
     players_count = await GameMemberController.count_game_members(game.id, session)

@@ -56,7 +56,9 @@ async def handle_bot_removed_group(
     game = await GameController.get_one(update.chat.id, session, "group_id")
     if game:
         game.group_id = None
-        await on_close_game(bot, game, session)
+
+        if not game.done:
+            await on_close_game(bot, game, session)
 
 
 async def close_game(
