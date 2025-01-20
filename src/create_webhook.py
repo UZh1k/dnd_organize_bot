@@ -1,7 +1,7 @@
 import asyncio
 
 from consts import WEBHOOK_URL_BASE, WEBHOOK_URL_PATH
-from main import bot
+from src.singleton.telegram import bot
 
 
 async def set_webhook():
