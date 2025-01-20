@@ -5,55 +5,36 @@ from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_filters import StateFilter
-from telebot.asyncio_helper import ApiTelegramException
 from telebot.asyncio_storage import StateMemoryStorage, StateRedisStorage
 from telebot.states.asyncio import StateMiddleware
 from telebot.states.asyncio.context import StateContext
 from telebot.types import Message, Update
-
-from consts import (
-    BOT_TOKEN,
-    NEWS_CHANNEL_ID,
-    ALLOWED_UPDATE_TYPES,
-    START_IMAGE,
-    ADMIN_IDS,
-    SEARCH_IMAGE,
-    BOOSTY_LINK,
-    CRYPTO_LINK,
-    WEBHOOK_URL_PATH,
-    STATE_STORAGE,
-    REDIS_URL,
-    REDIS_PORT,
-    REDIS_PASS,
-    ENVIRONMENT,
-)
-from controllers.game import GameController
-from controllers.user import UserController
-from handlers.administration import AdministrationHandlerGroup
-from handlers.feedback import FeedbackHandlerGroup
-from handlers.game_application import GameApplicationHandlerGroup
-from handlers.game_registration import GameRegistrationHandlerGroup
-from handlers.group_administration import GroupAdministrationHandlerGroup
-from handlers.user_profile import UserProfileHandlerGroup
-from handlers.user_registration import UserRegistrationHandlerGroup
-from middlewares.exception import ExceptionMiddleware
-from middlewares.session import SessionMiddleware
-from middlewares.user import UserMiddleware
-from models.user import User
-from utils.message_helpers import send_message_with_link_button
+import src.consts
+from src.handlers.administration import AdministrationHandlerGroup
+from src.handlers.feedback import FeedbackHandlerGroup
+from src.handlers.game_application import GameApplicationHandlerGroup
+from src.handlers.game_registration import GameRegistrationHandlerGroup
+from src.handlers.group_administration import GroupAdministrationHandlerGroup
+from src.handlers.user_profile import UserProfileHandlerGroup
+from src.handlers.user_registration import UserRegistrationHandlerGroup
+from src.middlewares.exception import ExceptionMiddleware
+from src.middlewares.session import SessionMiddleware
+from src.middlewares.user import UserMiddleware
+from src.models.user import User
+from src.utils.message_helpers import send_message_with_link_button
 
 state_storage = (
-    StateRedisStorage(host=REDIS_URL, port=REDIS_PORT, password=REDIS_PASS)
-    if STATE_STORAGE == "redis"
+    StateRedisStorage(host=src.consts.REDIS_URL, port=src.consts.REDIS_PORT, password=src.consts.REDIS_PASS)
+    if src.consts.STATE_STORAGE == "redis"
     else StateMemoryStorage()
 )
-bot = AsyncTeleBot(BOT_TOKEN, state_storage=state_storage)
+bot = AsyncTeleBot(src.consts.BOT_TOKEN, state_storage=state_storage)
 
 
 app = FastAPI()
 
 
-@app.post(WEBHOOK_URL_PATH)
+@app.post(src.consts.WEBHOOK_URL_PATH)
 async def process_webhook(update: dict):
     """
     Process webhook calls
@@ -81,7 +62,7 @@ async def handle_start(
     await state.delete()
     await bot.send_photo(
         message.chat.id,
-        START_IMAGE,
+        src.consts.START_IMAGE,
         "Привет! Я Сники Бот! Давай помогу найти или создать игру "
         "по твоим любимым НРИ. Для начала тебе нужно зарегистрироваться. "
         "Сделать это очень просто и быстро. Нажми в меню слева внизу кнопку "
@@ -119,8 +100,8 @@ async def handle_about(
         "чтобы ваших донатов хватило хотя бы на мое ежемесячное сопровождение "
         "платного хостинга. Даже 100 рублей уже сильно мне помогут.\n\n"
         "Буду очень вам благодарен. Ваш Сники Бот.\n\n"
-        f"• Бусти - {BOOSTY_LINK}\n"
-        f"• Крипта - USDT (TRC20 | TRON) {CRYPTO_LINK} \n\n"
+        f"• Бусти - {src.consts.BOOSTY_LINK}\n"
+        f"• Крипта - USDT (TRC20 | TRON) {src.consts.CRYPTO_LINK} \n\n"
         f"Больше полезных материалов к ролевым играм ты найдёшь "
         f"тут: https://t.me/sneaky_dice",
     )
@@ -132,8 +113,8 @@ async def find_game(
 ):
     await state.delete()
     invite_link = (
-        await bot.export_chat_invite_link(NEWS_CHANNEL_ID)
-        if ENVIRONMENT == "local"
+        await bot.export_chat_invite_link(src.consts.NEWS_CHANNEL_ID)
+        if src.consts.ENVIRONMENT == "local"
         else "https://t.me/SneakyDiceGames"
     )
     if user.registered:
@@ -155,7 +136,7 @@ async def find_game(
         text,
         "Канал с играми",
         invite_link,
-        photo=SEARCH_IMAGE,
+        photo=src.consts.SEARCH_IMAGE,
     )
 
 
@@ -203,6 +184,6 @@ bot.setup_middleware(StateMiddleware(bot))
 if __name__ == "__main__":
     asyncio.run(
         bot.infinity_polling(
-            allowed_updates=ALLOWED_UPDATE_TYPES, logger_level=logging.INFO
+            allowed_updates=src.consts.ALLOWED_UPDATE_TYPES, logger_level=logging.INFO
         )
     )
