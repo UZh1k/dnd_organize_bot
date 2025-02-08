@@ -46,3 +46,23 @@ def get_user_text(user: User):
         f"Роль в НРИ: {user_role}\n"
         f"Об игроке: {user.bio}"
     )
+
+def create_markup(
+    items: tuple[tuple[str, str], ...],
+    form_item_name: str,
+    row_width: int = 1,
+    form_prefix: str | None = None,
+):
+    markup = InlineKeyboardMarkup()
+    prefix = f"{form_prefix}:{form_item_name}" if form_prefix else form_item_name
+
+    markup.add(
+        *(
+            InlineKeyboardButton(
+                name, callback_data=f"{prefix}:{data}"
+            )
+            for name, data in items
+        ),
+        row_width=row_width,
+    )
+    return markup

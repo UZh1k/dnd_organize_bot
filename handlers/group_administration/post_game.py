@@ -8,15 +8,18 @@ from telebot.types import Message
 
 from consts import NEWS_CHANNEL_ID
 from controllers.game import GameController
+from controllers.game_member import GameMemberController
 from models import Game, User
 from utils.game_text import create_game_text, create_game_markup
 
 
-async def create_game_post(bot: AsyncTeleBot, game: Game, update_text: str = ""):
+async def create_game_post(
+    bot: AsyncTeleBot, game: Game, update_text: str = "", players_count: int = 0
+):
     post_message = await bot.send_photo(
         NEWS_CHANNEL_ID,
         game.image,
-        create_game_text(game, update_text),
+        create_game_text(game, update_text, players_count),
         reply_markup=create_game_markup(game),
         parse_mode="Markdown",
     )
@@ -48,7 +51,11 @@ async def update_game_post(
             game.post_id,
             parse_mode="Markdown",
         )
-        await create_game_post(bot, game, update_text=f"Донабор!\n\n")
+
+        players_count = await GameMemberController.count_game_members(game.id, session)
+        await create_game_post(
+            bot, game, update_text=f"Донабор!\n\n", players_count=players_count
+        )
         await bot.send_message(
             message.chat.id,
             "Я обновил твою публикацию. Постараюсь побыстрее найти игроков.",

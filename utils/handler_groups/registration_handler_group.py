@@ -90,6 +90,8 @@ class RegistrationHandlerGroup(BaseHandlerGroup):
             )
 
     def register_handlers(self):
+        super().register_handlers()
+
         self.bot.register_message_handler(
             self.first_step,
             commands=[self.command],
