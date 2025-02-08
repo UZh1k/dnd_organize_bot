@@ -41,7 +41,7 @@ from handlers.game_edit.settings import (
     GameEditCallbackPrefixes,
     GAME_EDIT_FORM_PREFIX,
     GameEditActions,
-    GameEditState,
+    GameShowStates,
 )
 from handlers.game_edit.show_game import ShowGameHandler
 from models import User
@@ -111,7 +111,7 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
                 )
                 return
 
-            await state.set(GameEditState)
+            await state.set(GameShowStates.show_games)
             games_markup = tuple((game.title, str(game.id)) for game in games)
             markup = self.create_markup(
                 games_markup + (("Отмена", GameEditActions.cancel.value),),
@@ -169,9 +169,7 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
             try:
                 if reset_image:
                     await bot.edit_message_media(
-                        InputMediaPhoto(
-                            game.image, game_text, parse_mode="Markdown"
-                        ),
+                        InputMediaPhoto(game.image, game_text, parse_mode="Markdown"),
                         NEWS_CHANNEL_ID,
                         game.post_id,
                         reply_markup=create_game_markup(game),

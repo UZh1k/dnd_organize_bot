@@ -4,7 +4,9 @@ from typing import Final
 from telebot.states import State, StatesGroup
 
 GAME_EDIT_FORM_PREFIX: Final[str] = "GameEdit"
-GameEditState = State()
+
+class GameShowStates(StatesGroup):
+    show_games = State()
 
 
 class GameEditCallbackPrefixes(Enum):
