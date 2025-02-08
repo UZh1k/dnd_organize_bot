@@ -95,33 +95,37 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
         bot: AsyncTeleBot,
         state: StateContext,
     ):
-        await state.delete()
-        if not user.registered:
-            await bot.send_message(
-                message.chat.id, "Не узнаю тебя. Ты точно зарегистрировался?"
+        try:
+            await state.delete()
+            if not user.registered:
+                await bot.send_message(
+                    message.chat.id, "Не узнаю тебя. Ты точно зарегистрировался?"
+                )
+                return
+            games = await GameController.get_games_for_edit(user.id, session)
+            if not games:
+                await bot.send_message(
+                    message.chat.id,
+                    "Не нашёл созданных тобой игр. Выбери в меню “Создание игры” "
+                    "или воспользуйся командой /create.",
+                )
+                return
+
+            await state.set(GameEditState)
+            games_markup = tuple((game.title, str(game.id)) for game in games)
+            markup = self.create_markup(
+                games_markup + (("Отмена", GameEditActions.cancel.value),),
+                GameEditCallbackPrefixes.choose_game.value,
+                row_width=1,
             )
-            return
-        games = await GameController.get_games_for_edit(user.id, session)
-        if not games:
             await bot.send_message(
                 message.chat.id,
-                "Не нашёл созданных тобой игр. Выбери в меню “Создание игры” "
-                "или воспользуйся командой /create.",
+                "Выбери, какую игру ты хочешь отредактировать.",
+                reply_markup=markup,
             )
-            return
-
-        await state.set(GameEditState)
-        games_markup = tuple((game.title, str(game.id)) for game in games)
-        markup = self.create_markup(
-            games_markup + (("Отмена", GameEditActions.cancel.value),),
-            GameEditCallbackPrefixes.choose_game.value,
-            row_width=1,
-        )
-        await bot.send_message(
-            message.chat.id,
-            "Выбери, какую игру ты хочешь отредактировать.",
-            reply_markup=markup,
-        )
+        except Exception as e:
+            print(traceback.format_exc())
+            raise
 
     async def last_step(
         self,
