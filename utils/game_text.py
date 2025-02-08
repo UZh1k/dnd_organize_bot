@@ -58,10 +58,10 @@ def create_game_text(game: Game, update_text: str = "", players_count: int = 0) 
         f"Игровая система: {game.system}\n"
         f"Редакция и сеттинг: {game.redaction}"
         f"{f', {game.setting}' if game.setting != game.redaction else ''}\n"
-        f"Тип игры:  {type_name}\n"
-        f"Уровень игроков на старте: {game.start_level}\n\n"
+        f"Тип игры: {type_name}\n"
+        f"Уровень на старте: {game.start_level}\n\n"
         f"Описание: {game.description}\n\n"
-        f"Требование к возрасту: {players_age}\n"
+        f"Возраст: {players_age}\n"
         f"Требование к игрокам: {game.tech_requirements}\n"
         f"ID: {game.id}\n\n"
         f"#{format_name} {city_tag}"
@@ -73,6 +73,6 @@ def create_game_text(game: Game, update_text: str = "", players_count: int = 0) 
 def create_game_markup(game: Game):
     markup = InlineKeyboardMarkup()
     markup.add(
-        InlineKeyboardButton("Подать заявку", url=generate_link_for_game_apply(game))
+        InlineKeyboardButton("Узнать о мастере", url=generate_link_for_game_apply(game))
     )
     return markup

@@ -2,12 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
-from telebot.types import (
-    Message,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-    CallbackQuery,
-)
+from telebot.types import Message, CallbackQuery
 
 from handlers.user_profile.accept_minor import UserProfileAcceptMinor
 from handlers.user_profile.age import UserProfileAge
@@ -21,7 +16,6 @@ from models import User
 from utils.form.form_item_group import FormItemGroup
 from utils.handler_groups.registration_handler_group import RegistrationHandlerGroup
 from utils.message_helpers import get_user_text
-from utils.other import is_command
 
 
 class UserProfileHandlerGroup(RegistrationHandlerGroup):
@@ -46,24 +40,6 @@ class UserProfileHandlerGroup(RegistrationHandlerGroup):
         "user_type": UserProfileUserType,
         "bio": UserProfileBio,
     }
-
-    def create_markup(
-        self,
-        items: tuple[tuple[str, str], ...],
-        form_item_name: str,
-        row_width: int = 1,
-    ):
-        markup = InlineKeyboardMarkup()
-        markup.add(
-            *(
-                InlineKeyboardButton(
-                    name, callback_data=f"{self.form_prefix}:{form_item_name}:{data}"
-                )
-                for name, data in items
-            ),
-            row_width=row_width,
-        )
-        return markup
 
     async def first_step(
         self,
@@ -109,8 +85,7 @@ class UserProfileHandlerGroup(RegistrationHandlerGroup):
         )
         await bot.send_message(
             chat_id,
-            f"Анкета успешно обновлена.\n\n"
-            f"{get_user_text(user)}",
+            f"Анкета успешно обновлена.\n\n" f"{get_user_text(user)}",
             reply_markup=markup,
         )
 
@@ -224,25 +199,6 @@ class UserProfileHandlerGroup(RegistrationHandlerGroup):
         for current_item_group in self.form_item_groups:
 
             for current_item in (current_item_group.main, *current_item_group.side):
-                current_item_obj = current_item(self.last_step, self.form_prefix)
-                if current_item_obj.with_message:
-                    self.bot.register_message_handler(
-                        current_item_obj.handle_message,
-                        func=lambda message: not is_command(message.text),
-                        state=current_item_obj.state,
-                        content_types=["text"],
-                        pass_bot=True,
-                    )
-                if current_item_obj.with_callback:
-                    self.bot.register_callback_query_handler(
-                        current_item_obj.handle_callback,
-                        self.create_func_for_filter(current_item_obj),
-                        pass_bot=True,
-                    )
-                if current_item_obj.with_photo:
-                    self.bot.register_message_handler(
-                        current_item_obj.handle_photo,
-                        state=current_item_obj.state,
-                        content_types=["photo", "document"],
-                        pass_bot=True,
-                    )
+                self.register_form_handlers(
+                    current_item(self.last_step, self.form_prefix)
+                )

@@ -32,6 +32,7 @@ from controllers.user import UserController
 from handlers.administration import AdministrationHandlerGroup
 from handlers.feedback import FeedbackHandlerGroup
 from handlers.game_application import GameApplicationHandlerGroup
+from handlers.game_edit import GameEditHandlerGroup
 from handlers.game_registration import GameRegistrationHandlerGroup
 from handlers.group_administration import GroupAdministrationHandlerGroup
 from handlers.user_profile import UserProfileHandlerGroup
@@ -178,6 +179,7 @@ GameApplicationHandlerGroup(bot).register_handlers()
 UserRegistrationHandlerGroup(bot).register_handlers()
 UserProfileHandlerGroup(bot).register_handlers()
 GameRegistrationHandlerGroup(bot).register_handlers()
+GameEditHandlerGroup(bot).register_handlers()
 
 
 @bot.message_handler(content_types=["text", "photo", "file"], chat_types=["private"])

@@ -1,3 +1,4 @@
+from blackd import parse_mode
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
@@ -32,6 +33,7 @@ from handlers.game_registration.tech_requirements import (
 from handlers.game_registration.title import GameRegistrationTitle
 from models import User
 from utils.form.form_item_group import FormItemGroup
+from utils.game_text import create_game_text
 from utils.handler_groups.registration_handler_group import RegistrationHandlerGroup
 
 
@@ -115,11 +117,21 @@ class GameRegistrationHandlerGroup(RegistrationHandlerGroup):
                 {"tag_id": tag_id, "game_id": game.id}, session
             )
 
+        game = await GameController.get_one(game.id, session)
+
         await state.delete()
+        await bot.send_photo(
+            chat_id,
+            game.image,
+            create_game_text(game),
+            parse_mode="Markdown",
+        )
         await bot.send_message(
             chat_id,
-            "Твоя игра успешно сохранена. "
-            "Для публикации осталось пройти пару шагов.\n\n"
+            "Твоя игра успешно сохранена. Если ты захочешь скорректировать "
+            "публикацию, то воспользуйся командой редактирование в меню слева "
+            "внизу или отправь /edit.\n\n"
+            "Для публикации осталось пройти пару шагов."
             "Тебе нужно создать новую группу в Телеграмм, в которой ты будешь "
             "собирать игроков и обсуждать предстоящую игру. А я смогу пригласить "
             "в нее игроков. Для этого, после создания группы, добавь меня - "

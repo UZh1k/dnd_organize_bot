@@ -29,7 +29,7 @@ class BaseHandler:
     ): ...
 
     @abstractmethod
-    def handle_callback(
+    async def handle_callback(
         self,
         call: CallbackQuery,
         session: AsyncSession,

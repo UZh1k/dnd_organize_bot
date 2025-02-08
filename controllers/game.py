@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
@@ -16,7 +18,7 @@ class GameController(CRUD):
     @classmethod
     async def get_unlinked_games(
         cls, user_id: int, session: AsyncSession
-    ) -> list[Game]:
+    ) -> Sequence[Game]:
         query = select(Game).where(
             Game.creator_id == user_id, Game.group_id.is_(None), Game.active.is_(True)
         )
@@ -27,3 +29,14 @@ class GameController(CRUD):
         await session.execute(
             update(Game).where(Game.group_id == group_id).values(group_id=None)
         )
+
+    @classmethod
+    async def get_games_for_edit(
+        cls, creator_id: int, session: AsyncSession
+    ) -> Sequence[Game]:
+        query = (
+            select(Game)
+            .where(Game.creator_id == creator_id)
+            .where(Game.active.is_(True))
+        )
+        return (await session.execute(query)).scalars().all()
