@@ -1,4 +1,3 @@
-from blackd import parse_mode
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
