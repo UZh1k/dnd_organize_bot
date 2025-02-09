@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.states.asyncio import StateContext
 from telebot.types import CallbackQuery
 
+from controllers.game import GameController
 from handlers.game_edit.form_items import (
     GameEditTitle,
     GameEditFormat,
@@ -70,6 +71,22 @@ class PrepareQuestionHandler(BaseCallbackHandler):
         question = call.data.split(":")[-1]
 
         handler = game_edit_option_handler_map[question]
+
+        tag_ids = []
+        if question == GameEditOptions.tag.value:
+            async with state.data() as data:
+                game_id = data["game_id"]
+
+            game = await GameController.get_one(game_id, session)
+            tag_ids = [tag.id for tag in game.tags]
+            await state.add_data(tags=tag_ids)
+
         await handler.prepare(
-            call.message.chat.id, user, session, self.bot, state, GAME_EDIT_FORM_PREFIX
+            call.message.chat.id,
+            user,
+            session,
+            self.bot,
+            state,
+            GAME_EDIT_FORM_PREFIX,
+            chosen_tags=tag_ids,
         )

@@ -55,17 +55,18 @@ class GameRegistrationTag(FormChoiceItem):
         state: StateContext,
     ):
         text = call.data.split(":")[-1]
+        async with state.data() as data:
+            chosen_tags = data.get("tags", [])
+
         if text == "save":
             await bot.edit_message_reply_markup(
                 call.message.chat.id, call.message.message_id, reply_markup=None
             )
+            await state.add_data(tags=chosen_tags)
             await self.on_answered(
                 text, call.message.chat.id, user, session, bot, state
             )
         else:
-            async with state.data() as data:
-                chosen_tags = data.get("tags", [])
-
             tag_id = int(text)
             if tag_id not in chosen_tags:
                 if len(chosen_tags) >= self.max_tags_count:
