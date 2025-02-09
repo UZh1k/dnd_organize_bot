@@ -9,6 +9,7 @@ from telebot.types import Message, InputMediaPhoto
 from consts import NEWS_CHANNEL_ID
 from controllers.game import GameController
 from controllers.game_member import GameMemberController
+from controllers.game_tag import GameTagController
 from controllers.game_tag_link import GameTagLinkController
 from handlers.game_edit.cancel import CancelEditHandler
 from handlers.game_edit.delete_ask import DeleteAskGameHandler
@@ -95,37 +96,33 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
         bot: AsyncTeleBot,
         state: StateContext,
     ):
-        try:
-            await state.delete()
-            if not user.registered:
-                await bot.send_message(
-                    message.chat.id, "Не узнаю тебя. Ты точно зарегистрировался?"
-                )
-                return
-            games = await GameController.get_games_for_edit(user.id, session)
-            if not games:
-                await bot.send_message(
-                    message.chat.id,
-                    "Не нашёл созданных тобой игр. Выбери в меню “Создание игры” "
-                    "или воспользуйся командой /create.",
-                )
-                return
-
-            await state.set(GameShowStates.show_games)
-            games_markup = tuple((game.title, str(game.id)) for game in games)
-            markup = self.create_markup(
-                games_markup + (("Отмена", GameEditActions.cancel.value),),
-                GameEditCallbackPrefixes.choose_game.value,
-                row_width=1,
+        await state.delete()
+        if not user.registered:
+            await bot.send_message(
+                message.chat.id, "Не узнаю тебя. Ты точно зарегистрировался?"
             )
+            return
+        games = await GameController.get_games_for_edit(user.id, session)
+        if not games:
             await bot.send_message(
                 message.chat.id,
-                "Выбери, какую игру ты хочешь отредактировать.",
-                reply_markup=markup,
+                "Не нашёл созданных тобой игр. Выбери в меню “Создание игры” "
+                "или воспользуйся командой /create.",
             )
-        except Exception as e:
-            print(traceback.format_exc())
-            raise
+            return
+
+        await state.set(GameShowStates.show_games)
+        games_markup = tuple((game.title, str(game.id)) for game in games)
+        markup = self.create_markup(
+            games_markup + (("Отмена", GameEditActions.cancel.value),),
+            GameEditCallbackPrefixes.choose_game.value,
+            row_width=1,
+        )
+        await bot.send_message(
+            message.chat.id,
+            "Выбери, какую игру ты хочешь отредактировать.",
+            reply_markup=markup,
+        )
 
     async def last_step(
         self,
@@ -143,15 +140,14 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
             await bot.send_message(chat_id, "Игра уже не активна")
             return
 
-        tags = data.pop("tags", [])
+        tag_ids = data.pop("tags", None)
         for key, value in data.items():
             if hasattr(game, key):
                 setattr(game, key, value)
 
-        for tag_id in tags:
-            await GameTagLinkController.create(
-                {"tag_id": tag_id, "game_id": game.id}, session
-            )
+        if tag_ids is not None:
+            new_tags = await GameTagController.get_list(session, tag_ids)
+            game.tags = new_tags
 
         await session.flush()
         await session.refresh(game)
