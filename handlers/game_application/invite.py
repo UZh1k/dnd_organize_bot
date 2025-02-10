@@ -1,3 +1,5 @@
+import traceback
+
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.async_telebot import AsyncTeleBot
 
@@ -28,4 +30,5 @@ async def send_invite(user_id: int, bot: AsyncTeleBot, game: Game):
             f"user_id: {user_id}\n"
             f"game_id: {game.id}"
         )
+        print(traceback.print_exc())
         pass
