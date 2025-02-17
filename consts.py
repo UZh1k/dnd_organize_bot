@@ -22,6 +22,7 @@ REDIS_PORT = os.getenv("REDIS_PORT")
 REDIS_PASS = os.getenv("REDIS_PASS")
 
 NEWS_CHANNEL_ID: int = int(os.getenv("NEWS_CHANNEL_ID"))
+FEEDBACK_CHAT_ID: int = int(os.getenv("FEEDBACK_CHAT_ID"))
 ADMIN_IDS: list[int] = list(map(int, os.getenv("ADMIN_IDS").split(",")))
 EXCEPTION_CHAT_ID: int = int(os.getenv("EXCEPTION_CHAT_ID"))
 

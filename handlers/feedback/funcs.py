@@ -4,7 +4,7 @@ from telebot.states import StatesGroup, State
 from telebot.states.asyncio import StateContext
 from telebot.types import Message, User
 
-from consts import ADMIN_IDS, FEEDBACK_IMAGE
+from consts import FEEDBACK_IMAGE, FEEDBACK_CHAT_ID
 
 
 class FeedbackStates(StatesGroup):
@@ -25,7 +25,7 @@ async def handle_feedback(
         "с ошибкой в моем функционале, то отправь ответное сообщение. "
         "Если хочешь прислать скриншот или скринкас, "
         "то напиши сообщение вместе с отправкой "
-        "файла, чтобы фидбек был отправлен одним сообщением. Спасибо!"
+        "файла, чтобы фидбек был отправлен одним сообщением. Спасибо!",
     )
     await state.set(FeedbackStates.get_feedback)
 
@@ -37,7 +37,6 @@ async def forward_to_admins(
     session: AsyncSession,
     state: StateContext,
 ):
-    for admin_id in ADMIN_IDS:
-        await bot.forward_message(admin_id, message.chat.id, message.id)
+    await bot.forward_message(FEEDBACK_CHAT_ID, message.chat.id, message.id)
     await bot.send_message(message.chat.id, "Фидбек отправлен")
     await state.delete()
