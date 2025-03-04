@@ -14,7 +14,7 @@ from utils.handlers.base_message_handler import BaseMessageHandler
 
 
 class NotificationTextHandler(BaseMessageHandler):
-    batch_size: int = 1  # never more than 30! Read docs
+    batch_size: int = 20  # never more than 30! Read docs
 
     def register_handler(self):
         self.bot.register_message_handler(
@@ -27,7 +27,9 @@ class NotificationTextHandler(BaseMessageHandler):
     async def handle_message(
         self, message: Message, session: AsyncSession, user: User, state: StateContext
     ):
+        await state.delete()
         text = message.text
+
         users = await UserController.get_list(session, User.banned.is_(False))
         total_count = len(users)
         await self.bot.send_message(

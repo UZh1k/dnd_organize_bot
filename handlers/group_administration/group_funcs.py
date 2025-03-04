@@ -21,6 +21,7 @@ async def handle_bot_added_to_group(
         "Ты сможешь потом поменять эту настройку в любой момент.",
     )
 
+
 async def handle_bot_added_to_supergroup(
     update: Update, bot: AsyncTeleBot, session: AsyncSession, user: User
 ):
@@ -68,7 +69,7 @@ async def close_game(
     if chat_member.status not in ["administrator", "creator"]:
         await bot.send_message(
             message.chat.id,
-            "Только администратор или создатель игры иожет ее закрыть",
+            "Только администратор или создатель игры может ее закрыть",
         )
         return
     game = await GameController.get_one(message.chat.id, session, "group_id")
@@ -93,12 +94,14 @@ async def done_game(
     if chat_member.status not in ["administrator", "creator"]:
         await bot.send_message(
             message.chat.id,
-            "Только администратор или создатель игры иожет ее закрыть",
+            "Только администратор или создатель игры может ее закрыть",
         )
         return
     game = await GameController.get_one(message.chat.id, session, "group_id")
     if not game or not game.active:
-        await bot.send_message(message.chat.id, "Игра еще не привязана уже неактивна")
+        await bot.send_message(
+            message.chat.id, "Игра еще не привязана или уже неактивна"
+        )
         return
     game.active = False
     game.done = True

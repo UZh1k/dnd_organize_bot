@@ -27,6 +27,11 @@ def create_game_text(game: Game, update_text: str = "", players_count: int = 0) 
     )
     about_price = f" - {game.about_price}" if game.about_price else ""
 
+    age_tag = (
+        f"#от{game.min_age} "
+        if not game.max_age
+        else f"#от{game.min_age}до{game.max_age} "
+    )
     city_tag = (
         f"#{create_tag(game.city.name)} "
         if game.city and game.city.name in POPULAR_CITIES
@@ -65,7 +70,7 @@ def create_game_text(game: Game, update_text: str = "", players_count: int = 0) 
         f"Требование к игрокам: {game.tech_requirements}\n"
         f"ID: {game.id}\n\n"
         f"#{format_name} {city_tag}"
-        f"#{free_status} {system_tag}{setting_tag}{redaction_tag}#{type_name} "
+        f"#{free_status} {system_tag}{setting_tag}{redaction_tag}{age_tag}#{type_name} "
         f"{' '.join(f'#{tag.title}' for tag in game.tags)}\n"
     )
 

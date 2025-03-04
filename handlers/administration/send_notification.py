@@ -6,6 +6,7 @@ from consts import ADMIN_IDS
 from handlers.administration.settings import SendNotificationStates
 from models import User
 from utils.handlers.base_message_handler import BaseMessageHandler
+from utils.other import is_command
 
 
 class SendNotificationHandler(BaseMessageHandler):
@@ -13,7 +14,10 @@ class SendNotificationHandler(BaseMessageHandler):
         self.bot.register_message_handler(
             self.handle_message,
             commands=["send_notification"],
-            func=lambda message: message.chat.id in ADMIN_IDS,
+            func=(
+                lambda message: message.chat.id in ADMIN_IDS
+                and not is_command(message.text)
+            ),
             chat_types=["private"],
         )
 
