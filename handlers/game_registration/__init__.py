@@ -32,7 +32,6 @@ from handlers.game_registration.tech_requirements import (
 from handlers.game_registration.title import GameRegistrationTitle
 from models import User
 from utils.form.form_item_group import FormItemGroup
-from utils.game_text import create_game_text
 from utils.handler_groups.registration_handler_group import RegistrationHandlerGroup
 
 
@@ -116,15 +115,7 @@ class GameRegistrationHandlerGroup(RegistrationHandlerGroup):
                 {"tag_id": tag_id, "game_id": game.id}, session
             )
 
-        game = await GameController.get_one(game.id, session)
-
         await state.delete()
-        await bot.send_photo(
-            chat_id,
-            game.image,
-            create_game_text(game),
-            parse_mode="Markdown",
-        )
         await bot.send_message(
             chat_id,
             "Твоя игра успешно сохранена. Если ты захочешь скорректировать "
