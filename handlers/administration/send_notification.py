@@ -16,7 +16,6 @@ class SendNotificationHandler(BaseMessageHandler):
             commands=["send_notification"],
             func=(
                 lambda message: message.chat.id in ADMIN_IDS
-                and not is_command(message.text)
             ),
             chat_types=["private"],
         )
