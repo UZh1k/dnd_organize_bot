@@ -40,7 +40,9 @@ POPULAR_DND_SETTINGS = (
 POPULAR_DND_REDACTIONS = ("DnD24", "DnD5e", "DnD3.5e", "DnD3e", "DnD2e", "ADnD", "ODnD")
 
 
-def generate_simple_choices(choices: tuple[str, ...]) -> tuple[tuple[str, str], ...]:
+def generate_simple_choices(
+    choices: tuple[str | int, ...]
+) -> tuple[tuple[str, str], ...]:
     return tuple((choice, choice) for choice in choices)
 
 
