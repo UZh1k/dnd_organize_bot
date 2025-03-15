@@ -37,20 +37,20 @@ class NotificationTextHandler(BaseMessageHandler):
         )
         total_count = len(user_ids)
         await self.bot.send_message(
-            message.chat.id, f"Начинаем отправлять нотификации. Всего - {total_count}. ТЕСТ"
+            message.chat.id, f"Начинаем отправлять нотификации. Всего - {total_count}."
         )
-        # counter = 0
-        # for user_ids_batch in batched(user_ids, self.batch_size):
-        #     for user_id in user_ids_batch:
-        #         try:
-        #             if message.content_type == "photo":
-        #                 await self.bot.send_photo(user_id, message.photo[-1].file_id, message.caption)
-        #             else:
-        #                 await self.bot.send_message(user_id, message.text)
-        #         except ApiTelegramException as e:
-        #             print(e)
-        #             pass
-        #     counter += len(user_ids_batch)
-        #     await self.bot.send_message(message.chat.id, f"{counter}/{total_count}")
-        #     await asyncio.sleep(1)
-        # await self.bot.send_message(message.chat.id, "Все нотификации отправлены")
+        counter = 0
+        for user_ids_batch in batched(user_ids, self.batch_size):
+            for user_id in user_ids_batch:
+                try:
+                    if message.content_type == "photo":
+                        await self.bot.send_photo(user_id, message.photo[-1].file_id, message.caption)
+                    else:
+                        await self.bot.send_message(user_id, message.text)
+                except ApiTelegramException as e:
+                    print(e)
+                    pass
+            counter += len(user_ids_batch)
+            await self.bot.send_message(message.chat.id, f"{counter}/{total_count}")
+            await asyncio.sleep(1)
+        await self.bot.send_message(message.chat.id, "Все нотификации отправлены")
