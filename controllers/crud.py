@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Type, Any, Sequence
 
-from sqlalchemy import select, Row, RowMapping
+from sqlalchemy import select, Row, RowMapping, BinaryExpression
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import Base
@@ -53,13 +53,14 @@ class CRUD(ABC):
 
     @classmethod
     async def get_list(
-        cls, session: AsyncSession, ids: list[int] = None
+        cls,
+        session: AsyncSession,
+        *binary_expressions: BinaryExpression,
+        ids: list[int] = None
     ) -> Sequence[model]:
         query = cls.common_query().order_by(cls.model.id)
         if ids is not None:
             query = query.where(cls.model.id.in_(ids))
-        return (
-            (await session.execute(query))
-            .scalars()
-            .all()
-        )
+        if binary_expressions:
+            query = query.where(*binary_expressions)
+        return (await session.execute(query)).scalars().all()

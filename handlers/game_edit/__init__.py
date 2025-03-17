@@ -146,7 +146,7 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
                 setattr(game, key, value)
 
         if tag_ids is not None:
-            new_tags = await GameTagController.get_list(session, tag_ids)
+            new_tags = await GameTagController.get_list(session, ids=tag_ids)
             game.tags = new_tags
 
         await session.flush()
