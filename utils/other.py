@@ -6,6 +6,7 @@ POPULAR_CITIES = (
     "Новосибирск",
     "Екатеринбург",
     "Казань",
+    "Омск",
 )
 
 CITY_TO_TIMEZONE = {
@@ -14,6 +15,7 @@ CITY_TO_TIMEZONE = {
     "Новосибирск": "UTC+7",
     "Екатеринбург": "UTC+5",
     "Казань": "UTC+3",
+    "Омск": "UTC+6",
 }
 
 POPULAR_SYSTEMS = (

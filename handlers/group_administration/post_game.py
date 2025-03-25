@@ -14,13 +14,17 @@ from utils.game_text import create_game_text, create_game_markup
 
 
 async def create_game_post(
-    bot: AsyncTeleBot, game: Game, update_text: str = "", players_count: int = 0
+    bot: AsyncTeleBot,
+    game: Game,
+    session: AsyncSession,
+    update_text: str = "",
+    players_count: int = 0,
 ):
     post_message = await bot.send_photo(
         NEWS_CHANNEL_ID,
         game.image,
         create_game_text(game, update_text, players_count),
-        reply_markup=create_game_markup(game),
+        reply_markup=await create_game_markup(game, session),
         parse_mode="Markdown",
     )
     game.post_id = post_message.id
@@ -68,12 +72,13 @@ async def update_game_post(
                         NEWS_CHANNEL_ID,
                         game.post_id,
                         parse_mode="Markdown",
-                        reply_markup=create_game_markup(game),
+                        reply_markup=await create_game_markup(game, session),
                     )
                 except ApiTelegramException:
                     await create_game_post(
                         bot,
                         game,
+                        session,
                         update_text=f"Донабор!\n\n",
                         players_count=players_count,
                     )
@@ -96,7 +101,7 @@ async def update_game_post(
             pass
 
         await create_game_post(
-            bot, game, update_text=f"Донабор!\n\n", players_count=players_count
+            bot, game, session, update_text=f"Донабор!\n\n", players_count=players_count
         )
         await bot.send_message(
             message.chat.id,

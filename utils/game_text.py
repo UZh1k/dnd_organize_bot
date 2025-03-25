@@ -1,7 +1,16 @@
+from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from models import Game, GameFormatText, GameFormat, GameType, GameTypeText
-from utils.message_helpers import generate_link_for_game_apply
+from controllers.review import ReviewController
+from models import (
+    Game,
+    GameFormatText,
+    GameFormat,
+    GameType,
+    GameTypeText,
+    ReviewReceiverTypeEnum,
+)
+from utils.message_helpers import generate_link_for_game_apply, review_statistic_text
 from utils.other import (
     POPULAR_CITIES,
     create_tag,
@@ -75,9 +84,17 @@ def create_game_text(game: Game, update_text: str = "", players_count: int = 0) 
     )
 
 
-def create_game_markup(game: Game):
+async def create_game_markup(game: Game, session: AsyncSession) -> InlineKeyboardMarkup:
+    dm_statistic = await ReviewController.get_reviews_statistic(
+        game.creator.id, session, ReviewReceiverTypeEnum.dm.value
+    )
+    review_text = review_statistic_text(dm_statistic, with_comments_count=False)
+
     markup = InlineKeyboardMarkup()
     markup.add(
-        InlineKeyboardButton("Узнать о мастере", url=generate_link_for_game_apply(game))
+        InlineKeyboardButton(
+            f"Мастер {game.creator.name}, {review_text}",
+            url=generate_link_for_game_apply(game),
+        )
     )
     return markup

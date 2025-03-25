@@ -24,3 +24,12 @@ class GameMemberController(CRUD):
             GameMember.game_id == game_id
         )
         return await session.scalar(query)
+
+    @classmethod
+    async def get_one_game_member(
+        cls, game_id: int, user_id: int, session: AsyncSession
+    ) -> model:
+        query = select(GameMember).where(
+            GameMember.game_id == game_id, GameMember.user_id == user_id
+        )
+        return (await session.execute(query)).scalars().first()

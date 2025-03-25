@@ -20,3 +20,12 @@ class BaseMessageHandler(BaseHandler, ABC):
         state: StateContext,
     ):
         pass
+
+    async def on_action(
+        self,
+        call: CallbackQuery,
+        session: AsyncSession,
+        user: User,
+        state: StateContext,
+    ):
+        pass

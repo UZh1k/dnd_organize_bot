@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.states.asyncio import StateContext
 from telebot.types import CallbackQuery
 
+from controllers.game import GameController
 from handlers.review.settings import (
     REVIEW_CALLBACK_PREFIX,
     ReviewMenuChoices,
@@ -37,12 +38,22 @@ class ReviewRateHandler(BaseCallbackHandler):
         if call.data.startswith(
             f"{REVIEW_CALLBACK_PREFIX}:{ReviewMenuChoices.review_player.value}"
         ):
-            await state.add_data(receiver_type=ReviewReceiverTypeEnum.player.value)
+            await state.add_data(
+                receiver_type=ReviewReceiverTypeEnum.player.value,
+                to_user_id=int(call.data.split(":")[-1]),
+            )
         else:
-            await state.add_data(receiver_type=ReviewReceiverTypeEnum.dm.value)
+            game_id = int(call.data.split(":")[-1])
+            game = await GameController.get_one(game_id, session)
+            await state.add_data(
+                receiver_type=ReviewReceiverTypeEnum.dm.value,
+                to_user_id=game.creator_id,
+            )
+
+        await state.add_data(from_user_id=user.id)
 
         markup = create_markup(
-            generate_simple_choices((1, 2, 3, 4, 5)),
+            (("⭐️", 1), ("⭐️⭐️", 2), ("⭐️⭐️⭐️", 3), ("⭐️⭐️⭐️⭐️", 4), ("⭐️⭐️⭐️⭐️⭐️", 5)),
             RATE_STAGE,
             form_prefix=REVIEW_CALLBACK_PREFIX,
         )

@@ -2,14 +2,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
-from telebot.types import CallbackQuery, Message
+from telebot.types import CallbackQuery, Message, InlineKeyboardButton
 
 from controllers.game import GameController
 from controllers.game_application import GameApplicationController
+from controllers.review import ReviewController
+from handlers.game_application.form import GAME_APPLICATION_CALLBACK_PREFIX
 from handlers.game_application.states import GameApplicationStates
 from handlers.game_application.accept_form import generate_accept_form_markup
-from models import User
-from utils.message_helpers import get_user_text
+from models import User, ReviewReceiverTypeEnum
+from utils.message_helpers import get_user_text, review_statistic_text
 
 
 async def send_application(
@@ -26,13 +28,30 @@ async def send_application(
     await GameApplicationController.create(game_id, user.id, session)
     await bot.send_message(user.id, "Заявка отправлена")
 
+    player_statistic = await ReviewController.get_reviews_statistic(
+        user.id, session, ReviewReceiverTypeEnum.player.value
+    )
+    player_statistic_text = review_statistic_text(player_statistic)
+
+    keyboard = generate_accept_form_markup(game_id, user.id)
+    if player_statistic.total_count > 0:
+        keyboard.add(
+            InlineKeyboardButton(
+                "Посмотреть отзывы",
+                callback_data=(
+                    f"{GAME_APPLICATION_CALLBACK_PREFIX}:reviews:player:{user.id}"
+                ),
+            )
+        )
+
     await bot.send_message(
         game.creator_id,
         f"Я нашел тебе игрока для приключения “{game.title}”. "
         f"Жду твоего одобрения, чтобы пригласить его в группу.\n\n"
         f"{get_user_text(user)}\n\n"
+        f"Оценка: {player_statistic_text}\n\n"
         f"{form_text if form_text else ''}",
-        reply_markup=generate_accept_form_markup(game_id, user.id),
+        reply_markup=keyboard,
     )
 
 
@@ -47,7 +66,10 @@ async def handle_application_letter_no_data(
         await bot.edit_message_reply_markup(
             call.message.chat.id, call.message.message_id, reply_markup=None
         )
-        if await state.get() == GameApplicationStates.letter.name:
+        if await state.get() in (
+            GameApplicationStates.letter.name,
+            GameApplicationStates.choice.name,
+        ):
             async with state.data() as data:
                 await send_application(bot, user, session, data["game_id"])
             await state.delete()

@@ -35,6 +35,7 @@ from handlers.game_application import GameApplicationHandlerGroup
 from handlers.game_edit import GameEditHandlerGroup
 from handlers.game_registration import GameRegistrationHandlerGroup
 from handlers.group_administration import GroupAdministrationHandlerGroup
+from handlers.review import ReviewHandlerGroup
 from handlers.user_profile import UserProfileHandlerGroup
 from handlers.user_registration import UserRegistrationHandlerGroup
 from middlewares.exception import ExceptionMiddleware
@@ -180,6 +181,7 @@ UserRegistrationHandlerGroup(bot).register_handlers()
 UserProfileHandlerGroup(bot).register_handlers()
 GameRegistrationHandlerGroup(bot).register_handlers()
 GameEditHandlerGroup(bot).register_handlers()
+ReviewHandlerGroup(bot).register_handlers()
 
 
 @bot.message_handler(content_types=["text", "photo", "file"], chat_types=["private"])

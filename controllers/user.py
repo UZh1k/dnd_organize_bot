@@ -1,7 +1,7 @@
 from operator import or_
 from typing import Sequence
 
-from sqlalchemy import select, Select, distinct
+from sqlalchemy import select, Select, distinct, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
@@ -71,21 +71,22 @@ class UserController(CRUD):
 
     @classmethod
     async def get_players_to_review(
-        cls, user_id: int, session: AsyncSession
-    ) -> Sequence[User]:
+        cls, user_id: int, session: AsyncSession, limit: int, page: int = 0
+    ) -> tuple[Sequence[tuple[User, Game]], int]:
         query = (
-            select(User)
+            select(User, Game)
             .join(GameMember, User.id == GameMember.user_id)
             .join(Game, Game.id == GameMember.game_id)
             .where(
+                User.registered.is_(True),
+                Game.done.is_(True),
                 or_(
                     Game.creator_id == user_id,
                     Game.id.in_(
-                        select(GameMember.game_id).join(
-                            GameMember, GameMember.user_id == user_id
-                        )
+                        select(GameMember.game_id).where(GameMember.user_id == user_id)
                     ),
                 ),
+                User.id != user_id,
                 User.id.not_in(
                     select(Review.to_user_id).where(
                         Review.from_user_id == user_id,
@@ -94,4 +95,8 @@ class UserController(CRUD):
                 ),
             )
         )
-        return (await session.execute(query)).scalars().all()
+        paginated_query = (
+            query.limit(limit).offset(page * limit).order_by(Game.id.desc())
+        )
+        total_count = await session.scalar(query.with_only_columns(func.count(User.id)))
+        return (await session.execute(paginated_query)).all(), total_count

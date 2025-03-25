@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlalchemy import select, update
+from sqlalchemy import select, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
@@ -13,7 +13,9 @@ class GameController(CRUD):
 
     @classmethod
     def common_query(cls):
-        return select(cls.model).options(joinedload(Game.city), selectinload(Game.tags))
+        return select(cls.model).options(
+            joinedload(Game.city), selectinload(Game.tags), joinedload(Game.creator)
+        )
 
     @classmethod
     async def get_unlinked_games(
@@ -43,11 +45,12 @@ class GameController(CRUD):
 
     @classmethod
     async def get_games_to_review(
-        cls, user_id: int, session: AsyncSession
-    ) -> Sequence[Game]:
+        cls, user_id: int, session: AsyncSession, limit: int = 19, page: int = 0
+    ) -> tuple[Sequence[Game], int]:
         query = (
             select(Game)
             .join(GameMember, GameMember.game_id == Game.id)
+            .options(joinedload(Game.creator))
             .where(
                 Game.done.is_(True),
                 GameMember.user_id == user_id,
@@ -56,7 +59,11 @@ class GameController(CRUD):
                         Review.from_user_id == user_id,
                         Review.receiver_type == ReviewReceiverTypeEnum.dm,
                     )
-                )
+                ),
             )
         )
-        return (await session.execute(query)).scalars().all()
+        paginated_query = (
+            query.limit(limit).offset(page * limit).order_by(Game.id.desc())
+        )
+        total_count = await session.scalar(query.with_only_columns(func.count(Game.id)))
+        return (await session.execute(paginated_query)).scalars().all(), total_count
