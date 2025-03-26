@@ -112,7 +112,7 @@ async def handle_link_game(
     game.group_id = call.message.chat.id
     await bot.answer_callback_query(callback_query_id=call.id, text="Группа привязана")
 
-    await create_game_post(bot, game)
+    await create_game_post(bot, game, session)
 
     await bot.send_message(
         call.message.chat.id,
@@ -124,6 +124,8 @@ async def handle_link_game(
         "публикацию в списке, отправив мне сюда команду /update. "
         "Когда ты наберешь полную группу, то пришли, пожалуйста сюда команду "
         "/done. Если передумаешь проводить игру, то пришли такую же команду "
-        "- /close",
+        "- /close. \n\n"
+        "Недавно мы добавили новую возможность - теперь можно возобновлять поиск "
+        "уже собранной игры командой /update, обязательно попробуй!",
         parse_mode="Markdown",
     )

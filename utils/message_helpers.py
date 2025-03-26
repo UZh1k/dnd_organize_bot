@@ -1,8 +1,18 @@
+import locale
+
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from consts import BOT_USERNAME
-from models import Game, User, UserTypeText, UserType
+from models import (
+    Game,
+    User,
+    UserTypeText,
+    UserType,
+    ReviewStatistic,
+    Review,
+    ReviewReceiverTypeEnum,
+)
 from utils.other import utc_to_relative_msk
 
 
@@ -47,6 +57,7 @@ def get_user_text(user: User):
         f"Об игроке: {user.bio}"
     )
 
+
 def create_markup(
     items: tuple[tuple[str, str], ...],
     form_item_name: str,
@@ -58,11 +69,33 @@ def create_markup(
 
     markup.add(
         *(
-            InlineKeyboardButton(
-                name, callback_data=f"{prefix}:{data}"
-            )
+            InlineKeyboardButton(name, callback_data=f"{prefix}:{data}")
             for name, data in items
         ),
         row_width=row_width,
     )
     return markup
+
+
+def review_statistic_text(statistic: ReviewStatistic, with_comments_count: bool = True):
+    if not statistic.total_count:
+        return "0 отзывов"
+
+    s = f"{statistic.rating:.1f}⭐️, всего отзывов - {statistic.total_count}"
+    if with_comments_count:
+        s += f", с комментариями - {statistic.comments_count}"
+    return s
+
+
+def generate_review_text(review: Review, review_index: int, total_count: int):
+    comment_text = f"Комментарий: {review.comment}\n" if review.comment else ""
+    locale.setlocale(locale.LC_ALL, "")
+    return (
+        f"Отзыв {'мастеру' if review.receiver_type == ReviewReceiverTypeEnum.dm else 'игроку'} "
+        f"{review.to_user.name} "
+        f"{review_index + 1}/{total_count}\n\n"
+        f"Пользователь: {review.from_user.name}\n"
+        f"Оценка: {review.value}⭐️\n"
+        f"{comment_text}\n"
+        f"Дата: {review.created:%d %B, %Y, %H:%M}\n"
+    )

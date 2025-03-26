@@ -6,6 +6,7 @@ POPULAR_CITIES = (
     "Новосибирск",
     "Екатеринбург",
     "Казань",
+    "Омск",
 )
 
 CITY_TO_TIMEZONE = {
@@ -14,6 +15,7 @@ CITY_TO_TIMEZONE = {
     "Новосибирск": "UTC+7",
     "Екатеринбург": "UTC+5",
     "Казань": "UTC+3",
+    "Омск": "UTC+6",
 }
 
 POPULAR_SYSTEMS = (
@@ -40,7 +42,9 @@ POPULAR_DND_SETTINGS = (
 POPULAR_DND_REDACTIONS = ("DnD24", "DnD5e", "DnD3.5e", "DnD3e", "DnD2e", "ADnD", "ODnD")
 
 
-def generate_simple_choices(choices: tuple[str, ...]) -> tuple[tuple[str, str], ...]:
+def generate_simple_choices(
+    choices: tuple[str | int, ...]
+) -> tuple[tuple[str, str], ...]:
     return tuple((choice, choice) for choice in choices)
 
 

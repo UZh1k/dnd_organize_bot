@@ -67,4 +67,5 @@ class Game(Base):
     done: Mapped[bool | None]
 
     city: Mapped["City"] = relationship()
+    creator: Mapped["User"] = relationship()
     tags: Mapped[list[GameTag]] = relationship(GameTag, secondary="game_tag_link")

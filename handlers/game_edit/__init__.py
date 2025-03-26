@@ -168,7 +168,7 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
                         InputMediaPhoto(game.image, game_text, parse_mode="Markdown"),
                         NEWS_CHANNEL_ID,
                         game.post_id,
-                        reply_markup=create_game_markup(game),
+                        reply_markup=await create_game_markup(game, session),
                     )
                 else:
                     await bot.edit_message_caption(
@@ -176,7 +176,7 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
                         NEWS_CHANNEL_ID,
                         game.post_id,
                         parse_mode="Markdown",
-                        reply_markup=create_game_markup(game),
+                        reply_markup=await create_game_markup(game, session),
                     )
             except ApiTelegramException:
                 pass

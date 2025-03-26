@@ -7,14 +7,17 @@ from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 from controllers.game import GameController
 from controllers.game_application import GameApplicationController
+from controllers.review import ReviewController
 from controllers.user import UserController
 from handlers.game_application.invite import send_invite
 from handlers.game_application.states import GameApplicationStates
-from models import User
+from models import User, ReviewReceiverTypeEnum
 from utils.message_helpers import (
     send_message_with_link_button,
     generate_link_for_game_apply,
     get_user_text,
+    review_statistic_text,
+    create_markup,
 )
 
 GAME_APPLICATION_CALLBACK_PREFIX = "GameApplication"
@@ -23,6 +26,7 @@ GAME_APPLICATION_CANCEL = f"{GAME_APPLICATION_CALLBACK_PREFIX}:cancel"
 
 
 class GameApplicationChoiceEnum(Enum):
+    letter = "letter"
     no_data = "no_data"
     cancel = "cancel"
 
@@ -64,25 +68,40 @@ async def handle_apply_for_game(
             generate_link_for_game_apply(game),
         )
         return
-    await state.set(GameApplicationStates.letter)
+
+    await state.set(GameApplicationStates.choice)
     await state.add_data(game_id=game_id)
-    markup = InlineKeyboardMarkup()
-    markup.add(
-        InlineKeyboardButton(
-            "Отправить без сообщения", callback_data=GAME_APPLICATION_NO_DATA
-        ),
-        InlineKeyboardButton("Отмена", callback_data=GAME_APPLICATION_CANCEL),
-    )
 
     game_master = await UserController.get_one(game.creator_id, session)
+
+    dm_statistic = await ReviewController.get_reviews_statistic(
+        game.creator_id, session, ReviewReceiverTypeEnum.dm.value
+    )
+    review_text = review_statistic_text(dm_statistic)
+
+    keyboard = [
+        ("Написать сопроводительное сообщение", "letter"),
+        ("Отправить заявку без сообщения", "no_data"),
+        ("Отмена", "cancel"),
+    ]
+    if dm_statistic.total_count > 0:
+        keyboard.insert(
+            0,
+            (
+                "Посмотреть отзывы",
+                f"reviews:{ReviewReceiverTypeEnum.dm.value}:{game.creator_id}",
+            ),
+        )
+
+    markup = create_markup(keyboard, GAME_APPLICATION_CALLBACK_PREFIX)
+
     await bot.send_message(
         message.chat.id,
         f"Вижу, что тебя заинтересовала игра “{game.title}”. "
         f"Отправляю тебе анкету мастера этой игры.\n\n"
         f"{get_user_text(game_master)}\n\n"
+        f"Оценка: {review_text}\n\n"
         f"Если тебя все устраивает, то я отправлю твою анкету мастеру. "
-        f"Если хочешь приложить к анкете сопроводительное сообщение, например, "
-        f"ты уже знаешь за кого и какой класс хочешь играть, то отправь в "
-        f"ответ текстовое сообщение вместо нажатия кнопок.",
+        f"Выбери одну из опций ниже.",
         reply_markup=markup,
     )
