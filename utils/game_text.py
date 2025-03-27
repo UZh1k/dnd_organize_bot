@@ -90,11 +90,11 @@ async def create_game_markup(game: Game, session: AsyncSession) -> InlineKeyboar
     )
     review_text = review_statistic_text(dm_statistic, with_comments_count=False)
 
+    dm_part = f"Мастер {game.creator.name}"
+    button_text = f"{review_text}, {dm_part}" if dm_statistic.total_count else dm_part
+
     markup = InlineKeyboardMarkup()
     markup.add(
-        InlineKeyboardButton(
-            f"Мастер {game.creator.name}, {review_text}",
-            url=generate_link_for_game_apply(game),
-        )
+        InlineKeyboardButton(button_text, url=generate_link_for_game_apply(game))
     )
     return markup

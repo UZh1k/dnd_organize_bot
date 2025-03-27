@@ -28,7 +28,7 @@ class ApplicantReviewHandler(BaseCallbackHandler):
                         (
                             ("Написать сопроводительное сообщение", "letter"),
                             ("Отправить заявку без сообщения", "no_data"),
-                            ("Отмена", "no_data"),
+                            ("Отмена", "cancel"),
                         ),
                         GAME_APPLICATION_CALLBACK_PREFIX,
                     )

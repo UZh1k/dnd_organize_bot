@@ -77,14 +77,27 @@ def create_markup(
     return markup
 
 
+def pluralize_review(count: int) -> str:
+    # forms = ["отзыв", "отзыва", "отзывов"]
+    # if 11 <= count % 100 <= 14:
+    #     return f"{count} {forms[2]}"
+    # if count % 10 == 1:
+    #     return f"{count} {forms[0]}"
+    # if 2 <= count % 10 <= 4:
+    #     return f"{count} {forms[1]}"
+    return f"{count} отз."
+
+
 def review_statistic_text(statistic: ReviewStatistic, with_comments_count: bool = True):
     if not statistic.total_count:
-        return "0 отзывов"
+        return "нет отзывов"
 
-    s = f"{statistic.rating:.1f}⭐️, всего отзывов - {statistic.total_count}"
+    comments_part = ""
     if with_comments_count:
-        s += f", с комментариями - {statistic.comments_count}"
-    return s
+        comments_part = f", с комментарием - {statistic.comments_count}"
+
+    return f"{statistic.rating:.1f}⭐️ ({pluralize_review(statistic.total_count)}{comments_part})"
+
 
 
 def generate_review_text(review: Review, review_index: int, total_count: int):
