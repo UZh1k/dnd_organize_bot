@@ -1,4 +1,5 @@
 .env
+.env.production
 /.venv
 /.idea
 __pycache__
