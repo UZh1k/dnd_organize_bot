@@ -31,6 +31,7 @@ class SendNotificationHandler(BaseMessageHandler):
                 ("Бесплатным ДМам", NotificationTypeEnum.to_free_dms.value),
                 ("Игрокам", NotificationTypeEnum.to_players.value),
                 ("Всем", NotificationTypeEnum.to_all.value),
+                ("Кастомный фильтр", NotificationTypeEnum.custom_filter.value),
             ),
             SEND_NOTIFICATION_CALLBACK_PREFIX,
         )

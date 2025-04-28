@@ -1,7 +1,7 @@
 from operator import or_
 from typing import Sequence
 
-from sqlalchemy import select, Select, distinct, func
+from sqlalchemy import select, Select, distinct, func, text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
@@ -67,6 +67,14 @@ class UserController(CRUD):
         }
 
         result = await session.execute(map_query[notification_type])
+        return result.scalars().all()
+
+    @classmethod
+    async def get_user_ids_by_custom_filter(
+        cls, custom_filter: str, session: AsyncSession
+    ) -> Sequence[int]:
+        query = select(User.id).where(text(custom_filter))
+        result = await session.execute(query)
         return result.scalars().all()
 
     @classmethod
