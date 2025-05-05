@@ -1,0 +1,90 @@
+service: dnd_hub
+
+image: sas145work/dnd_hub
+
+servers:
+  web:
+    - dnd_hub
+
+proxy:
+  ssl: true
+  host: dnd-hub.ru
+  healthcheck:
+    path: "/up"
+    interval: 5
+    timeout: 5
+  app_port: 8080
+
+registry:
+  username: sas145work
+
+  # Always use an access token rather than real password (pulled from .kamal/secrets).
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+  # Pass in additional build args needed for your Dockerfile.
+  # args:
+  #   RUBY_VERSION: <%= ENV["RBENV_VERSION"] || ENV["rvm_ruby_string"] || "#{RUBY_ENGINE}-#{RUBY_ENGINE_VERSION}" %>
+
+# Inject ENV variables into containers (secrets come from .kamal/secrets).
+env:
+  clear:
+    ENVIRONMENT: "production"
+    STATE_STORAGE: "redis"
+    DB_POOL_SIZE: 5
+    REDIS_HOST: "dnd_hub-redis"
+    REDIS_PORT: "6379"
+    REDIS_PASS: ""
+    BOT_USERNAME: "dnd_hub_test_deploy_bot"
+    BOT_TOKEN: "7722629207:AAEjfgJ3OwaFuyyVAK5isWcrS__GNtGA7JU"
+    WEBHOOK_URL_BASE: "https://dnd-hub.ru"
+    NEWS_CHANNEL_ID: 0
+    ADMIN_IDS: "0"
+    EXCEPTION_CHAT_ID: 0
+    FEEDBACK_CHAT_ID: 0
+    START_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
+    REGISTER_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
+    SEARCH_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
+    ABOUT_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
+    CREATE_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
+    FEEDBACK_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
+    BOOSTY_LINK: "https://www.wikipedia.org/"
+    CRYPTO_LINK: "https://www.wikipedia.org/"
+  secret:
+    - DB_URL
+
+# Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
+# "bin/kamal app logs -r job" will tail logs from the first server in the job section.
+aliases:
+  bash: app exec -i --reuse "bash"
+  logs: app logs
+  logsf: app logs -f
+  dbbash: accessory exec db -i --reuse "bash"
+  dbconsole: accessory exec db -i --reuse "psql -U postgres -d dnd_hub_production"
+
+# Use a different ssh user than root
+ssh:
+  user: sneaky
+
+# Use accessory services (secrets come from .kamal/secrets).
+accessories:
+  db:
+    image: postgres:17
+    host: dnd_hub
+    port: "127.0.0.1:5432:5432"
+    env:
+      secret:
+        - POSTGRES_PASSWORD
+    files:
+      - config/db_setup.sql:/docker-entrypoint-initdb.d/setup.sql
+    directories:
+      - data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7.4
+    host: dnd_hub
+    port: "127.0.0.1:6379:6379"
+    volumes:
+      - /var/lib/redis:/data

@@ -9,5 +9,4 @@ async def set_webhook():
 
     await bot.set_webhook(url=WEBHOOK_URL_BASE + WEBHOOK_URL_PATH)
 
-
 asyncio.run(set_webhook())

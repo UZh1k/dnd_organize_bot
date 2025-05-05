@@ -4,10 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 ENVIRONMENT = os.getenv("ENVIRONMENT")
-CONNECTION_TYPE = os.getenv("CONNECTION_TYPE")
 WEBHOOK_URL_BASE = os.getenv("WEBHOOK_URL_BASE")
-WEBHOOK_IP = os.getenv("WEBHOOK_IP")
-WEBHOOK_PORT = os.getenv("WEBHOOK_PORT")
 
 BOT_USERNAME = os.getenv("BOT_USERNAME")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -17,7 +14,7 @@ DB_URL = os.getenv("DB_URL")
 DB_POOL_SIZE = int(os.getenv("DB_POOL_SIZE"))
 
 STATE_STORAGE = os.getenv("STATE_STORAGE")
-REDIS_URL = os.getenv("REDIS_URL")
+REDIS_HOST = os.getenv("REDIS_HOST")
 REDIS_PORT = os.getenv("REDIS_PORT")
 REDIS_PASS = os.getenv("REDIS_PASS")
 

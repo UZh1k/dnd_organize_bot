@@ -22,7 +22,7 @@ from consts import (
     CRYPTO_LINK,
     WEBHOOK_URL_PATH,
     STATE_STORAGE,
-    REDIS_URL,
+    REDIS_HOST,
     REDIS_PORT,
     REDIS_PASS,
     ENVIRONMENT,
@@ -45,7 +45,7 @@ from models.user import User
 from utils.message_helpers import send_message_with_link_button
 
 state_storage = (
-    StateRedisStorage(host=REDIS_URL, port=REDIS_PORT, password=REDIS_PASS)
+    StateRedisStorage(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASS)
     if STATE_STORAGE == "redis"
     else StateMemoryStorage()
 )
@@ -67,10 +67,9 @@ async def process_webhook(update: dict):
         return
 
 
-@app.get("/", status_code=201)
+@app.get("/up", status_code=200)
 async def health():
     return {}
-
 
 @bot.message_handler(
     commands=["start"],
