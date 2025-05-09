@@ -1,6 +1,6 @@
 service: dnd_hub
 
-image: sas145work/dnd_hub
+image: danuzh1k/dnd_hub
 
 servers:
   web:
@@ -16,7 +16,7 @@ proxy:
   app_port: 8080
 
 registry:
-  username: sas145work
+  username: danuzh1k
 
   # Always use an access token rather than real password (pulled from .kamal/secrets).
   password:
@@ -33,27 +33,33 @@ env:
   clear:
     ENVIRONMENT: "production"
     STATE_STORAGE: "redis"
-    DB_POOL_SIZE: 5
+    DB_POOL_SIZE: 10
     REDIS_HOST: "dnd_hub-redis"
     REDIS_PORT: "6379"
     REDIS_PASS: ""
-    BOT_USERNAME: "dnd_hub_test_deploy_bot"
-    BOT_TOKEN: "7722629207:AAEjfgJ3OwaFuyyVAK5isWcrS__GNtGA7JU"
     WEBHOOK_URL_BASE: "https://dnd-hub.ru"
-    NEWS_CHANNEL_ID: 0
-    ADMIN_IDS: "0"
-    EXCEPTION_CHAT_ID: 0
-    FEEDBACK_CHAT_ID: 0
     START_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
     REGISTER_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
     SEARCH_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
     ABOUT_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
     CREATE_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
     FEEDBACK_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
-    BOOSTY_LINK: "https://www.wikipedia.org/"
-    CRYPTO_LINK: "https://www.wikipedia.org/"
   secret:
     - DB_URL
+    - BOT_USERNAME
+    - BOT_TOKEN
+    - NEWS_CHANNEL_ID
+    - ADMIN_IDS
+    - EXCEPTION_CHAT_ID
+    - FEEDBACK_CHAT_ID
+    - START_IMAGE
+    - REGISTER_IMAGE
+    - SEARCH_IMAGE
+    - ABOUT_IMAGE
+    - CREATE_IMAGE
+    - FEEDBACK_IMAGE
+    - BOOSTY_LINK
+    - CRYPTO_LINK
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal app logs -r job" will tail logs from the first server in the job section.
@@ -85,6 +91,5 @@ accessories:
   redis:
     image: redis:7.4
     host: dnd_hub
-    port: "127.0.0.1:6379:6379"
     volumes:
       - /var/lib/redis:/data
