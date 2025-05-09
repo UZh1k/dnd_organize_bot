@@ -1,9 +1,12 @@
+from handlers.feedback.answer import AnswerHandler
 from handlers.feedback.funcs import handle_feedback, forward_to_admins, FeedbackStates
 from utils.handler_groups.base_handler_group import BaseHandlerGroup
 from utils.other import is_command
 
 
 class FeedbackHandlerGroup(BaseHandlerGroup):
+    handlers = [AnswerHandler]
+
     def register_handlers(self):
         self.bot.register_message_handler(
             handle_feedback,
@@ -18,3 +21,4 @@ class FeedbackHandlerGroup(BaseHandlerGroup):
             content_types=["text", "photo", "document", "video"],
             pass_bot=True,
         )
+        super().register_handlers()

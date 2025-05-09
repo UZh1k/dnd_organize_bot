@@ -16,7 +16,7 @@ from utils.other import (
     create_tag,
     POPULAR_SYSTEMS,
     POPULAR_DND_SETTINGS,
-    POPULAR_DND_REDACTIONS,
+    POPULAR_DND_REDACTIONS, CITY_TAGS,
 )
 
 
@@ -43,7 +43,7 @@ def create_game_text(game: Game, update_text: str = "", players_count: int = 0) 
     )
     city_tag = (
         f"#{create_tag(game.city.name)} "
-        if game.city and game.city.name in POPULAR_CITIES
+        if game.city and game.city.name in CITY_TAGS
         else ""
     )
     system_tag = (
