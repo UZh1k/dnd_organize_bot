@@ -1,4 +1,6 @@
 .env
+.env.production
 /.venv
 /.idea
 __pycache__
+.ruby-version
