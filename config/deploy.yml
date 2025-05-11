@@ -38,12 +38,6 @@ env:
     REDIS_PORT: "6379"
     REDIS_PASS: ""
     WEBHOOK_URL_BASE: "https://dnd-hub.ru"
-    START_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
-    REGISTER_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
-    SEARCH_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
-    ABOUT_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
-    CREATE_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
-    FEEDBACK_IMAGE: "https://fyf.tac-cdn.net/images/products/large/FYF-118.jpg?auto=webp&quality=80&width=590"
   secret:
     - DB_URL
     - BOT_USERNAME
