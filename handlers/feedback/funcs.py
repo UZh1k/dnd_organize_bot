@@ -5,6 +5,7 @@ from telebot.states.asyncio import StateContext
 from telebot.types import Message, User
 
 from consts import FEEDBACK_IMAGE, FEEDBACK_CHAT_ID
+from controllers.feedback_message import FeedbackMessageController
 
 
 class FeedbackStates(StatesGroup):
@@ -37,6 +38,12 @@ async def forward_to_admins(
     session: AsyncSession,
     state: StateContext,
 ):
-    await bot.forward_message(FEEDBACK_CHAT_ID, message.chat.id, message.id)
     await bot.send_message(message.chat.id, "Фидбек отправлен")
+    forwarded_message = await bot.forward_message(
+        FEEDBACK_CHAT_ID, message.chat.id, message.id
+    )
     await state.delete()
+
+    await FeedbackMessageController.create(
+        {"creator_id": user.id, "message_id": forwarded_message.id}, session
+    )
