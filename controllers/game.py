@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
 from controllers.crud import CRUD
-from models import Game, GameMember, Review, ReviewReceiverTypeEnum
+from models import Game, Review, ReviewReceiverTypeEnum, ReviewMember
 
 
 class GameController(CRUD):
@@ -49,11 +49,10 @@ class GameController(CRUD):
     ) -> tuple[Sequence[Game], int]:
         query = (
             select(Game)
-            .join(GameMember, GameMember.game_id == Game.id)
+            .join(ReviewMember, ReviewMember.game_id == Game.id)
             .options(joinedload(Game.creator))
             .where(
-                Game.done.is_(True),
-                GameMember.user_id == user_id,
+                ReviewMember.user_id == user_id,
                 Game.creator_id.not_in(
                     select(Review.to_user_id).where(
                         Review.from_user_id == user_id,

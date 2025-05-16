@@ -56,11 +56,18 @@ class CRUD(ABC):
         cls,
         session: AsyncSession,
         *binary_expressions: BinaryExpression,
-        ids: list[int] = None
+        ids: list[int] = None,
+        apply_default_order: bool = True,
     ) -> Sequence[model]:
-        query = cls.common_query().order_by(cls.model.id)
+        query = cls.common_query()
+
+        if apply_default_order:
+            query = query.order_by(cls.model.id)
+
         if ids is not None:
             query = query.where(cls.model.id.in_(ids))
+
         if binary_expressions:
             query = query.where(*binary_expressions)
+
         return (await session.execute(query)).scalars().all()

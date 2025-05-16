@@ -1,11 +1,13 @@
 from datetime import datetime
-from enum import IntEnum, Enum
+from enum import Enum, IntEnum
 
-from sqlalchemy import ForeignKey, SMALLINT, BIGINT
-from sqlalchemy.orm import mapped_column, Mapped, relationship
+from sqlalchemy import BIGINT, SMALLINT, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
-from models.game_tag import GameTag, GameTagLink
+from models.city import City
+from models.game_tag import GameTag
+from models.user import User
 
 
 class GameFormat(IntEnum):
@@ -65,6 +67,10 @@ class Game(Base):
 
     last_update: Mapped[datetime | None]
     done: Mapped[bool | None]
+
+    create_datetime: Mapped[datetime | None]
+    first_post_datetime: Mapped[datetime | None]
+    done_datetime: Mapped[datetime | None]
 
     city: Mapped["City"] = relationship()
     creator: Mapped["User"] = relationship()

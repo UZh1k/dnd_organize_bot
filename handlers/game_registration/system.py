@@ -9,7 +9,7 @@ from handlers.game_registration.dnd_redaction import GameRegistrationDndRedactio
 from handlers.game_registration.states import GameRegistrationStates
 from models import User
 from utils.form.form_choice_text_item import FormChoiceTextItem
-from utils.other import generate_simple_choices, POPULAR_SYSTEMS
+from utils.other import POPULAR_SYSTEMS_MAP
 
 
 class GameRegistrationSystem(FormChoiceTextItem):
@@ -22,12 +22,13 @@ class GameRegistrationSystem(FormChoiceTextItem):
     message_length = 40
 
     alert_message = "Формат игры записан"
-    choices = generate_simple_choices(POPULAR_SYSTEMS)
+    choices = tuple((value, key) for key, value in POPULAR_SYSTEMS_MAP.items())
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext
     ):
-        await state.add_data(system=text)
+        result = POPULAR_SYSTEMS_MAP.get(text, text)
+        await state.add_data(system=result)
 
     async def on_answered(
         self,

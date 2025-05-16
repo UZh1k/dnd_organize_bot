@@ -1,10 +1,11 @@
 from datetime import datetime
-from enum import IntEnum, Enum
+from enum import Enum, IntEnum
 
+from sqlalchemy import BIGINT, SMALLINT, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, SMALLINT, BIGINT
 
 from models.base import Base
+from models.city import City
 
 
 class UserType(IntEnum):

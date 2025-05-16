@@ -61,12 +61,7 @@ class NotificationTextHandler(BaseMessageHandler):
         for user_ids_batch in batched(user_ids, self.batch_size):
             for user_id in user_ids_batch:
                 try:
-                    if message.content_type == "photo":
-                        await self.bot.send_photo(
-                            user_id, message.photo[-1].file_id, message.caption
-                        )
-                    else:
-                        await self.bot.send_message(user_id, message.text)
+                    await self.bot.copy_message(user_id, message.chat.id, message.id)
                 except ApiTelegramException as e:
                     print(e)
                     pass

@@ -1,4 +1,3 @@
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
@@ -7,9 +6,10 @@ from telebot.types import Update, User
 from consts import NEWS_CHANNEL_ID
 from controllers.game import GameController
 from controllers.game_member import GameMemberController
+from controllers.review_member import ReviewMemberController
 from controllers.user import UserController
 from handlers.group_administration.group_funcs import on_close_game
-from models import Game
+from models import Game, ReviewMember
 from utils.game_text import create_game_text, create_game_markup
 
 
@@ -39,6 +39,7 @@ async def handle_player_added_to_group(
             {"id": user_id, "username": new_user.username}, session
         )
     game = await GameController.get_one(update.chat.id, session, "group_id")
+
     if not game:
         await bot.send_message(
             update.chat.id,
@@ -46,10 +47,21 @@ async def handle_player_added_to_group(
             "группе игру с помощью команды /link.",
         )
         return
+
     if not await GameMemberController.get_one_game_member(game.id, user_id, session):
         await GameMemberController.create(
             {"game_id": game.id, "user_id": user_id}, session
         )
+
+    if game.done and not await ReviewMemberController.get_list(
+        session,
+        ReviewMember.game_id == game.id and ReviewMember.user_id == user_id,
+        apply_default_order=False,
+    ):
+        await ReviewMemberController.create(
+            {"game_id": game.id, "user_id": user_id}, session
+        )
+
     if game.active:
         players_count = await GameMemberController.count_game_members(game.id, session)
         if game.max_players <= players_count:

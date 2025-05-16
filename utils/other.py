@@ -60,7 +60,22 @@ POPULAR_SYSTEMS = (
     "Зов Ктулху",
     "Warhammer",
     "Cyberpunk",
+    "Vampire: The Masquerade",
+    "Vampire: The Requiem",
 )
+
+POPULAR_SYSTEMS_MAP = {
+    "DnD": "DnD",
+    "Pathfinder": "Pathfinder",
+    "GURPS": "GURPS",
+    "FATE": "FATE",
+    "Savage Worlds": "Savage Worlds",
+    "Зов Ктулху": "Зов Ктулху",
+    "Warhammer": "Warhammer",
+    "Cyberpunk": "Cyberpunk",
+    "VTM": "Vampire: The Masquerade",
+    "VTR": "Vampire: The Requiem",
+}
 
 POPULAR_DND_SETTINGS = (
     "Forgotten Realms",
@@ -86,7 +101,13 @@ def generate_city_choices() -> tuple[tuple[str, str], ...]:
 
 
 def create_tag(string: str) -> str:
-    return string.replace(" ", "").replace("-", "").replace("_", "").replace(".", "")
+    return (
+        string.replace(" ", "")
+        .replace("-", "")
+        .replace("_", "")
+        .replace(".", "")
+        .replace(":", "")
+    )
 
 
 def contains_link(text: str) -> bool:

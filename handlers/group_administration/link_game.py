@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
@@ -110,6 +112,7 @@ async def handle_link_game(
     game_id = int(call.data.split(":")[-1])
     game = await GameController.get_one(game_id, session)
     game.group_id = call.message.chat.id
+    game.first_post_datetime = datetime.now()
     await bot.answer_callback_query(callback_query_id=call.id, text="Группа привязана")
 
     await create_game_post(bot, game, session)

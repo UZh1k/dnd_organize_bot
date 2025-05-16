@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
@@ -109,6 +111,7 @@ class GameRegistrationHandlerGroup(RegistrationHandlerGroup):
             data["creator_id"] = user.id
             tags = data.pop("tags", [])
 
+        data["create_datetime"] = datetime.now()
         game = await GameController.create(data, session)
         for tag_id in tags:
             await GameTagLinkController.create(

@@ -1,12 +1,12 @@
-from models.game import *
-from models.game_member import *
-from models.game_tag import *
-from models.city import *
-from models.user import *
 from models.base import Base
-from models.game_application import *
-from models.review import *
-from models.feedback_message import *
-
+from models.city import *  # noqa: F403
+from models.feedback_message import *  # noqa: F403
+from models.game import *  # noqa: F403
+from models.game_application import *  # noqa: F403
+from models.game_member import *  # noqa: F403
+from models.game_tag import *  # noqa: F403
+from models.review import *  # noqa: F403
+from models.review_member import *  # noqa: F403
+from models.user import *  # noqa: F403
 
 Base.registry.configure()
