@@ -127,7 +127,6 @@ async def handle_callback_apply_for_game(
     user: User,
     state: StateContext,
 ):
-    print("1")
     try:
         await bot.edit_message_reply_markup(
             call.message.chat.id, call.message.message_id, reply_markup=None

@@ -50,12 +50,6 @@ class FiltersMenuHandler(BaseHandler):
         async with state.data() as data:
             set_filters = data
 
-        if not user.registered:
-            await bot.send_message(
-                chat_id, "Не узнаю тебя. Ты точно зарегистрировался?"
-            )
-            return
-
         keyboard = InlineKeyboardMarkup()
 
         if set_filters.get("format") == GameFormat.offline.value:
@@ -128,7 +122,8 @@ class FiltersMenuHandler(BaseHandler):
         text = (
             '*Фильтры*\n\n'
             'Добавь фильтры и нажми кнопку "Поиск по фильтрам".\n\n'
-            f'Также все игры можно посмотреть в нашем [канале]({channel_link})!'
+            f'Также все игры можно посмотреть в нашем [канале]({channel_link}), '
+            f'обязательно подписывайся!'
         )
         if edit_message_id:
             try:
