@@ -19,6 +19,7 @@ class GameEditFree(GameRegistrationFree):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        **kwargs,
     ):
         if answer == "for_pay":
             await GameEditAboutPrice.prepare(
@@ -26,4 +27,6 @@ class GameEditFree(GameRegistrationFree):
             )
         else:
             await state.add_data(about_price=None)
-            await self.next_step(chat_id, user, session, bot, state, self.form_prefix)
+            await self.next_step(
+                chat_id, user, session, bot, state, self.form_prefix, **kwargs
+            )

@@ -24,7 +24,12 @@ class GameRegistrationTag(FormChoiceItem):
 
     @classmethod
     async def prepare_markup(
-        cls, form_prefix: str, session: AsyncSession, chosen_tags: list[int] = None
+        cls,
+        form_prefix: str,
+        session: AsyncSession,
+        state: StateContext,
+        chosen_tags: list[int] = None,
+        **kwargs,
     ):
         chosen_tags = chosen_tags or []
         markup = InlineKeyboardMarkup()
@@ -56,17 +61,25 @@ class GameRegistrationTag(FormChoiceItem):
     ):
         text = call.data.split(":")[-1]
         async with state.data() as data:
-            chosen_tags = data.get("tags", [])
+            chosen_tags = data.get("tags", []) or []
 
-        if text == "save":
+        if text in ("save", "clean"):
             await bot.edit_message_reply_markup(
                 call.message.chat.id, call.message.message_id, reply_markup=None
             )
             await state.add_data(tags=chosen_tags)
+            if text == "clean":
+                await self.on_clean(state)
             await self.on_answered(
-                text, call.message.chat.id, user, session, bot, state
+                text,
+                call.message.chat.id,
+                user,
+                session,
+                bot,
+                state,
+                edit_message_id=call.message.id,
             )
-        else:
+        elif text.isdigit():
             tag_id = int(text)
             if tag_id not in chosen_tags:
                 if len(chosen_tags) >= self.max_tags_count:
@@ -91,7 +104,7 @@ class GameRegistrationTag(FormChoiceItem):
                     call.message.chat.id,
                     call.message.message_id,
                     reply_markup=await self.prepare_markup(
-                        self.form_prefix, session, chosen_tags=chosen_tags
+                        self.form_prefix, session, state, chosen_tags=chosen_tags
                     ),
                 )
             except ApiTelegramException:

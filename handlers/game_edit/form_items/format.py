@@ -19,6 +19,7 @@ class GameEditFormat(GameRegistrationFormat):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        **kwargs,
     ):
         if answer == "offline":
             await GameEditAcceptOffline.prepare(
@@ -26,4 +27,6 @@ class GameEditFormat(GameRegistrationFormat):
             )
         else:
             await state.add_data(city_id=None)
-            await self.next_step(chat_id, user, session, bot, state, self.form_prefix)
+            await self.next_step(
+                chat_id, user, session, bot, state, self.form_prefix, **kwargs
+            )

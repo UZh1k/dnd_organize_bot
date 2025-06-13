@@ -132,6 +132,7 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
         bot: AsyncTeleBot,
         state: StateContext,
         form_prefix: str,
+        **kwargs,
     ):
         async with state.data() as data:
             game = await GameController.get_one(data["game_id"], session)

@@ -25,7 +25,9 @@ class FormTextItem(ABC):
         self.form_prefix = form_prefix
 
     @classmethod
-    async def prepare_markup(cls, form_prefix: str, session: AsyncSession, **kwargs):
+    async def prepare_markup(
+        cls, form_prefix: str, session: AsyncSession, state: StateContext, **kwargs
+    ):
         return None
 
     @classmethod
@@ -43,7 +45,9 @@ class FormTextItem(ABC):
         await bot.send_message(
             chat_id,
             cls.prepare_text.format(user=user),
-            reply_markup=await cls.prepare_markup(form_prefix, session, **kwargs),
+            reply_markup=await cls.prepare_markup(
+                form_prefix, session, state, **kwargs
+            ),
         )
 
     @classmethod
@@ -115,8 +119,11 @@ class FormTextItem(ABC):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        **kwargs,
     ):
-        await self.next_step(chat_id, user, session, bot, state, self.form_prefix)
+        await self.next_step(
+            chat_id, user, session, bot, state, self.form_prefix, **kwargs
+        )
 
     async def handle_message(
         self,

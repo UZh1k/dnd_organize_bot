@@ -19,6 +19,7 @@ class GameEditDndRedaction(GameRegistrationDndRedaction):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        **kwargs,
     ):
         await GameEditDndSetting.prepare(
             chat_id, user, session, bot, state, self.form_prefix

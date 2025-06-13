@@ -33,11 +33,13 @@ class GameRegistrationFormat(FormChoiceItem):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        **kwargs,
     ):
         if answer == "offline":
             await GameRegistrationAcceptOffline.prepare(
                 chat_id, user, session, bot, state, self.form_prefix
             )
         else:
-            await self.next_step(chat_id, user, session, bot, state, self.form_prefix)
-
+            await self.next_step(
+                chat_id, user, session, bot, state, self.form_prefix, **kwargs
+            )

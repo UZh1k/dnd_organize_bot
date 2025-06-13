@@ -25,7 +25,9 @@ class FormChoiceTextItem(FormTextItem):
         return f"{cls.gen_callback_root(form_prefix)}:{data}"
 
     @classmethod
-    async def prepare_markup(cls, form_prefix: str, session: AsyncSession, **kwargs):
+    async def prepare_markup(
+        cls, form_prefix: str, session: AsyncSession, state: StateContext, **kwargs
+    ):
         markup = InlineKeyboardMarkup(row_width=cls.row_width)
         for name, data in cls.choices:
             markup.add(
@@ -55,7 +57,13 @@ class FormChoiceTextItem(FormTextItem):
                         callback_query_id=call.id, text=self.alert_message
                     )
                 await self.on_answered(
-                    text, call.message.chat.id, user, session, bot, state
+                    text,
+                    call.message.chat.id,
+                    user,
+                    session,
+                    bot,
+                    state,
+                    edit_message_id=call.message.id,
                 )
         except ApiTelegramException:
             pass

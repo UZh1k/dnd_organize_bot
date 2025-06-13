@@ -12,11 +12,11 @@ from models import (
 )
 from utils.message_helpers import generate_link_for_game_apply, review_statistic_text
 from utils.other import (
-    POPULAR_CITIES,
     create_tag,
     POPULAR_SYSTEMS,
     POPULAR_DND_SETTINGS,
-    POPULAR_DND_REDACTIONS, CITY_TAGS,
+    POPULAR_DND_REDACTIONS,
+    CITY_TAGS,
 )
 
 
@@ -84,14 +84,18 @@ def create_game_text(game: Game, update_text: str = "", players_count: int = 0) 
     )
 
 
-async def create_game_markup(game: Game, session: AsyncSession) -> InlineKeyboardMarkup:
+async def create_game_markup_text(game: Game, session: AsyncSession) -> str:
     dm_statistic = await ReviewController.get_reviews_statistic(
         game.creator.id, session, ReviewReceiverTypeEnum.dm.value
     )
     review_text = review_statistic_text(dm_statistic, with_comments_count=False)
 
     dm_part = f"Мастер {game.creator.name}"
-    button_text = f"{review_text}, {dm_part}" if dm_statistic.total_count else dm_part
+    return f"{review_text}, {dm_part}" if dm_statistic.total_count else dm_part
+
+
+async def create_game_markup(game: Game, session: AsyncSession) -> InlineKeyboardMarkup:
+    button_text = await create_game_markup_text(game, session)
 
     markup = InlineKeyboardMarkup()
     markup.add(

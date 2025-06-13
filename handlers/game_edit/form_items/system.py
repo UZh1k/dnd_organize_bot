@@ -18,6 +18,9 @@ class GameEditSystem(GameRegistrationSystem):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        **kwargs,
     ):
         # todo use super()
-        await self.next_step(chat_id, user, session, bot, state, self.form_prefix)
+        await self.next_step(
+            chat_id, user, session, bot, state, self.form_prefix, **kwargs
+        )
