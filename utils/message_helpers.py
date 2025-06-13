@@ -3,7 +3,7 @@ import locale
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from consts import BOT_USERNAME
+from consts import BOT_USERNAME, NEWS_CHANNEL_ID, ENVIRONMENT
 from models import (
     Game,
     User,
@@ -30,6 +30,14 @@ async def send_message_with_link_button(
         await bot.send_photo(chat_id, photo, text, reply_markup=markup)
     else:
         await bot.send_message(chat_id, text, reply_markup=markup)
+
+
+async def get_channel_link(bot: AsyncTeleBot):
+    return (
+        await bot.export_chat_invite_link(NEWS_CHANNEL_ID)
+        if ENVIRONMENT == "local"
+        else "https://t.me/SneakyDiceGames"
+    )
 
 
 def generate_link_for_game_apply(game: Game):

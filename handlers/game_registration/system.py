@@ -38,6 +38,7 @@ class GameRegistrationSystem(FormChoiceTextItem):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        **kwargs,
     ):
         if answer == "DnD":
             await GameRegistrationDndRedaction.prepare(

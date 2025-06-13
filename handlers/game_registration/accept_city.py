@@ -33,10 +33,13 @@ class GameRegistrationAcceptCity(FormChoiceItem):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        **kwargs,
     ):
         if answer == "no":
             await GameRegistrationCity.prepare(
                 chat_id, user, session, bot, state, self.form_prefix
             )
         else:
-            await self.next_step(chat_id, user, session, bot, state, self.form_prefix)
+            await self.next_step(
+                chat_id, user, session, bot, state, self.form_prefix, **kwargs
+            )

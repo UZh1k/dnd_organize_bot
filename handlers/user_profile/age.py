@@ -19,10 +19,13 @@ class UserProfileAge(UserRegistrationAge):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        **kwargs,
     ):
         if int(answer) < 18:
             await UserProfileAcceptMinor.prepare(
                 chat_id, user, session, bot, state, self.form_prefix
             )
         else:
-            await self.next_step(chat_id, user, session, bot, state, self.form_prefix)
+            await self.next_step(
+                chat_id, user, session, bot, state, self.form_prefix, **kwargs
+            )

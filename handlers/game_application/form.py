@@ -2,8 +2,9 @@ from enum import Enum
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
+from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
-from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import Message, CallbackQuery
 
 from controllers.game import GameController
 from controllers.game_application import GameApplicationController
@@ -32,20 +33,20 @@ class GameApplicationChoiceEnum(Enum):
 
 
 async def handle_apply_for_game(
-    message: Message,
+    game_id: int,
+    chat_id: int,
     bot: AsyncTeleBot,
     session: AsyncSession,
     user: User,
     state: StateContext,
 ):
-    game_id = int(message.text.split()[-1])
     game = await GameController.get_one(game_id, session)
     if not game or not game.active:
-        await bot.send_message(message.chat.id, "Игра уже неактивна")
+        await bot.send_message(chat_id, "Игра уже неактивна")
         return
     if game.creator_id == user.id:
         await bot.send_message(
-            message.chat.id, "Ты уже состоишь в игре, потому что ты ее создал."
+            chat_id, "Ты уже состоишь в игре, потому что ты ее создал."
         )
         return
     game_application = await GameApplicationController.get_one(
@@ -53,15 +54,15 @@ async def handle_apply_for_game(
     )
     if game_application:
         if not game_application.accepted:
-            await bot.send_message(message.chat.id, "Ты уже подавал заявку на эту игру")
+            await bot.send_message(chat_id, "Ты уже подавал заявку на эту игру")
             return
         else:
-            await send_invite(message.chat.id, bot, game)
+            await send_invite(chat_id, bot, game)
             return
     if not user.registered:
         await send_message_with_link_button(
             bot,
-            message.chat.id,
+            chat_id,
             f"Вижу, что тебя заинтересовала игра “{game.title}”. "
             "Зарегистрируйся при помощи команды /register, а затем опять подавайся",
             "Податься на игру",
@@ -96,7 +97,7 @@ async def handle_apply_for_game(
     markup = create_markup(keyboard, GAME_APPLICATION_CALLBACK_PREFIX)
 
     await bot.send_message(
-        message.chat.id,
+        chat_id,
         f"Вижу, что тебя заинтересовала игра “{game.title}”. "
         f"Отправляю тебе анкету мастера этой игры.\n\n"
         f"{get_user_text(game_master)}\n\n"
@@ -105,3 +106,35 @@ async def handle_apply_for_game(
         f"Выбери одну из опций ниже.",
         reply_markup=markup,
     )
+
+
+async def handle_message_apply_for_game(
+    message: Message,
+    bot: AsyncTeleBot,
+    session: AsyncSession,
+    user: User,
+    state: StateContext,
+):
+    game_id = int(message.text.split()[-1])
+    chat_id = message.chat.id
+    await handle_apply_for_game(game_id, chat_id, bot, session, user, state)
+
+
+async def handle_callback_apply_for_game(
+    call: CallbackQuery,
+    bot: AsyncTeleBot,
+    session: AsyncSession,
+    user: User,
+    state: StateContext,
+):
+    print("1")
+    try:
+        await bot.edit_message_reply_markup(
+            call.message.chat.id, call.message.message_id, reply_markup=None
+        )
+        game_id = int(call.data.split(":")[-1])
+        chat_id = call.message.chat.id
+        await handle_apply_for_game(game_id, chat_id, bot, session, user, state)
+    except ApiTelegramException:
+        pass
+

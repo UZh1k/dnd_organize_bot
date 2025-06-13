@@ -19,8 +19,11 @@ class UserProfileCity(UserRegistrationCity):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        **kwargs,
     ):
         if known_timezone := CITY_TO_TIMEZONE.get(answer):
             user.timezone = known_timezone
         await session.refresh(user)
-        await self.next_step(chat_id, user, session, bot, state, self.form_prefix)
+        await self.next_step(
+            chat_id, user, session, bot, state, self.form_prefix, **kwargs
+        )

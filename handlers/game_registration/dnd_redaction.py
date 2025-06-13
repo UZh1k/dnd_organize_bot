@@ -30,6 +30,7 @@ class GameRegistrationDndRedaction(FormChoiceItem):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        **kwargs,
     ):
         await GameRegistrationDndSetting.prepare(
             chat_id, user, session, bot, state, self.form_prefix

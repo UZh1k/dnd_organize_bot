@@ -5,7 +5,6 @@ from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_filters import StateFilter
-from telebot.asyncio_helper import ApiTelegramException
 from telebot.asyncio_storage import StateMemoryStorage, StateRedisStorage
 from telebot.states.asyncio import StateMiddleware
 from telebot.states.asyncio.context import StateContext
@@ -13,11 +12,8 @@ from telebot.types import Message, Update
 
 from consts import (
     BOT_TOKEN,
-    NEWS_CHANNEL_ID,
     ALLOWED_UPDATE_TYPES,
     START_IMAGE,
-    ADMIN_IDS,
-    SEARCH_IMAGE,
     BOOSTY_LINK,
     CRYPTO_LINK,
     WEBHOOK_URL_PATH,
@@ -25,12 +21,10 @@ from consts import (
     REDIS_HOST,
     REDIS_PORT,
     REDIS_PASS,
-    ENVIRONMENT,
 )
-from controllers.game import GameController
-from controllers.user import UserController
 from handlers.administration import AdministrationHandlerGroup
 from handlers.feedback import FeedbackHandlerGroup
+from handlers.filters import FiltersHandlerGroup
 from handlers.game_application import GameApplicationHandlerGroup
 from handlers.game_edit import GameEditHandlerGroup
 from handlers.game_registration import GameRegistrationHandlerGroup
@@ -42,7 +36,7 @@ from middlewares.exception import ExceptionMiddleware
 from middlewares.session import SessionMiddleware
 from middlewares.user import UserMiddleware
 from models.user import User
-from utils.message_helpers import send_message_with_link_button
+from utils.message_helpers import send_message_with_link_button, get_channel_link
 
 state_storage = (
     StateRedisStorage(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASS)
@@ -71,6 +65,7 @@ async def process_webhook(update: dict):
 async def health():
     return {}
 
+
 @bot.message_handler(
     commands=["start"],
     func=lambda message: len(message.text.split()) == 1,
@@ -80,9 +75,7 @@ async def handle_start(
     message: Message, session: AsyncSession, user: User, state: StateContext
 ):
     await state.delete()
-    await bot.send_photo(
-        message.chat.id,
-        START_IMAGE,
+    text = (
         "Привет! Я Сники Бот! Давай помогу найти или создать игру "
         "по твоим любимым НРИ. Для начала тебе нужно зарегистрироваться. "
         "Сделать это очень просто и быстро. Нажми в меню слева внизу кнопку "
@@ -94,7 +87,15 @@ async def handle_start(
         "Если ты искал справочную информацию по ДНД 2024, то тебе лучше "
         "обратиться к Сники Справочнику - @sneaky_library_bot.\n\n"
         "Больше полезных материалов к ролевым играм ты "
-        "найдёшь тут: https://t.me/sneaky_dice",
+        "найдёшь тут: https://t.me/sneaky_dice"
+    )
+    await send_message_with_link_button(
+        bot,
+        message.chat.id,
+        text,
+        "Канал с играми",
+        await get_channel_link(bot),
+        photo=START_IMAGE,
     )
 
 
@@ -103,8 +104,7 @@ async def handle_about(
     message: Message, session: AsyncSession, user: User, state: StateContext
 ):
     await state.delete()
-    await bot.send_message(
-        message.chat.id,
+    text = (
         "Привет! Я Сники Бот! Для регистрации нажми в меню слева внизу кнопку "
         "“Регистрация” или отправь команду /register. Если ты уже зарегистрировался, "
         "то ты можешь начать подбор игроков через нажатие “Создание игры” или "
@@ -123,40 +123,14 @@ async def handle_about(
         f"• Бусти - {BOOSTY_LINK}\n"
         f"• Крипта - USDT (TRC20 | TRON) {CRYPTO_LINK} \n\n"
         f"Больше полезных материалов к ролевым играм ты найдёшь "
-        f"тут: https://t.me/sneaky_dice",
+        f"тут: https://t.me/sneaky_dice"
     )
-
-
-@bot.message_handler(commands=["search"], chat_types=["private"])
-async def find_game(
-    message: Message, session: AsyncSession, user: User, state: StateContext
-):
-    await state.delete()
-    invite_link = (
-        await bot.export_chat_invite_link(NEWS_CHANNEL_ID)
-        if ENVIRONMENT == "local"
-        else "https://t.me/SneakyDiceGames"
-    )
-    if user.registered:
-        text = (
-            "Все активные игры ты можешь увидеть в канале "
-            "https://t.me/SneakyDiceGames. Если что-то понравится, "
-            "то нажми там на кнопку “Подать заявку”."
-        )
-    else:
-        text = (
-            "Все активные игры ты можешь увидеть в канале "
-            "https://t.me/SneakyDiceGames. Но у тебя не получится откликнуться, "
-            "пока ты не зарегистрирован. Чтобы зарегистрироваться выбери в меню "
-            "слева внизу команду “Регистрация” или отправь команду /register."
-        )
     await send_message_with_link_button(
         bot,
         message.chat.id,
         text,
         "Канал с играми",
-        invite_link,
-        photo=SEARCH_IMAGE,
+        await get_channel_link(bot),
     )
 
 
@@ -181,6 +155,7 @@ UserProfileHandlerGroup(bot).register_handlers()
 GameRegistrationHandlerGroup(bot).register_handlers()
 GameEditHandlerGroup(bot).register_handlers()
 ReviewHandlerGroup(bot).register_handlers()
+FiltersHandlerGroup(bot).register_handlers()
 
 
 @bot.message_handler(content_types=["text", "photo", "file"], chat_types=["private"])

@@ -9,6 +9,9 @@ from handlers.game_application.form import (
     handle_apply_for_game,
     GAME_APPLICATION_NO_DATA,
     GAME_APPLICATION_CANCEL,
+    handle_message_apply_for_game,
+    handle_callback_apply_for_game,
+    GAME_APPLICATION_CALLBACK_PREFIX,
 )
 from handlers.game_application.handle_form import (
     handle_application_letter_no_data,
@@ -30,10 +33,17 @@ class GameApplicationHandlerGroup(BaseHandlerGroup):
     def register_handlers(self):
         super().register_handlers()
         self.bot.register_message_handler(
-            handle_apply_for_game,
+            handle_message_apply_for_game,
             chat_types=["private"],
             commands=["start"],
             func=lambda message: len(message.text.split()) == 2,
+            pass_bot=True,
+        )
+        self.bot.register_callback_query_handler(
+            handle_callback_apply_for_game,
+            func=lambda call: (
+                call.data.startswith(f"{GAME_APPLICATION_CALLBACK_PREFIX}:apply")
+            ),
             pass_bot=True,
         )
         self.bot.register_callback_query_handler(

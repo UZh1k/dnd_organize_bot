@@ -106,6 +106,7 @@ class GameRegistrationHandlerGroup(RegistrationHandlerGroup):
         bot: AsyncTeleBot,
         state: StateContext,
         form_prefix: str,
+        **kwargs,
     ):
         async with state.data() as data:
             data["creator_id"] = user.id

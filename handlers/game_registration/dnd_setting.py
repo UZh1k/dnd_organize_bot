@@ -34,6 +34,7 @@ class GameRegistrationDndSetting(FormChoiceTextItem):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
+        **kwargs,
     ):
         await GameRegistrationDescription.prepare(
             chat_id, user, session, bot, state, self.form_prefix

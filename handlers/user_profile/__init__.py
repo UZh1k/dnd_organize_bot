@@ -76,6 +76,7 @@ class UserProfileHandlerGroup(RegistrationHandlerGroup):
         bot: AsyncTeleBot,
         state: StateContext,
         form_prefix: str,
+        **kwargs,
     ):
         await state.delete()
         markup = self.create_markup(
@@ -133,7 +134,7 @@ class UserProfileHandlerGroup(RegistrationHandlerGroup):
         )
         await bot.send_message(
             call.message.chat.id,
-            f"Выбери, что ты хочешь скорректировать",
+            "Выбери, что ты хочешь скорректировать",
             reply_markup=markup,
         )
 
