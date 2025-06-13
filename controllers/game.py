@@ -77,8 +77,11 @@ class GameController(CRUD):
     ) -> tuple[Game | None, int]:
         query = cls.common_query()
 
+        column_names = [column.name for column in Game.__table__.columns]
         set_filters = {
-            key: value for key, value in filters.items() if value is not None
+            key: value
+            for key, value in filters.items()
+            if value is not None and key in column_names
         }
         query = query.where(Game.active.is_(True), Game.post_id.is_not(None)).filter_by(
             **set_filters
