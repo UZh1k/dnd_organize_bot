@@ -28,6 +28,8 @@ class ReviewMenuHandler(BaseMessageHandler):
         user: User,
         state: StateContext,
     ):
+        await state.delete()
+
         if not user.registered:
             await self.bot.send_message(
                 message.chat.id,
