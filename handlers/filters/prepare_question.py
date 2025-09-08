@@ -12,6 +12,7 @@ from handlers.filters.form_items import (
     GameFilterType,
     GameFilterSystem,
     GameFilterTag,
+    GameFilterPlatform,
 )
 from handlers.filters.settings import FilterOptions, FILTERS_FORM_PREFIX, FiltersStages
 from models import User
@@ -20,6 +21,7 @@ from utils.handlers.base_callback_handler import BaseCallbackHandler
 FILTER_OPTION_HANDLER_MAP = {
     FilterOptions.age.value: GameFilterPlayersAge,
     FilterOptions.city.value: GameFilterCity,
+    FilterOptions.platform.value: GameFilterPlatform,
     FilterOptions.dnd_redaction.value: GameFilterDndRedaction,
     FilterOptions.dnd_setting.value: GameFilterDndSetting,
     FilterOptions.format.value: GameFilterFormat,
@@ -35,8 +37,7 @@ class FiltersPrepareQuestionHandler(BaseCallbackHandler):
         self.bot.register_callback_query_handler(
             self.handle_callback,
             func=lambda call: call.data.startswith(
-                f"{FILTERS_FORM_PREFIX}:"
-                f"{FiltersStages.choose_filter.value}"
+                f"{FILTERS_FORM_PREFIX}:" f"{FiltersStages.choose_filter.value}"
             )
             and call.data.split(":")[-1] in FILTER_OPTION_HANDLER_MAP,
         )

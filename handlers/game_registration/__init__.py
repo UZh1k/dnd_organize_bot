@@ -20,6 +20,7 @@ from handlers.game_registration.free import GameRegistrationFree
 from handlers.game_registration.game_time import GameRegistrationTime
 from handlers.game_registration.game_type import GameRegistrationType
 from handlers.game_registration.image import GameRegistrationImage
+from handlers.game_registration.platform import GameRegistrationPlatform
 from handlers.game_registration.players_age import GameRegistrationPlayersAge
 from handlers.game_registration.players_count import GameRegistrationPlayersCount
 from handlers.game_registration.redaction_and_setting import (
@@ -46,6 +47,7 @@ class GameRegistrationHandlerGroup(RegistrationHandlerGroup):
                 GameRegistrationAcceptOffline,
                 GameRegistrationAcceptCity,
                 GameRegistrationCity,
+                GameRegistrationPlatform,
             ),
         ),
         FormItemGroup(main=GameRegistrationPlayersCount),

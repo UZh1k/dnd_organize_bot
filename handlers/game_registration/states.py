@@ -7,6 +7,7 @@ class GameRegistrationStates(StatesGroup):
     accept_offline = State()
     accept_city = State()
     city = State()
+    platform = State()
     system = State()
     dnd_redaction = State()
     dnd_setting = State()

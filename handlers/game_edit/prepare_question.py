@@ -3,6 +3,7 @@ from telebot.states.asyncio import StateContext
 from telebot.types import CallbackQuery
 
 from controllers.game import GameController
+from handlers.game_edit import GameEditPlatform
 from handlers.game_edit.form_items import (
     GameEditTitle,
     GameEditFormat,
@@ -34,6 +35,7 @@ game_edit_option_handler_map = {
     GameEditOptions.title.value: GameEditTitle,
     GameEditOptions.format.value: GameEditFormat,
     GameEditOptions.city.value: GameEditCity,
+    GameEditOptions.platform.value: GameEditPlatform,
     GameEditOptions.system.value: GameEditSystem,
     GameEditOptions.dnd_redaction.value: GameEditDndRedaction,
     GameEditOptions.dnd_setting.value: GameEditDndSetting,

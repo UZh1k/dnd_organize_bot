@@ -57,6 +57,11 @@ class FiltersMenuHandler(BaseHandler):
                 ("Формат", FilterOptions.format.value),
                 ("Город", FilterOptions.city.value),
             )
+        elif set_filters.get("format") == GameFormat.online.value:
+            first_row = (
+                ("Формат", FilterOptions.format.value),
+                ("Площадка", FilterOptions.platform.value),
+            )
         else:
             first_row = (("Формат", FilterOptions.format.value),)
 
@@ -120,10 +125,10 @@ class FiltersMenuHandler(BaseHandler):
 
         channel_link = await get_channel_link(bot)
         text = (
-            '*Фильтры*\n\n'
+            "*Фильтры*\n\n"
             'Добавь фильтры и нажми кнопку "Поиск по фильтрам".\n\n'
-            f'Также все игры можно посмотреть в нашем [канале]({channel_link}), '
-            f'обязательно подписывайся!'
+            f"Также все игры можно посмотреть в нашем [канале]({channel_link}), "
+            f"обязательно подписывайся!"
         )
         if edit_message_id:
             try:

@@ -16,6 +16,7 @@ from handlers.filters.form_items import (
     GameFilterDndRedaction,
     GameFilterFree,
     GameFilterTag,
+    GameFilterPlatform,
 )
 from handlers.filters.list_game import FiltersListGameHandler
 from handlers.filters.menu import FiltersMenuHandler
@@ -40,6 +41,7 @@ class FiltersHandlerGroup(RegistrationHandlerGroup):
             main=GameFilterFormat,
             side=(GameFilterCity,),
         ),
+        FormItemGroup(main=GameFilterPlatform),
         FormItemGroup(main=GameFilterSystem),
         FormItemGroup(main=GameFilterDndSetting),
         FormItemGroup(main=GameFilterDndRedaction),

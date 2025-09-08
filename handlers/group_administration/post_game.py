@@ -17,13 +17,12 @@ async def create_game_post(
     bot: AsyncTeleBot,
     game: Game,
     session: AsyncSession,
-    update_text: str = "",
     players_count: int = 0,
 ):
     post_message = await bot.send_photo(
         NEWS_CHANNEL_ID,
         game.image,
-        create_game_text(game, update_text, players_count),
+        create_game_text(game, players_count),
         reply_markup=await create_game_markup(game, session),
         parse_mode="Markdown",
     )
@@ -58,6 +57,7 @@ async def update_game_post(
 
     try:
         players_count = await GameMemberController.count_game_members(game.id, session)
+        game.is_update = True
 
         if game.done:
             game.done = None
@@ -79,11 +79,9 @@ async def update_game_post(
                         bot,
                         game,
                         session,
-                        update_text=f"Донабор!\n\n",
                         players_count=players_count,
                     )
 
-                game.active = True
                 await bot.send_message(
                     message.chat.id,
                     "Я обновил твою публикацию. Постараюсь побыстрее найти игроков.",
@@ -100,9 +98,7 @@ async def update_game_post(
         except ApiTelegramException:
             pass
 
-        await create_game_post(
-            bot, game, session, update_text=f"Донабор!\n\n", players_count=players_count
-        )
+        await create_game_post(bot, game, session, players_count=players_count)
         await bot.send_message(
             message.chat.id,
             "Я обновил твою публикацию. Постараюсь побыстрее найти игроков.",

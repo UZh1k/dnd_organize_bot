@@ -17,11 +17,15 @@ from utils.other import (
     POPULAR_DND_SETTINGS,
     POPULAR_DND_REDACTIONS,
     CITY_TAGS,
+    POPULAR_PLATFORMS,
 )
 
 
-def create_game_text(game: Game, update_text: str = "", players_count: int = 0) -> str:
+def create_game_text(game: Game, players_count: int = 0) -> str:
+    update_text = "Донабор!\n\n" if game.is_update else ""
+
     city_text = f"Город: {game.city.name}\n" if game.city else ""
+    platform_text = f"Площадка: {game.platform}\n" if game.platform else ""
 
     players_at_all = (
         f"{game.min_players}"
@@ -46,6 +50,11 @@ def create_game_text(game: Game, update_text: str = "", players_count: int = 0) 
         if game.city and game.city.name in CITY_TAGS
         else ""
     )
+    platform_tag = (
+        f"#{create_tag(game.platform)} "
+        if game.platform and game.platform in POPULAR_PLATFORMS
+        else ""
+    )
     system_tag = (
         f"#{create_tag(game.system)} " if game.system in POPULAR_SYSTEMS else ""
     )
@@ -66,6 +75,7 @@ def create_game_text(game: Game, update_text: str = "", players_count: int = 0) 
         f"{update_text}"
         f"Формат: {format_name}\n"
         f"{city_text}"
+        f"{platform_text}"
         f"Количество игроков: {players_at_all}{players_count_left}\n"
         f"Цена: {free_status}{about_price}\n"
         f"Время проведения: {game.time}\n\n"
@@ -79,7 +89,8 @@ def create_game_text(game: Game, update_text: str = "", players_count: int = 0) 
         f"Требование к игрокам: {game.tech_requirements}\n"
         f"ID: {game.id}\n\n"
         f"#{format_name} {city_tag}"
-        f"#{free_status} {system_tag}{setting_tag}{redaction_tag}{age_tag}#{type_name} "
+        f"#{free_status} {system_tag}{setting_tag}{redaction_tag}{age_tag}"
+        f"{platform_tag}#{type_name} "
         f"{' '.join(f'#{tag.title}' for tag in game.tags)}\n"
     )
 

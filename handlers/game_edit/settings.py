@@ -5,6 +5,7 @@ from telebot.states import State, StatesGroup
 
 GAME_EDIT_FORM_PREFIX: Final[str] = "GameEdit"
 
+
 class GameShowStates(StatesGroup):
     show_games = State()
 
@@ -27,6 +28,7 @@ class GameEditOptions(Enum):
     title = "title"
     format = "format"
     city = "city"
+    platform = "platform"
     players_count = "players_count"
     free = "free"
     time = "time"
@@ -48,6 +50,7 @@ class GameEditOptionsStr(Enum):
     title = "Название игры"
     format = "Формат"
     city = "Город"
+    platform = "Площадка"
     players_count = "Количество игроков"
     free = "Цена"
     time = "Время проведения"
@@ -70,6 +73,7 @@ class GameEditStates(StatesGroup):
     accept_offline = State()
     accept_city = State()
     city = State()
+    platform = State()
     system = State()
     dnd_redaction = State()
     dnd_setting = State()

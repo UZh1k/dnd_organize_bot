@@ -1,5 +1,6 @@
 from handlers.filters.form_items.age import GameFilterPlayersAge
 from handlers.filters.form_items.city import GameFilterCity
+from handlers.filters.form_items.platform import GameFilterPlatform
 from handlers.filters.form_items.dnd_redaction import GameFilterDndRedaction
 from handlers.filters.form_items.dnd_setting import GameFilterDndSetting
 from handlers.filters.form_items.format import GameFilterFormat

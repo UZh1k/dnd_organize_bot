@@ -89,6 +89,14 @@ POPULAR_DND_SETTINGS = (
 
 POPULAR_DND_REDACTIONS = ("DnD24", "DnD5e", "DnD3.5e", "DnD3e", "DnD2e", "ADnD", "ODnD")
 
+POPULAR_PLATFORMS = (
+    "Foundry VTT",
+    "Roll20",
+    "DnDBeyond",
+    "OwlBear Rodeo",
+    "Fantasy grounds VTT",
+)
+
 
 def generate_simple_choices(
     choices: tuple[str | int, ...]

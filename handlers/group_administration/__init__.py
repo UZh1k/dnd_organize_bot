@@ -3,8 +3,10 @@ from handlers.group_administration.group_funcs import (
     handle_bot_added_to_group,
     handle_bot_removed_group,
     close_game,
-    done_game, handle_bot_added_to_supergroup,
+    done_game,
+    handle_bot_added_to_supergroup,
 )
+from handlers.group_administration.help import GroupHelpHandler
 from handlers.group_administration.link_game import (
     handle_bot_promoted_to_admin,
     handle_link_game_command,
@@ -21,7 +23,13 @@ from utils.handler_groups.base_handler_group import BaseHandlerGroup
 
 
 class GroupAdministrationHandlerGroup(BaseHandlerGroup):
+    handlers = [
+        GroupHelpHandler,
+    ]
+
     def register_handlers(self):
+        super().register_handlers()
+
         self.bot.register_my_chat_member_handler(
             handle_bot_added_to_group,
             lambda update: (
@@ -34,9 +42,9 @@ class GroupAdministrationHandlerGroup(BaseHandlerGroup):
         self.bot.register_my_chat_member_handler(
             handle_bot_added_to_supergroup,
             lambda update: (
-                    update.chat.type == "supergroup"
-                    and update.new_chat_member.user.username == BOT_USERNAME
-                    and update.new_chat_member.status == "member"
+                update.chat.type == "supergroup"
+                and update.new_chat_member.user.username == BOT_USERNAME
+                and update.new_chat_member.status == "member"
             ),
             pass_bot=True,
         )

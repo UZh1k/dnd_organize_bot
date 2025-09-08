@@ -58,6 +58,7 @@ class Game(Base):
     city_id: Mapped[int | None] = mapped_column(
         ForeignKey("city.id", ondelete="CASCADE")
     )
+    platform: Mapped[str | None]
     about_price: Mapped[str | None]
     redaction: Mapped[str | None]
     setting: Mapped[str | None]
@@ -65,6 +66,7 @@ class Game(Base):
 
     active: Mapped[bool | None] = mapped_column(default=True)
 
+    is_update: Mapped[bool] = mapped_column(default=False)
     last_update: Mapped[datetime | None]
     done: Mapped[bool | None]
 

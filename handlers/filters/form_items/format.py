@@ -27,6 +27,8 @@ class GameFilterFormat(FilterItem, GameRegistrationFormat):
         edit_message_id: int = None,
         **kwargs,
     ):
+        if answer != "online":
+            await state.add_data(platform=None)
         if answer == "offline":
             await GameFilterCity.prepare(
                 chat_id,

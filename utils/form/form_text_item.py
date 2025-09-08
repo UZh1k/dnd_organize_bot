@@ -81,7 +81,7 @@ class FormTextItem(ABC):
             await bot.send_message(
                 message.chat.id,
                 "Похоже, что текст содержит один из символов: “*”, “#” или “_”. "
-                "Пожалуйста, перепиши без нее.",
+                "Пожалуйста, перепиши без них.",
             )
             return False
         return True
