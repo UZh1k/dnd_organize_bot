@@ -45,6 +45,10 @@ class GameEditConfirmHandler(BaseCallbackHandler):
                 option is GameEditOptionsStr.city
                 and game.format != GameFormat.offline
                 or (
+                    option is GameEditOptionsStr.platform
+                    and game.format != GameFormat.online
+                )
+                or (
                     option is GameEditOptionsStr.redaction_and_setting
                     and game.system == "DnD"
                 )

@@ -1,5 +1,3 @@
-import traceback
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
@@ -10,7 +8,6 @@ from consts import NEWS_CHANNEL_ID
 from controllers.game import GameController
 from controllers.game_member import GameMemberController
 from controllers.game_tag import GameTagController
-from controllers.game_tag_link import GameTagLinkController
 from handlers.game_edit.cancel import CancelEditHandler
 from handlers.game_edit.delete_ask import DeleteAskGameHandler
 from handlers.game_edit.delete_confirm import DeleteConfirmGameHandler
@@ -37,6 +34,7 @@ from handlers.game_edit.form_items import (
     GameEditAboutPrice,
     GameEditImage,
 )
+from handlers.game_edit.form_items.platform import GameEditPlatform
 from handlers.game_edit.prepare_question import PrepareQuestionHandler
 from handlers.game_edit.settings import (
     GameEditCallbackPrefixes,
@@ -65,7 +63,12 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
         FormItemGroup(main=GameEditTitle),
         FormItemGroup(
             main=GameEditFormat,
-            side=(GameEditAcceptOffline, GameEditAcceptCity, GameEditCity),
+            side=(
+                GameEditAcceptOffline,
+                GameEditAcceptCity,
+                GameEditCity,
+                GameEditPlatform,
+            ),
         ),
         FormItemGroup(main=GameEditCity),
         FormItemGroup(main=GameEditPlayersCount),

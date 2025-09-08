@@ -3,6 +3,7 @@ from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
 
 from handlers.game_registration.accept_offline import GameRegistrationAcceptOffline
+from handlers.game_registration.platform import GameRegistrationPlatform
 from handlers.game_registration.states import GameRegistrationStates
 from models import User, GameFormat
 from utils.form.form_choice_item import FormChoiceItem
@@ -37,7 +38,11 @@ class GameRegistrationFormat(FormChoiceItem):
     ):
         if answer == "offline":
             await GameRegistrationAcceptOffline.prepare(
-                chat_id, user, session, bot, state, self.form_prefix
+                chat_id, user, session, bot, state, self.form_prefix, **kwargs
+            )
+        elif answer == "online":
+            await GameRegistrationPlatform.prepare(
+                chat_id, user, session, bot, state, self.form_prefix, **kwargs
             )
         else:
             await self.next_step(
