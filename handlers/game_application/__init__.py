@@ -4,6 +4,7 @@ from handlers.game_application.accept_form import (
     ApplyAnswer,
     handle_accept_application,
 )
+from handlers.game_application.answer_application import AnswerApplicationHandler
 from handlers.game_application.applicant_review import ApplicantReviewHandler
 from handlers.game_application.form import (
     handle_apply_for_game,
@@ -28,6 +29,7 @@ class GameApplicationHandlerGroup(BaseHandlerGroup):
     handlers = [
         ApplicantReviewHandler,
         ApplicationWriteLetterHandler,
+        AnswerApplicationHandler,
     ]
 
     def register_handlers(self):

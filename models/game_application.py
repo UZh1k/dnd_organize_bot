@@ -14,3 +14,4 @@ class GameApplication(Base):
         ForeignKey("game.id", ondelete="CASCADE"), primary_key=True
     )
     accepted: Mapped[bool | None]
+    message_id: Mapped[int | None]
