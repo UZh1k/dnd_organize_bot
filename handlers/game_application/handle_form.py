@@ -25,8 +25,6 @@ async def send_application(
     if not game or not game.active:
         await bot.send_message(user.id, "Игра закрыта или не существует")
         return
-    await GameApplicationController.create(game_id, user.id, session)
-    await bot.send_message(user.id, "Заявка отправлена")
 
     player_statistic = await ReviewController.get_reviews_statistic(
         user.id, session, ReviewReceiverTypeEnum.player.value
@@ -44,15 +42,24 @@ async def send_application(
             )
         )
 
-    await bot.send_message(
+    application_message = await bot.send_message(
         game.creator_id,
         f"Я нашел тебе игрока для приключения “{game.title}”. "
         f"Жду твоего одобрения, чтобы пригласить его в группу.\n\n"
         f"{get_user_text(user)}\n\n"
         f"Оценка: {player_statistic_text}\n\n"
-        f"{form_text if form_text else ''}",
+        f"{form_text + '\n\n' if form_text else ''}"
+        f"❗️❗️❗️\n"
+        f"Чтобы написать сообщение игроку, ответь на это сообщение. "
+        f"В сообщении можно прикрепить фото, войс или кружок. "
+        f"Если хочешь остаться с ним в контакте, напиши ему в сообщении свой ник в ТГ.",
         reply_markup=keyboard,
     )
+
+    await GameApplicationController.create(
+        game_id, user.id, application_message.id, session
+    )
+    await bot.send_message(user.id, "Заявка отправлена")
 
 
 async def handle_application_letter_no_data(
