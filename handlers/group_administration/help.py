@@ -10,7 +10,7 @@ class GroupHelpHandler(BaseMessageHandler):
     def register_handler(self):
         self.bot.register_message_handler(
             self.handle_message,
-            commands=["help"],
+            commands=["help", "list"],
             chat_types=["group", "supergroup"],
         )
 
