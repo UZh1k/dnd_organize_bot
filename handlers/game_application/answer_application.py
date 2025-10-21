@@ -43,7 +43,7 @@ class AnswerApplicationHandler(BaseMessageHandler):
         game = await GameController.get_one(game_id, session)
         await self.bot.send_message(
             receiver_id,
-            f'Ответ от {"мастера" if user.id == game.creator_id else "игрока"} '
+            f'Пришел ответ от {"мастера" if user.id == game.creator_id else "игрока"} '
             f'{user.name} по игре "{game.title}". \n\n'
             "Чтобы переслать ему что-то, ответь на сообщение ниже. "
             "В сообщении можно прикрепить фото, войс или кружок.",
