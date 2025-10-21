@@ -62,6 +62,7 @@ POPULAR_SYSTEMS = (
     "Cyberpunk",
     "Vampire: The Masquerade",
     "Vampire: The Requiem",
+    "Daggerheart",
 )
 
 POPULAR_SYSTEMS_MAP = {
@@ -75,6 +76,7 @@ POPULAR_SYSTEMS_MAP = {
     "Cyberpunk": "Cyberpunk",
     "VTM": "Vampire: The Masquerade",
     "VTR": "Vampire: The Requiem",
+    "Daggerheart": "Daggerheart",
 }
 
 POPULAR_DND_SETTINGS = (

@@ -4,6 +4,7 @@ from telebot.types import Message
 
 from controllers.game import GameController
 from controllers.game_application import GameApplicationController
+from controllers.game_application_message import GameApplicationMessageController
 from models import User
 from utils.handlers.base_message_handler import BaseMessageHandler
 
@@ -26,21 +27,41 @@ class AnswerApplicationHandler(BaseMessageHandler):
     async def handle_message(
         self, message: Message, session: AsyncSession, user: User, state: StateContext
     ):
-        application = await GameApplicationController.get_one_for_answer(
+        if application := await GameApplicationController.get_one_for_answer(
             user.id, message.reply_to_message.id, session
-        )
-        if not application:
+        ):
+            game_id = application.game_id
+            receiver_id = application.user_id
+        elif application_message := await GameApplicationMessageController.get_one_for_answer(
+            user.id, message.reply_to_message.id, session
+        ):
+            game_id = application_message.game_id
+            receiver_id = application_message.sender_id
+        else:
             return
 
-        game = await GameController.get_one(application.game_id, session)
+        game = await GameController.get_one(game_id, session)
         await self.bot.send_message(
-            application.user_id,
-            f'Ответ от мастера {user.name} по игре "{game.title}"',
+            receiver_id,
+            f'Ответ от {"мастера" if user.id == game.creator_id else "игрока"} '
+            f'{user.name} по игре "{game.title}". \n\n'
+            "Чтобы переслать ему что-то, ответь на сообщение ниже. "
+            "В сообщении можно прикрепить фото, войс или кружок.",
         )
-        await self.bot.copy_message(
-            application.user_id,
+        answer_message_id = await self.bot.copy_message(
+            receiver_id,
             message.chat.id,
             message.id,
         )
 
         await self.bot.send_message(message.chat.id, "Сообщение отправлено")
+
+        await GameApplicationMessageController.create(
+            {
+                "sender_id": user.id,
+                "receiver_id": receiver_id,
+                "game_id": game_id,
+                "message_id": answer_message_id.message_id,
+            },
+            session,
+        )

@@ -8,5 +8,6 @@ from models.game_tag import *  # noqa: F403
 from models.review import *  # noqa: F403
 from models.review_member import *  # noqa: F403
 from models.user import *  # noqa: F403
+from models.game_application_message import *  # noqa: F403
 
 Base.registry.configure()
