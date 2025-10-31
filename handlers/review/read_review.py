@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.states.asyncio import StateContext
-from telebot.types import CallbackQuery
+from telebot.types import CallbackQuery, InlineKeyboardButton
 
 from controllers.review import ReviewController
 from handlers.review.settings import (
@@ -26,20 +26,20 @@ class ReadReviewHandler(BaseCallbackHandler):
         )
 
     async def on_action(
-            self,
-            call: CallbackQuery,
-            session: AsyncSession,
-            user: User,
-            state: StateContext,
+        self,
+        call: CallbackQuery,
+        session: AsyncSession,
+        user: User,
+        state: StateContext,
     ):
         pass
 
     async def handle_callback(
-            self,
-            call: CallbackQuery,
-            session: AsyncSession,
-            user: User,
-            state: StateContext,
+        self,
+        call: CallbackQuery,
+        session: AsyncSession,
+        user: User,
+        state: StateContext,
     ):
         review_num = int(call.data.split(":")[-1])
         reviews = await ReviewController.get_user_reviews(user.id, session)
@@ -50,28 +50,30 @@ class ReadReviewHandler(BaseCallbackHandler):
             )
             return
 
-        buttons = []
-        if review_num != 0:
-            buttons.append(
-                (
-                    "Предыдущий",
-                    f"{ReviewMenuChoices.reviews_about_me.value}:{review_num-1}",
-                )
-            )
-        if review_num != len(reviews) - 1:
-            buttons.append(
-                (
-                    "Следующий",
-                    f"{ReviewMenuChoices.reviews_about_me.value}:{review_num+1}",
-                )
-            )
-
         keyboard = create_markup(
-            buttons,
+            (("Назад", ReviewMenuChoices.menu.value),),
             REVIEW_MENU_PREFIX,
             row_width=2,
             form_prefix=REVIEW_CALLBACK_PREFIX,
         )
+        pagination_buttons = []
+        if review_num != 0:
+            pagination_buttons.append(
+                InlineKeyboardButton(
+                    "Предыдущий",
+                    callback_data=f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.reviews_about_me.value}:{review_num-1}",
+                )
+            )
+        if review_num != len(reviews) - 1:
+
+            pagination_buttons.append(
+                InlineKeyboardButton(
+                    "Следующий",
+                    callback_data=f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.reviews_about_me.value}:{review_num+1}",
+                )
+            )
+
+        keyboard.add(*pagination_buttons, row_width=2)
 
         review = reviews[review_num]
         review_text = generate_review_text(review, review_num, len(reviews))

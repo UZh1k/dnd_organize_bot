@@ -52,9 +52,7 @@ class FiltersListGameHandler(BaseCallbackHandler):
         if not is_first_message:
             search_number = int(call_data_split[-1])
 
-        async with state.data() as data:
-            set_filters = data.copy()
-
+        set_filters = user.filters
         tags = []
         if "tags" in set_filters:
             tags = set_filters.pop("tags") or []

@@ -31,7 +31,7 @@ class FiltersMenuHandler(BaseHandler):
         self.bot.register_callback_query_handler(
             self.handle_callback,
             func=lambda call: call.data
-            == (f"{FILTERS_FORM_PREFIX}:" f"{FiltersStages.menu.value}"),
+            == f"{FILTERS_FORM_PREFIX}:{FiltersStages.menu.value}",
         )
 
     @classmethod
@@ -46,18 +46,14 @@ class FiltersMenuHandler(BaseHandler):
     ):
         await state.set(FiltersStates.menu)
 
-        set_filters = {}
-        async with state.data() as data:
-            set_filters = data
-
         keyboard = InlineKeyboardMarkup()
 
-        if set_filters.get("format") == GameFormat.offline.value:
+        if user.filters.get("format") == GameFormat.offline.value:
             first_row = (
                 ("Формат", FilterOptions.format.value),
                 ("Город", FilterOptions.city.value),
             )
-        elif set_filters.get("format") == GameFormat.online.value:
+        elif user.filters.get("format") == GameFormat.online.value:
             first_row = (
                 ("Формат", FilterOptions.format.value),
                 ("Площадка", FilterOptions.platform.value),
@@ -73,7 +69,7 @@ class FiltersMenuHandler(BaseHandler):
             ),
         )
 
-        if set_filters.get("system") == "DnD":
+        if user.filters.get("system") == "DnD":
             markup += (
                 (
                     ("Редакция", FilterOptions.dnd_redaction.value),
@@ -95,7 +91,7 @@ class FiltersMenuHandler(BaseHandler):
                     InlineKeyboardButton(
                         (
                             await FILTER_OPTION_HANDLER_MAP[call_data].prepare_answer(
-                                name, set_filters, session
+                                name, user.filters, session
                             )
                         ),
                         callback_data=(
@@ -140,7 +136,12 @@ class FiltersMenuHandler(BaseHandler):
                     parse_mode="Markdown",
                 )
             except ApiTelegramException:
-                pass
+                await bot.send_message(
+                    chat_id,
+                    text,
+                    reply_markup=keyboard,
+                    parse_mode="Markdown",
+                )
         else:
             await bot.send_message(
                 chat_id,
@@ -165,4 +166,11 @@ class FiltersMenuHandler(BaseHandler):
         user: User,
         state: StateContext,
     ):
-        await self.show_menu(call.message.chat.id, user, session, self.bot, state)
+        await self.show_menu(
+            call.message.chat.id,
+            user,
+            session,
+            self.bot,
+            state,
+            edit_message_id=call.message.id,
+        )

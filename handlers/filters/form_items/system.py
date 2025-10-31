@@ -15,6 +15,13 @@ class GameFilterSystem(FilterItem, GameRegistrationSystem):
     prepare_text = "Выбери из списка или напиши текстом игровую систему."
     set_field = "system"
 
+    async def save_answer(
+        self, text: str, user: User, session: AsyncSession, state: StateContext
+    ):
+        if text != "DnD":
+            await state.add_data(redaction=None, setting=None)
+        await super().save_answer(text, user, session, state)
+
     async def on_answered(
         self,
         answer: str,
@@ -38,4 +45,4 @@ class GameFilterSystem(FilterItem, GameRegistrationSystem):
         return f"{name}: {system}" if system else name
 
     async def on_clean(self, state: StateContext):
-        await state.add_data(system=None)
+        await state.add_data(system=None, redaction=None, setting=None)

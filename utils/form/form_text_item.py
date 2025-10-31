@@ -46,7 +46,7 @@ class FormTextItem(ABC):
             chat_id,
             cls.prepare_text.format(user=user),
             reply_markup=await cls.prepare_markup(
-                form_prefix, session, state, **kwargs
+                form_prefix, session, state, user=user, **kwargs
             ),
         )
 

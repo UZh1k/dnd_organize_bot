@@ -5,6 +5,7 @@ from enum import Enum
 from sqlalchemy import func, Index, BIGINT, ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
+from models.user import User
 from models.base import Base
 
 

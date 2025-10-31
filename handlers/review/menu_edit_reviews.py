@@ -1,20 +1,21 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from telebot.apihelper import ApiTelegramException
+from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
-from telebot.types import CallbackQuery
+from telebot.types import CallbackQuery, InlineKeyboardButton
 
-from controllers.game import GameController
+from controllers.review import ReviewController
 from handlers.review.settings import (
+    REVIEW_CALLBACK_PREFIX,
     REVIEW_MENU_PREFIX,
     ReviewMenuChoices,
-    REVIEW_CALLBACK_PREFIX,
+    REVIEW_ITEM_PREFIX,
 )
-from models import User
+from models import User, ReviewReceiverTypeEnum
 from utils.handlers.base_callback_handler import BaseCallbackHandler
 from utils.message_helpers import create_markup, get_pagination_row
 
 
-class ReviewChooseGameHandler(BaseCallbackHandler):
+class MenuEditReviewHandler(BaseCallbackHandler):
     page_size = 10
 
     def register_handler(self):
@@ -22,7 +23,7 @@ class ReviewChooseGameHandler(BaseCallbackHandler):
             self.handle_callback,
             func=lambda call: (
                 call.data.startswith(
-                    f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.review_dm.value}"
+                    f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.edit_review.value}"
                 )
             ),
         )
@@ -52,53 +53,55 @@ class ReviewChooseGameHandler(BaseCallbackHandler):
         else:
             page = int(call_data_split[-1])
 
-        games, total_count = await GameController.get_games_to_review(
+        reviews, total_count = await ReviewController.get_reviews_from_user(
             user.id, session, self.page_size, page
         )
 
-        if not games:
-            markup = create_markup(
-                (("Назад", ReviewMenuChoices.menu.value),),
-                REVIEW_MENU_PREFIX,
-                form_prefix=REVIEW_CALLBACK_PREFIX,
-            )
-            await self.bot.edit_message_text(
-                "Похоже, что ты уже оценил всех мастеров, с кем играл, "
-                "или вышел из группы с уже прошедшей игрой. "
-                "Чтобы сохранить возможность оценить сопартийцев или мастера игры, "
-                "не выходи из чата вашего завершенного приключения.",
-                call.message.chat.id,
-                message_id=call.message.id,
-                reply_markup=markup,
-            )
-            return
+        keyboard_choices = []
 
-        markup = create_markup(
-            tuple(
-                (f"{game.title} от мастера {game.creator.name}", game.creator_id)
-                for game in games
-            ),
-            ReviewMenuChoices.review_dm.value,
+        for review in reviews:
+            prefix = (
+                "Игрок"
+                if review.receiver_type == ReviewReceiverTypeEnum.player
+                else "Мастер"
+            )
+            comment_text = "с комментарием" if review.comment else "без комментария"
+            keyboard_choices.append(
+                (
+                    f"{prefix} {review.to_user.name}: {review.value}⭐️, {comment_text}",
+                    review.id,
+                )
+            )
+
+        keyboard = create_markup(
+            keyboard_choices,
+            REVIEW_ITEM_PREFIX,
             form_prefix=REVIEW_CALLBACK_PREFIX,
         )
-        markup.add(
+        keyboard.add(
+            InlineKeyboardButton(
+                "Назад",
+                callback_data=f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.menu.value}",
+            )
+        )
+        keyboard.add(
             *get_pagination_row(
                 page,
                 total_count,
                 self.page_size,
-                f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.review_dm.value}",
+                f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.edit_review.value}",
             ),
             row_width=2,
         )
 
         if first_message:
             await self.bot.edit_message_text(
-                "Выбери игру, мастера которой хочешь оценить.",
+                "Выбери отзыв, который хочешь поменять.",
                 call.message.chat.id,
                 message_id=call.message.id,
-                reply_markup=markup,
+                reply_markup=keyboard,
             )
         else:
             await self.bot.edit_message_reply_markup(
-                call.message.chat.id, call.message.message_id, reply_markup=markup
+                call.message.chat.id, call.message.message_id, reply_markup=keyboard
             )

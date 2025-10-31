@@ -1,5 +1,4 @@
-import locale
-
+from babel.dates import format_datetime
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
@@ -107,10 +106,11 @@ def review_statistic_text(statistic: ReviewStatistic, with_comments_count: bool 
     return f"{statistic.rating:.1f}⭐️ ({pluralize_review(statistic.total_count)}{comments_part})"
 
 
-
 def generate_review_text(review: Review, review_index: int, total_count: int):
     comment_text = f"Комментарий: {review.comment}\n" if review.comment else ""
-    locale.setlocale(locale.LC_ALL, "")
+    formatted_date = format_datetime(
+        review.created, format="dd MMMM, yyyy, HH:mm", locale="ru"
+    )
     return (
         f"Отзыв {'мастеру' if review.receiver_type == ReviewReceiverTypeEnum.dm else 'игроку'} "
         f"{review.to_user.name} "
@@ -118,5 +118,24 @@ def generate_review_text(review: Review, review_index: int, total_count: int):
         f"Пользователь: {review.from_user.name}\n"
         f"Оценка: {review.value}⭐️\n"
         f"{comment_text}\n"
-        f"Дата: {review.created:%d %B, %Y, %H:%M}\n"
+        f"Дата: {formatted_date}\n"
     )
+
+
+def get_pagination_row(page: int, total_count: int, page_size: int, prefix: str):
+    last_row = []
+    is_last_page = (page + 1) * page_size >= total_count
+    if total_count > page_size:
+        if page != 0:
+            last_row.append(
+                InlineKeyboardButton(
+                    "Предыдущая страница", callback_data=f"{prefix}:{page - 1}"
+                )
+            )
+        if not is_last_page:
+            last_row.append(
+                InlineKeyboardButton(
+                    "Следующая страница", callback_data=f"{prefix}:{page + 1}"
+                )
+            )
+    return last_row

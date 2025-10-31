@@ -16,6 +16,15 @@ class GameFilterFormat(FilterItem, GameRegistrationFormat):
     prepare_text = "В каком формате ищешь игру?"
     set_field = "format"
 
+    async def save_answer(
+        self, text: str, user: User, session: AsyncSession, state: StateContext
+    ):
+        if text != "online":
+            await state.add_data(platform=None)
+        if text != "offline":
+            await state.add_data(city_id=None)
+        await super().save_answer(text, user, session, state)
+
     async def on_answered(
         self,
         answer: str,
@@ -27,8 +36,6 @@ class GameFilterFormat(FilterItem, GameRegistrationFormat):
         edit_message_id: int = None,
         **kwargs,
     ):
-        if answer != "online":
-            await state.add_data(platform=None)
         if answer == "offline":
             await GameFilterCity.prepare(
                 chat_id,
@@ -40,9 +47,15 @@ class GameFilterFormat(FilterItem, GameRegistrationFormat):
                 edit_message_id=edit_message_id,
             )
         else:
-            await state.add_data(city_id=None)
             await self.next_step(
-                chat_id, user, session, bot, state, self.form_prefix, **kwargs
+                chat_id,
+                user,
+                session,
+                bot,
+                state,
+                self.form_prefix,
+                edit_message_id=edit_message_id,
+                **kwargs,
             )
 
     @classmethod

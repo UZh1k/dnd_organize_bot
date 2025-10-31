@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum, IntEnum
 
-from sqlalchemy import BIGINT, SMALLINT, ForeignKey
+from sqlalchemy import BIGINT, SMALLINT, ForeignKey, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
@@ -41,5 +41,7 @@ class User(Base):
     banned: Mapped[bool] = mapped_column(default=False)
     commands_count: Mapped[int] = mapped_column(default=0)
     last_update: Mapped[datetime | None]
+
+    filters: Mapped[dict] = mapped_column(JSON, default=dict)
 
     city: Mapped["City"] = relationship()

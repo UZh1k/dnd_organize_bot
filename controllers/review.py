@@ -1,5 +1,6 @@
 from typing import Sequence
 
+from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
@@ -62,3 +63,31 @@ class ReviewController(CRUD):
             rating=rating_sum / total_count if total_count else 0,
             comments_count=comments_count,
         )
+
+    @classmethod
+    async def get_reviews_from_user(
+        cls, from_user_id: int, session: AsyncSession, limit: int, page: int = 0
+    ) -> tuple[Sequence[Review], int]:
+        query = cls.common_query().where(Review.from_user_id == from_user_id)
+        paginated_query = (
+            query.limit(limit).offset(page * limit).order_by(Review.created.desc())
+        )
+        total_count = await session.scalar(
+            query.with_only_columns(func.count(Review.id))
+        )
+        return (await session.execute(paginated_query)).scalars().all(), total_count
+
+    @classmethod
+    async def find_one(
+        cls,
+        from_user_id: int,
+        to_user_id: int,
+        receiver_type: str,
+        session: AsyncSession,
+    ) -> Review | None:
+        query = cls.common_query().where(
+            Review.from_user_id == from_user_id,
+            Review.to_user_id == to_user_id,
+            Review.receiver_type == receiver_type,
+        )
+        return (await session.execute(query)).scalar_one_or_none()

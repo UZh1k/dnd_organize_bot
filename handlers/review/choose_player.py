@@ -8,7 +8,6 @@ from handlers.review.settings import (
     REVIEW_CALLBACK_PREFIX,
     REVIEW_MENU_PREFIX,
     ReviewMenuChoices,
-    ReviewStates,
 )
 from models import User
 from utils.handlers.base_callback_handler import BaseCallbackHandler
@@ -58,12 +57,19 @@ class ReviewChoosePlayerHandler(BaseCallbackHandler):
         )
 
         if not players_and_games:
-            await self.bot.send_message(
-                call.message.chat.id,
+            markup = create_markup(
+                (("Назад", ReviewMenuChoices.menu.value),),
+                REVIEW_MENU_PREFIX,
+                form_prefix=REVIEW_CALLBACK_PREFIX,
+            )
+            await self.bot.edit_message_text(
                 "Похоже, что ты уже оценил всех игроков, с кем играл, "
                 "или вышел из группы с уже прошедшей игрой. "
                 "Чтобы сохранить возможность оценить сопартийцев или мастера игры, "
                 "не выходи из чата вашего завершенного приключения.",
+                call.message.chat.id,
+                message_id=call.message.id,
+                reply_markup=markup,
             )
             return
 
@@ -73,14 +79,14 @@ class ReviewChoosePlayerHandler(BaseCallbackHandler):
             if page != 0:
                 last_row.append(
                     InlineKeyboardButton(
-                        f"Предыдущая страница",
+                        "Предыдущая страница",
                         callback_data=f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.review_player.value}:{page - 1}",
                     )
                 )
             if not is_last_page:
                 last_row.append(
                     InlineKeyboardButton(
-                        f"Следующая страница",
+                        "Следующая страница",
                         callback_data=f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.review_player.value}:{page + 1}",
                     )
                 )
@@ -105,12 +111,12 @@ class ReviewChoosePlayerHandler(BaseCallbackHandler):
             form_prefix=REVIEW_CALLBACK_PREFIX,
         )
         markup.add(*last_row, row_width=2)
-        await state.set(ReviewStates.review_player)
 
         if first_message:
-            await self.bot.send_message(
-                call.message.chat.id,
+            await self.bot.edit_message_text(
                 "Выбери игрока, которого хочешь оценить.",
+                call.message.chat.id,
+                message_id=call.message.id,
                 reply_markup=markup,
             )
         else:

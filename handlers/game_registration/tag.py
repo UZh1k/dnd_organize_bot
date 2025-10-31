@@ -51,6 +51,8 @@ class GameRegistrationTag(FormChoiceItem):
         )
         return markup
 
+    async def get_active_tags(self, session: AsyncSession) -> list[int]: ...
+
     async def handle_callback(
         self,
         call: CallbackQuery,
@@ -104,7 +106,11 @@ class GameRegistrationTag(FormChoiceItem):
                     call.message.chat.id,
                     call.message.message_id,
                     reply_markup=await self.prepare_markup(
-                        self.form_prefix, session, state, chosen_tags=chosen_tags
+                        self.form_prefix,
+                        session,
+                        state,
+                        user=user,
+                        chosen_tags=chosen_tags,
                     ),
                 )
             except ApiTelegramException:

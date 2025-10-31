@@ -128,12 +128,11 @@ async def handle_callback_apply_for_game(
     state: StateContext,
 ):
     try:
-        await bot.edit_message_reply_markup(
-            call.message.chat.id, call.message.message_id, reply_markup=None
+        await bot.answer_callback_query(
+            callback_query_id=call.id, text="Подай заявку и возвращайся листать дальше"
         )
         game_id = int(call.data.split(":")[-1])
         chat_id = call.message.chat.id
         await handle_apply_for_game(game_id, chat_id, bot, session, user, state)
     except ApiTelegramException:
         pass
-

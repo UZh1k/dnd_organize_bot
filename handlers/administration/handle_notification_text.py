@@ -58,14 +58,19 @@ class NotificationTextHandler(BaseMessageHandler):
             message.chat.id, f"Начинаем отправлять нотификации. Всего - {total_count}."
         )
         counter = 0
+        success_count = 0
         for user_ids_batch in batched(user_ids, self.batch_size):
             for user_id in user_ids_batch:
                 try:
                     await self.bot.copy_message(user_id, message.chat.id, message.id)
+                    success_count += 1
                 except ApiTelegramException as e:
                     print(e)
                     pass
             counter += len(user_ids_batch)
             await self.bot.send_message(message.chat.id, f"{counter}/{total_count}")
             await asyncio.sleep(1)
-        await self.bot.send_message(message.chat.id, "Все нотификации отправлены")
+        await self.bot.send_message(
+            message.chat.id,
+            f"Все нотификации отправлены. Всего удачных: {success_count}/{total_count}",
+        )

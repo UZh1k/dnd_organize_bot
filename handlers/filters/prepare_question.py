@@ -53,9 +53,6 @@ class FiltersPrepareQuestionHandler(BaseCallbackHandler):
 
         handler = FILTER_OPTION_HANDLER_MAP[question]
 
-        async with state.data() as data:
-            tags = data.get("tags", [])
-
         await handler.prepare(
             call.message.chat.id,
             user,
@@ -64,5 +61,5 @@ class FiltersPrepareQuestionHandler(BaseCallbackHandler):
             state,
             FILTERS_FORM_PREFIX,
             edit_message_id=call.message.id,
-            chosen_tags=tags,
+            chosen_tags=user.filters.get("tags") or [],
         )

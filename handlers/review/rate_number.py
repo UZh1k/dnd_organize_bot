@@ -30,17 +30,18 @@ class RateNumberHandler(BaseCallbackHandler):
         state: StateContext,
     ):
         rate_number = int(call.data.split(":")[-1])
-        await state.add_data(value=rate_number)
 
         keyboard = create_markup(
             (("Сохранить без комментария", EMPTY_CALLBACK),),
             REVIEW_CALLBACK_PREFIX,
         )
 
-        await self.bot.send_message(
-            call.message.chat.id,
+        await self.bot.edit_message_text(
             "Отлично! Теперь оставь комментарий "
             'или нажми кнопку "Сохранить без комментария"',
+            call.message.chat.id,
+            message_id=call.message.id,
             reply_markup=keyboard,
         )
         await state.set(ReviewStates.write_comment)
+        await state.add_data(value=rate_number)
