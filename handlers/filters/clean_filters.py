@@ -13,9 +13,8 @@ class FiltersCleanHandler(BaseCallbackHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: call.data == (
-                f"{FILTERS_FORM_PREFIX}:{FiltersStages.clear_filters.value}"
-            ),
+            func=lambda call: call.data
+            == (f"{FILTERS_FORM_PREFIX}:{FiltersStages.clear_filters.value}"),
         )
 
     async def handle_callback(
@@ -29,6 +28,8 @@ class FiltersCleanHandler(BaseCallbackHandler):
             set_filters = data
         if set_filters:
             await state.delete()
+            user.filters = {}
+            await session.flush()
             await FiltersMenuHandler.show_menu(
                 call.message.chat.id,
                 user,

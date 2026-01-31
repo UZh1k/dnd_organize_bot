@@ -20,6 +20,8 @@ class FormTextItem(ABC):
     with_callback: bool = False
     with_photo: bool = False
 
+    prohibited_symbols: list[str] = ["*", "#", "_", "`"]
+
     def __init__(self, next_step: Callable[..., Awaitable], form_prefix: str):
         self.next_step = next_step
         self.form_prefix = form_prefix
@@ -77,11 +79,11 @@ class FormTextItem(ABC):
 
     @classmethod
     async def check_has_no_bad_symbols(cls, message: Message, bot: AsyncTeleBot):
-        if "*" in message.text or "_" in message.text or "#" in message.text:
+        if any(s in message.text for s in cls.prohibited_symbols):
             await bot.send_message(
                 message.chat.id,
-                "Похоже, что текст содержит один из символов: “*”, “#” или “_”. "
-                "Пожалуйста, перепиши без них.",
+                f"Похоже, что текст содержит один из символов: "
+                f"{', '.join(cls.prohibited_symbols)}. Пожалуйста, перепиши без них.",
             )
             return False
         return True

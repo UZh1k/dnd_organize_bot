@@ -97,6 +97,7 @@ POPULAR_PLATFORMS = (
     "DnDBeyond",
     "OwlBear Rodeo",
     "Fantasy grounds VTT",
+    "Tabletop simulator",
 )
 
 
