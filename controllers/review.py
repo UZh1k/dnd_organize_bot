@@ -68,7 +68,10 @@ class ReviewController(CRUD):
     async def get_reviews_from_user(
         cls, from_user_id: int, session: AsyncSession, limit: int, page: int = 0
     ) -> tuple[Sequence[Review], int]:
-        query = cls.common_query().where(Review.from_user_id == from_user_id)
+        query = cls.common_query().where(
+            Review.from_user_id == from_user_id,
+            Review.unchangeable.is_(False),
+        )
         paginated_query = (
             query.limit(limit).offset(page * limit).order_by(Review.created.desc())
         )

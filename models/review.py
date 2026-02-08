@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 
-from sqlalchemy import func, Index, BIGINT, ForeignKey
+from sqlalchemy import func, Index, ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from models.user import User
@@ -24,6 +24,8 @@ class Review(Base):
 
     value: Mapped[int]
     comment: Mapped[str | None]
+
+    unchangeable: Mapped[bool] = mapped_column(default=False)
 
     created: Mapped[datetime] = mapped_column(server_default=func.now())
 

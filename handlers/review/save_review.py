@@ -76,6 +76,15 @@ class SaveReviewHandler(BaseHandler):
         if not review:
             review = await ReviewController.create(review_data, session)
         else:
+
+            if review.unchangeable:
+                await self.bot.send_message(
+                    chat_id,
+                    "Отзыв по какой-то причине отмечен, как не редактируемый. "
+                    "За разъяснениями обратись в поддержку.",
+                )
+                return
+
             review.value = review_data["value"]
             review.comment = review_data.get("comment")
             await session.flush()
