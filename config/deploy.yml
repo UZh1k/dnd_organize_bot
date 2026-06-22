@@ -63,6 +63,8 @@ aliases:
   logsf: app logs -f
   dbbash: accessory exec db -i --reuse "bash"
   dbconsole: accessory exec db -i --reuse "psql -U postgres -d dnd_hub_production"
+  backup-now: accessory exec backup "backup-now"
+  backup-logs: accessory logs backup -f
 
 # Use a different ssh user than root
 ssh:
@@ -87,3 +89,44 @@ accessories:
     host: dnd_hub
     volumes:
       - /var/lib/redis:/data
+
+  # Off-host PostgreSQL backups. Runs tiredofit/db-backup as a Kamal accessory (travels with the
+  # config — no host-side cron/rclone to redo per host migration): nightly pg_dump of the primary DB
+  # -> gzip -> Backblaze B2 (S3-compatible), 7-day retention. No `network:` key, so it joins the
+  # default `kamal` network and reaches the DB by container name `dnd_hub-db` (the db accessory's
+  # 127.0.0.1:5432 host mapping is irrelevant to it). A post-backup hook (.kamal/backup/notify.sh)
+  # posts a Discord embed every run and pings healthchecks.io as a dead-man's-switch.
+  # Boot/replace on a host: dotenv -f .env.production kamal accessory boot backup
+  # (NB: nfrastack/db-backup — the post-EOL successor — is not publicly pullable yet, so we stay on
+  #  tiredofit:4.1.100; revisit once nfrastack publishes a public pinned tag.)
+  backup:
+    image: tiredofit/db-backup:4.1.100   # >=4.1.99 bundles PG17 + PG18 clients (auto-selected)
+    host: dnd_hub
+    files:
+      - .kamal/backup/notify.sh:/assets/scripts/post/notify.sh
+    env:
+      clear:
+        DB01_TYPE: pgsql
+        DB01_HOST: dnd_hub-db
+        DB01_PORT: 5432
+        DB01_NAME: dnd_hub_production
+        DB01_USER: postgres
+        DB01_BACKUP_BEGIN: "0300"            # daily at 03:00
+        DB01_BACKUP_INTERVAL: 1440           # minutes (24h)
+        DB01_CLEANUP_TIME: 10080             # keep 7 days (minutes)
+        DB01_COMPRESSION: GZ
+        DB01_BACKUP_LOCATION: S3
+        DB01_S3_BUCKET: dnd-hub                           # the B2 bucket (created 2026-06-22)
+        DB01_S3_REGION: eu-central-003                   # middle segment of the B2 endpoint
+        DB01_S3_HOST: s3.eu-central-003.backblazeb2.com  # the Endpoint shown on the B2 bucket
+        DB01_S3_PATH: dnd_hub
+        DB01_POST_SCRIPT_SKIP_X_VERIFY: "TRUE"
+        # Image defaults to Zabbix monitoring on; we have no Zabbix server, so it errors and adds a
+        # ~10s delay every run. Off.
+        CONTAINER_ENABLE_MONITORING: "FALSE"
+      secret:
+        - DB01_PASS
+        - DB01_S3_KEY_ID
+        - DB01_S3_KEY_SECRET
+        - BACKUP_DISCORD_WEBHOOK
+        - BACKUP_HEALTHCHECK_URL
