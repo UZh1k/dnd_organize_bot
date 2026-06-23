@@ -109,4 +109,4 @@ Off-host DB backups run as the **`backup` Kamal accessory** (`accessories.backup
 
 ## Git
 
-Commit messages: **English, short** (imperative subject line, ~50 chars; body only if it adds something). **No AI/agent trailers** — do not append `Co-Authored-By` or "Generated with …" lines.
+Commit messages: **English, short** — a single imperative sentence (~50 chars, no body). **No AI/agent trailers** — do not append `Co-Authored-By` or "Generated with …" lines.
