@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  checks:
+    name: Migrations & boot
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # Dummy values so consts.py imports cleanly (it coerces several ints at import time).
+      DB_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/postgres
+      DB_POOL_SIZE: "5"
+      STATE_STORAGE: memory
+      BOT_TOKEN: "0:ci-dummy-token"
+      NEWS_CHANNEL_ID: "0"
+      FEEDBACK_CHAT_ID: "0"
+      EXCEPTION_CHAT_ID: "0"
+      ADMIN_IDS: "0"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Apply migrations on a clean DB
+        # Mirrors what the Dockerfile runs on every prod boot — a broken or
+        # divergent migration here means prod would crash-loop on deploy.
+        run: alembic upgrade heads
+
+      - name: Detect un-migrated model changes
+        # Fails if models/ drifted from the migrations (forgot to autogenerate).
+        # Informational: enum/server-default diffs can be false positives.
+        continue-on-error: true
+        run: alembic check
+
+      - name: Boot check (import app + register handlers)
+        # Catches import errors and the "forgot to import a model in
+        # models/__init__.py" footgun flagged in CLAUDE.md.
+        run: python -c "import main; print('boot ok')"
+
+  docker:
+    name: Docker build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t dnd_organize_bot:ci .
+
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    # Non-blocking: a freshly disclosed transitive CVE should surface in the PR
+    # without blocking unrelated changes. Drop continue-on-error to make it a gate.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run pip-audit
+        run: |
+          pip install pip-audit
+          pip-audit -r requirements.txt
