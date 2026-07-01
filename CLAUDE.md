@@ -6,28 +6,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Telegram bot ("Сники Бот" / Sneaky Bot) for finding and organizing tabletop RPG (D&D) games in the Russian-speaking community. Deployed at dnd-hub.ru. All user-facing strings are in Russian.
 
-Stack: Python 3.12 · [pyTelegramBotAPI](https://pytba.readthedocs.io/) (`telebot`, async) · FastAPI (webhook receiver) · SQLAlchemy 2.0 async + asyncpg (PostgreSQL) · Alembic · Redis (FSM state in prod) · Kamal (deploy).
+Stack: Python 3.12 · [pyTelegramBotAPI](https://pytba.readthedocs.io/) (`telebot`, async) · FastAPI (webhook receiver) · SQLAlchemy 2.0 async + asyncpg (PostgreSQL) · Alembic · Redis (FSM state in prod) · Poetry (dependency management) · Kamal (deploy).
 
 ## Commands
 
 ```bash
-pip install -r requirements.txt          # install deps
+poetry install                           # install all deps (main + dev) into ./.venv
+poetry install --only main               # production deps only
+poetry add <pkg>                         # add a dependency (updates pyproject.toml + poetry.lock)
+poetry update <pkg>                      # update one dep + its transitives, rewrite the lock
+poetry lock                              # re-resolve the lock from pyproject.toml
 
-python main.py                           # run locally via long-polling (needs .env)
-uvicorn main:app --host 0.0.0.0 --port 8080   # run as webhook server (production mode)
+poetry run python main.py                # run locally via long-polling (needs .env)
+poetry run uvicorn main:app --host 0.0.0.0 --port 8080   # run as webhook server (production mode)
 
-python create_webhook.py                 # register the Telegram webhook (uses WEBHOOK_URL_BASE)
-python remove_webhook.py                 # delete the webhook (required before switching back to polling)
+poetry run python create_webhook.py      # register the Telegram webhook (uses WEBHOOK_URL_BASE)
+poetry run python remove_webhook.py      # delete the webhook (required before switching back to polling)
 
-alembic upgrade heads                    # apply migrations (note: heads, plural)
-alembic revision --autogenerate -m "msg" # generate a migration from model changes
-alembic downgrade -1                     # roll back one migration
+poetry run alembic upgrade heads         # apply migrations (note: heads, plural)
+poetry run alembic revision --autogenerate -m "msg"  # generate a migration from model changes
+poetry run alembic downgrade -1          # roll back one migration
 
 docker compose up --build                # run app container locally (reads .env)
 kamal deploy                             # deploy to production (see README.md for full Kamal usage)
 ```
 
 There are **no automated tests** and no linter configured in this repo.
+
+Dependencies are managed with **Poetry** (2.x, PEP 621 `[project]` table). `pyproject.toml` is the declaration and `poetry.lock` pins the full resolved tree — both are committed; there is **no `requirements.txt`**. `[tool.poetry] package-mode = false` (this is an app, not a distributable package). Dev-only tools go in the `dev` group (`[tool.poetry.group.dev.dependencies]`) and are excluded by `--only main`. **NOTE:** the Poetry migration was version-preserving, so `pyproject.toml` pins direct deps to exact versions **and** temporarily pins ~20 transitive deps at their pre-Poetry versions (the commented block) so no dependency changed. Loosen those to ranges and drop the transitive pins in a follow-up PR once test coverage exists — then `poetry update` can move them.
 
 Local dev needs a `.env` (copy `.env_example`). `consts.py` reads every setting from env via `python-dotenv` and will raise at import time if required ints (`NEWS_CHANNEL_ID`, `DB_POOL_SIZE`, `ADMIN_IDS`, etc.) are missing.
 
@@ -37,7 +43,7 @@ Local dev needs a `.env` (copy `.env_example`). `consts.py` reads every setting 
 - **Production** runs `uvicorn main:app`; Telegram POSTs updates to `/webhook/` which feeds `bot.process_new_updates(...)`. `/up` is the healthcheck. The webhook is set once via `create_webhook.py`.
 - **Local dev** runs `python main.py`, which falls into `__main__` and uses `bot.infinity_polling(...)` instead.
 
-The `Dockerfile` runs `alembic upgrade heads` before starting uvicorn with 4 workers.
+The `Dockerfile` is a multi-stage Poetry build: a build stage installs the locked production deps into an in-project `.venv`, and the slim runtime stage copies just that venv. On start it runs `alembic upgrade heads` before starting uvicorn with 4 workers.
 
 ## Architecture
 
