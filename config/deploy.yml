@@ -130,3 +130,5 @@ accessories:
         - DB01_S3_KEY_SECRET
         - BACKUP_DISCORD_WEBHOOK
         - BACKUP_HEALTHCHECK_URL
+
+deploy_timeout: 60

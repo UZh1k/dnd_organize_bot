@@ -39,29 +39,35 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Poetry
+        # pipx is preinstalled on ubuntu-latest. Must run before setup-python
+        # so its `cache: poetry` can find poetry. Keep this version in sync with
+        # POETRY_VERSION in the Dockerfile.
+        run: pipx install poetry==2.4.1
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: pip
+          cache: poetry
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: poetry install --only main --no-interaction
 
       - name: Apply migrations on a clean DB
         # Mirrors what the Dockerfile runs on every prod boot — a broken or
         # divergent migration here means prod would crash-loop on deploy.
-        run: alembic upgrade heads
+        run: poetry run alembic upgrade heads
 
       - name: Detect un-migrated model changes
         # Fails if models/ drifted from the migrations (forgot to autogenerate).
         # Informational: enum/server-default diffs can be false positives.
         continue-on-error: true
-        run: alembic check
+        run: poetry run alembic check
 
       - name: Boot check (import app + register handlers)
         # Catches import errors and the "forgot to import a model in
         # models/__init__.py" footgun flagged in CLAUDE.md.
-        run: python -c "import main; print('boot ok')"
+        run: poetry run python -c "import main; print('boot ok')"
 
   docker:
     name: Docker build
@@ -79,10 +85,18 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
+      - name: Install Poetry
+        run: pipx install poetry==2.4.1
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run pip-audit
+          cache: poetry
+      - name: Install production deps
+        run: poetry install --only main --no-interaction
+      - name: Freeze and audit the production tree
+        # Audit only the locked prod tree (same target as the old
+        # `pip-audit -r requirements.txt`). pip-audit runs via pipx, kept out
+        # of the project's venv.
         run: |
-          pip install pip-audit
-          pip-audit -r requirements.txt
+          poetry run python -m pip freeze > requirements-audit.txt
+          pipx run pip-audit -r requirements-audit.txt
