@@ -8,12 +8,15 @@ from utils.form.form_text_item import FormTextItem
 
 class GameRegistrationTime(FormTextItem):
     state = GameRegistrationStates.time
+    message_length = 40
     prepare_text = (
         "Когда ты планируешь провести игру? Есть конкретное время и дата? "
         "Может дни недели? При написании времени укажи, пожалуйста, часовой пояс. "
-        "Напиши мне ответ в свободной форме."
+        "Напиши мне ответ в свободной форме.\n\n"
+        f"Пожалуйста, постарайся уместиться в {message_length} символов. "
+        f"Это обусловлено ограничениями самого мессенджера, "
+        f"посты не могут превышать определенной длины."
     )
-    message_length = 40
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

@@ -8,11 +8,14 @@ from utils.form.form_text_item import FormTextItem
 
 class GameRegistrationRedactionAndSetting(FormTextItem):
     state = GameRegistrationStates.redaction_and_setting
+    message_length = 40
     prepare_text = (
         "По какой редакции и в каком сеттинге будет твоя игра? "
-        "Пришли текст в ответном сообщении."
+        "Пришли текст в ответном сообщении.\n\n"
+        f"Пожалуйста, постарайся уместиться в {message_length} символов. "
+        f"Это обусловлено ограничениями самого мессенджера, "
+        f"посты не могут превышать определенной длины."
     )
-    message_length = 40
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

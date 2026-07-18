@@ -12,12 +12,15 @@ from utils.other import generate_city_choices
 
 class GameRegistrationCity(FormChoiceTextItem):
     state = GameRegistrationStates.city
+    message_length = 30
     prepare_text = (
         "В каком городе ты хочешь провести игру? Выбери город из списка "
-        "или напиши текстом название, если нужного города нет в списке."
+        "или напиши текстом название, если нужного города нет в списке.\n\n"
+        f"Пожалуйста, постарайся уместиться в {message_length} символов. "
+        f"Это обусловлено ограничениями самого мессенджера, "
+        f"посты не могут превышать определенной длины."
     )
     form_item_name = "city"
-    message_length = 30
 
     alert_message = "Город сохранен"
     choices = generate_city_choices()

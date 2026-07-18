@@ -8,11 +8,14 @@ from utils.form.form_text_item import FormTextItem
 
 class GameRegistrationTitle(FormTextItem):
     state = GameRegistrationStates.title
+    message_length = 80
     prepare_text = (
         "Придумай короткое название для твоей игры. "
-        "Напиши мне ответ в свободной форме."
+        "Напиши мне ответ в свободной форме.\n\n"
+        f"Пожалуйста, постарайся уместиться в {message_length} символов. "
+        f"Это обусловлено ограничениями самого мессенджера, "
+        f"посты не могут превышать определенной длины."
     )
-    message_length = 80
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext

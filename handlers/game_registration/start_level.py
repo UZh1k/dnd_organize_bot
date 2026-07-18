@@ -8,8 +8,13 @@ from utils.form.form_text_item import FormTextItem
 
 class GameRegistrationStartLevel(FormTextItem):
     state = GameRegistrationStates.start_level
-    prepare_text = "Какой уровень будет искателей приключений в твоей игре на старте?"
     message_length = 20
+    prepare_text = (
+        "Какой уровень будет искателей приключений в твоей игре на старте?\n\n"
+        f"Пожалуйста, постарайся уместиться в {message_length} символов. "
+        f"Это обусловлено ограничениями самого мессенджера, "
+        f"посты не могут превышать определенной длины."
+    )
 
     async def save_answer(
         self, text: str, user: User, session: AsyncSession, state: StateContext
