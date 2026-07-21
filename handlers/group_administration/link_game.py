@@ -11,6 +11,7 @@ from telebot.types import (
     CallbackQuery,
 )
 
+from consts import MAX_ACTIVE_GAMES
 from controllers.game import GameController
 from handlers.group_administration.post_game import create_game_post
 from models import Game, User
@@ -108,6 +109,15 @@ async def handle_link_game(
         return
     if await GameController.get_one(call.message.chat.id, session, "group_id"):
         await bot.send_message(call.message.chat.id, "Группа уже привязана к игре")
+        return
+    if (active_games_count := await GameController.get_active_games_count(user.id, session)) >= MAX_ACTIVE_GAMES:
+        await bot.send_message(
+            call.message.chat.id,
+            f"У тебя уже {active_games_count} активных "
+                f"наборов из {MAX_ACTIVE_GAMES} доступных. "
+                f"К сожалению, не получится привязать игру к группе, "
+                f"пока не закроешь одну из существующих командой /close в чате сбора."
+        )
         return
     game_id = int(call.data.split(":")[-1])
     game = await GameController.get_one(game_id, session)

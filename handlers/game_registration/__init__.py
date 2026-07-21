@@ -5,7 +5,7 @@ from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
 from telebot.types import Message
 
-from consts import CREATE_IMAGE
+from consts import CREATE_IMAGE, MAX_ACTIVE_GAMES
 from controllers.game import GameController
 from controllers.game_tag_link import GameTagLinkController
 from handlers.game_registration.about_price import GameRegistrationAboutPrice
@@ -122,18 +122,30 @@ class GameRegistrationHandlerGroup(RegistrationHandlerGroup):
             )
 
         await state.delete()
-        await bot.send_message(
-            chat_id,
-            "Твоя игра успешно сохранена, но она еще не в канале.\n\n"
-            "❗️❗️❗️\n"
-            "Для публикации осталось пройти пару шагов. "
-            "Тебе нужно создать новую группу в Телеграмм, не канал, "
-            "а именно группу, в которой ты будешь собирать игроков и "
-            "обсуждать предстоящую игру. А я смогу пригласить в эту группу "
-            "игроков. Для этого, после создания группы, добавь меня - "
-            "@sneakydicebot. В группе ты получишь от меня информацию, "
-            "как начать подбор.\n\n"
-            " Если ты захочешь скорректировать "
-            "публикацию, то воспользуйся командой редактирование в меню слева "
-            "внизу или отправь /edit.\n\n",
-        )
+
+        if (active_games_count := await GameController.get_active_games_count(user.id, session)) >= MAX_ACTIVE_GAMES:
+            await bot.send_message(
+                chat_id,
+                "Твоя игра успешно сохранена, но она еще не в канале.\n\n"
+                "❗️❗️❗️\n"
+                "Для публикации осталось пройти пару шагов. "
+                "Тебе нужно создать новую группу в Телеграмм, не канал, "
+                "а именно группу, в которой ты будешь собирать игроков и "
+                "обсуждать предстоящую игру. А я смогу пригласить в эту группу "
+                "игроков. Для этого, после создания группы, добавь меня - "
+                "@sneakydicebot. В группе ты получишь от меня информацию, "
+                "как начать подбор.\n\n"
+                " Если ты захочешь скорректировать "
+                "публикацию, то воспользуйся командой редактирование в меню слева "
+                "внизу или отправь /edit.",
+            )
+        else:
+            await bot.send_message(
+                chat_id,
+                "Твоя игра успешно сохранена, но она еще не в канале.\n\n"
+                "🔴🔴🔴\n"
+                f"Обрати внимание, что у тебя уже {active_games_count} активных "
+                f"наборов из {MAX_ACTIVE_GAMES} доступных. "
+                f"К сожалению, не получится привязать новый к группе, "
+                f"пока не закроешь один из существующих командой /close в чате сбора.",
+            )

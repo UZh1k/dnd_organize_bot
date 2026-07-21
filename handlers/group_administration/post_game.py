@@ -6,7 +6,7 @@ from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.types import Message
 
-from consts import NEWS_CHANNEL_ID
+from consts import NEWS_CHANNEL_ID, MAX_ACTIVE_GAMES
 from controllers.game import GameController
 from controllers.game_member import GameMemberController
 from models import Game, User
@@ -52,6 +52,19 @@ async def update_game_post(
         await bot.send_message(
             message.chat.id,
             "Публикацию можно поднимать не чаще, чем раз в 5 дней. Попробуй позже.",
+        )
+        return
+
+
+    if not game.done and (
+        active_games_count := await GameController.get_active_games_count(user.id, session)
+    ) >= MAX_ACTIVE_GAMES:
+        await bot.send_message(
+            message.chat.id,
+            f"У тебя уже {active_games_count} активных "
+                f"наборов из {MAX_ACTIVE_GAMES} доступных. "
+                f"К сожалению, не получится привязать игру к группе, "
+                f"пока не закроешь одну из существующих командой /close в чате сбора."
         )
         return
 

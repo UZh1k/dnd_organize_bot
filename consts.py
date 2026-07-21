@@ -23,6 +23,8 @@ FEEDBACK_CHAT_ID: int = int(os.getenv("FEEDBACK_CHAT_ID"))
 ADMIN_IDS: list[int] = list(map(int, os.getenv("ADMIN_IDS").split(",")))
 EXCEPTION_CHAT_ID: int = int(os.getenv("EXCEPTION_CHAT_ID"))
 
+MAX_ACTIVE_GAMES: int = int(os.getenv("MAX_ACTIVE_GAMES", 5))
+
 ALLOWED_UPDATE_TYPES = [
     "my_chat_member",
     "new_chat_member",

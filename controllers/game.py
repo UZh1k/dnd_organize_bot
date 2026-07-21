@@ -27,6 +27,13 @@ class GameController(CRUD):
         return (await session.execute(query)).scalars().all()
 
     @classmethod
+    async def get_active_games_count(cls, creator_id: int, session: AsyncSession) -> int:
+        query = select(func.count(Game.id)).where(
+            Game.creator_id == creator_id, Game.active.is_(True), Game.group_id.is_not(None)
+        )
+        return await session.scalar(query)
+
+    @classmethod
     async def unlink_game_from_group(cls, group_id: int, session: AsyncSession):
         await session.execute(
             update(Game).where(Game.group_id == group_id).values(group_id=None)
