@@ -4,7 +4,7 @@
 /.git/
 /.gitignore
 
-# Ignore the local (in-project) Poetry virtualenv; the image builds its own.
+# Ignore the local (in-project) uv virtualenv; the image builds its own.
 /.venv
 
 # Ignore Kamal files.
