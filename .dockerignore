@@ -4,6 +4,9 @@
 /.git/
 /.gitignore
 
+# Ignore the local (in-project) uv virtualenv; the image builds its own.
+/.venv
+
 # Ignore Kamal files.
 /config/deploy*.yml
 /.kamal

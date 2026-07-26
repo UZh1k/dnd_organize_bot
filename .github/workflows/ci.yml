@@ -39,29 +39,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Install uv
+        # Keep this version in sync with the pinned uv in the Dockerfile.
+        # uv provisions CPython 3.12 itself (from requires-python), so no
+        # separate actions/setup-python step is needed.
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: "3.12"
-          cache: pip
+          version: "0.11.30"
+          enable-cache: true
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: uv sync --no-dev --frozen
 
       - name: Apply migrations on a clean DB
         # Mirrors what the Dockerfile runs on every prod boot — a broken or
         # divergent migration here means prod would crash-loop on deploy.
-        run: alembic upgrade heads
+        run: uv run alembic upgrade heads
 
       - name: Detect un-migrated model changes
         # Fails if models/ drifted from the migrations (forgot to autogenerate).
         # Informational: enum/server-default diffs can be false positives.
         continue-on-error: true
-        run: alembic check
+        run: uv run alembic check
 
       - name: Boot check (import app + register handlers)
         # Catches import errors and the "forgot to import a model in
         # models/__init__.py" footgun flagged in CLAUDE.md.
-        run: python -c "import main; print('boot ok')"
+        run: uv run python -c "import main; print('boot ok')"
 
   docker:
     name: Docker build
@@ -79,10 +83,15 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: "3.12"
-      - name: Run pip-audit
+          version: "0.11.30"
+          enable-cache: true
+      - name: Export and audit the production tree
+        # Audit only the locked prod tree (same target as the old
+        # `pip-audit -r requirements.txt`). `uv export` reads uv.lock directly
+        # (no install needed); `uvx` runs pip-audit outside the project's venv.
         run: |
-          pip install pip-audit
-          pip-audit -r requirements.txt
+          uv export --no-dev --frozen --no-hashes --no-emit-project -o requirements-audit.txt
+          uvx pip-audit -r requirements-audit.txt
