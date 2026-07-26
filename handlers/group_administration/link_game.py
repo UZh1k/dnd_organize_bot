@@ -11,6 +11,7 @@ from telebot.types import (
     CallbackQuery,
 )
 
+from consts import MAX_ACTIVE_GAMES
 from controllers.game import GameController
 from handlers.group_administration.post_game import create_game_post
 from models import Game, User
@@ -109,8 +110,33 @@ async def handle_link_game(
     if await GameController.get_one(call.message.chat.id, session, "group_id"):
         await bot.send_message(call.message.chat.id, "Группа уже привязана к игре")
         return
+    active_games_count = await GameController.get_active_games_count(
+        user.id, session, lock_creator=True
+    )
     game_id = int(call.data.split(":")[-1])
     game = await GameController.get_one(game_id, session)
+    if (
+        not game
+        or game.creator_id != user.id
+        or not game.active
+        or game.group_id is not None
+    ):
+        await bot.send_message(
+            call.message.chat.id,
+            "Эту игру уже нельзя привязать. Отправь /link и выбери игру заново.",
+        )
+        return
+    if active_games_count >= MAX_ACTIVE_GAMES:
+        await bot.send_message(
+            call.message.chat.id,
+            f"У тебя уже {active_games_count} активных "
+            f"наборов из {MAX_ACTIVE_GAMES} доступных. "
+            f"К сожалению, не получится привязать игру к группе, "
+            f"пока не закроешь один из существующих командой /close в чате сбора "
+            f"или через редактирование игр командой /edit в личных сообщениях со мной. "
+            f"Когда сделаешь это, попробуй заново привязать игру здесь командой /link.",
+        )
+        return
     game.group_id = call.message.chat.id
     game.first_post_datetime = datetime.now()
     await bot.answer_callback_query(callback_query_id=call.id, text="Группа привязана")

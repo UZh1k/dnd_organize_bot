@@ -14,12 +14,15 @@ from utils.other import POPULAR_SYSTEMS_MAP
 
 class GameRegistrationSystem(FormChoiceTextItem):
     state = GameRegistrationStates.system
+    message_length = 30
     prepare_text = (
         "По какой игровой системе ты будешь проводить игру? "
-        "Выбери из списка или напиши текстом, если твоей системы нет."
+        "Выбери из списка или напиши текстом, если твоей системы нет.\n\n"
+        f"Пожалуйста, постарайся уместиться в {message_length} символов. "
+        f"Это обусловлено ограничениями самого мессенджера, "
+        f"посты не могут превышать определенной длины."
     )
     form_item_name = "system"
-    message_length = 40
 
     alert_message = "Формат игры записан"
     choices = tuple((value, key) for key, value in POPULAR_SYSTEMS_MAP.items())

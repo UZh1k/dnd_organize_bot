@@ -5,7 +5,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
 from controllers.crud import CRUD
-from models import Game, Review, ReviewReceiverTypeEnum, ReviewMember, GameTagLink
+from models import (
+    Game,
+    GameTagLink,
+    Review,
+    ReviewMember,
+    ReviewReceiverTypeEnum,
+    User,
+)
 
 
 class GameController(CRUD):
@@ -25,6 +32,24 @@ class GameController(CRUD):
             Game.creator_id == user_id, Game.group_id.is_(None), Game.active.is_(True)
         )
         return (await session.execute(query)).scalars().all()
+
+    @classmethod
+    async def get_active_games_count(
+        cls,
+        creator_id: int,
+        session: AsyncSession,
+        lock_creator: bool = False,
+    ) -> int:
+        if lock_creator:
+            await session.execute(
+                select(User.id).where(User.id == creator_id).with_for_update()
+            )
+        query = select(func.count(Game.id)).where(
+            Game.creator_id == creator_id,
+            Game.active.is_(True),
+            Game.group_id.is_not(None),
+        )
+        return (await session.scalar(query)) or 0
 
     @classmethod
     async def unlink_game_from_group(cls, group_id: int, session: AsyncSession):

@@ -11,12 +11,15 @@ from utils.other import generate_simple_choices, POPULAR_DND_SETTINGS
 
 class GameRegistrationDndSetting(FormChoiceTextItem):
     state = GameRegistrationStates.dnd_setting
+    message_length = 40
     prepare_text = (
         "В каком сеттинге DnD будет твоя игра? Выбери из списка или "
-        "напиши ответ в текстовом сообщении."
+        "напиши ответ в текстовом сообщении.\n\n"
+        f"Пожалуйста, постарайся уместиться в {message_length} символов. "
+        f"Это обусловлено ограничениями самого мессенджера, "
+        f"посты не могут превышать определенной длины."
     )
     form_item_name = "dnd_setting"
-    message_length = 40
 
     alert_message = None
     choices = generate_simple_choices(POPULAR_DND_SETTINGS)

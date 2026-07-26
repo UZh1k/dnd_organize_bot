@@ -71,7 +71,7 @@ class ShowGameHandler(BaseCallbackHandler):
         game_id = int(call.data.split(":")[-1])
         game = await GameController.get_one(game_id, session)
 
-        if not game or not game.active:
+        if not game or game.creator_id != user.id or not game.active:
             await self.bot.send_message(call.message.chat.id, "Игра уже неактивна")
             return
 

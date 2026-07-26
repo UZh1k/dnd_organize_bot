@@ -1,12 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from asyncpg.pgproto.pgproto import timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.types import Message
 
-from consts import NEWS_CHANNEL_ID
+from consts import NEWS_CHANNEL_ID, MAX_ACTIVE_GAMES
 from controllers.game import GameController
 from controllers.game_member import GameMemberController
 from models import Game, User
@@ -52,6 +51,29 @@ async def update_game_post(
         await bot.send_message(
             message.chat.id,
             "Публикацию можно поднимать не чаще, чем раз в 5 дней. Попробуй позже.",
+        )
+        return
+
+
+    active_games_count = None
+    if game.done:
+        active_games_count = await GameController.get_active_games_count(
+            game.creator_id, session, lock_creator=True
+        )
+        await session.refresh(game)
+
+    if (
+        game.done
+        and active_games_count is not None
+        and active_games_count >= MAX_ACTIVE_GAMES
+    ):
+        await bot.send_message(
+            message.chat.id,
+            f"У тебя уже {active_games_count} активных "
+            f"наборов из {MAX_ACTIVE_GAMES} доступных. "
+            f"К сожалению, не получится возобновить этот набор, "
+            f"пока не закроешь один из существующих командой /close в чате сбора "
+            f"или через редактирование игр командой /edit в личных сообщениях со мной.",
         )
         return
 
