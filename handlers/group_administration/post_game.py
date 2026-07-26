@@ -1,6 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from asyncpg.pgproto.pgproto import timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
@@ -56,15 +55,25 @@ async def update_game_post(
         return
 
 
-    if not game.done and (
-        active_games_count := await GameController.get_active_games_count(user.id, session)
-    ) >= MAX_ACTIVE_GAMES:
+    active_games_count = None
+    if game.done:
+        active_games_count = await GameController.get_active_games_count(
+            game.creator_id, session, lock_creator=True
+        )
+        await session.refresh(game)
+
+    if (
+        game.done
+        and active_games_count is not None
+        and active_games_count >= MAX_ACTIVE_GAMES
+    ):
         await bot.send_message(
             message.chat.id,
             f"У тебя уже {active_games_count} активных "
-                f"наборов из {MAX_ACTIVE_GAMES} доступных. "
-                f"К сожалению, не получится привязать игру к группе, "
-                f"пока не закроешь одну из существующих командой /close в чате сбора."
+            f"наборов из {MAX_ACTIVE_GAMES} доступных. "
+            f"К сожалению, не получится возобновить этот набор, "
+            f"пока не закроешь один из существующих командой /close в чате сбора "
+            f"или через редактирование игр командой /edit в личных сообщениях со мной.",
         )
         return
 

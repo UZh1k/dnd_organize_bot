@@ -4,7 +4,7 @@ from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
 from telebot.types import Message, InputMediaPhoto
 
-from consts import NEWS_CHANNEL_ID
+from consts import MAX_ACTIVE_GAMES, NEWS_CHANNEL_ID
 from controllers.game import GameController
 from controllers.game_member import GameMemberController
 from controllers.game_tag import GameTagController
@@ -114,8 +114,27 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
             )
             return
 
+        active_games_count = await GameController.get_active_games_count(
+            user.id, session
+        )
+        active_games_text = (
+            f"Активных наборов: {active_games_count} из {MAX_ACTIVE_GAMES}."
+        )
+        if active_games_count >= MAX_ACTIVE_GAMES:
+            active_games_text += (
+                "\n\n🔴 Лимит достигнут. Чтобы опубликовать новую игру, "
+                "удали здесь одну из активных игр или закрой набор командой "
+                "/close в чате соответствующей игры."
+            )
+
         await state.set(GameShowStates.show_games)
-        games_markup = tuple((game.title, str(game.id)) for game in games)
+        games_markup = tuple(
+            (
+                f"🔎 {game.title}" if game.group_id is not None else game.title,
+                str(game.id),
+            )
+            for game in games
+        )
         markup = self.create_markup(
             games_markup + (("Отмена", GameEditActions.cancel.value),),
             GameEditCallbackPrefixes.choose_game.value,
@@ -123,6 +142,7 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
         )
         await bot.send_message(
             message.chat.id,
+            f"{active_games_text}\n\n"
             "Выбери, какую игру ты хочешь отредактировать.",
             reply_markup=markup,
         )
@@ -140,7 +160,7 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
         async with state.data() as data:
             game = await GameController.get_one(data["game_id"], session)
 
-        if not game or not game.active:
+        if not game or game.creator_id != user.id or not game.active:
             await bot.send_message(chat_id, "Игра уже не активна")
             return
 

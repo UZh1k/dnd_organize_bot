@@ -123,7 +123,10 @@ class GameRegistrationHandlerGroup(RegistrationHandlerGroup):
 
         await state.delete()
 
-        if (active_games_count := await GameController.get_active_games_count(user.id, session)) >= MAX_ACTIVE_GAMES:
+        active_games_count = await GameController.get_active_games_count(
+            user.id, session
+        )
+        if active_games_count <= MAX_ACTIVE_GAMES:
             await bot.send_message(
                 chat_id,
                 "Твоя игра успешно сохранена, но она еще не в канале.\n\n"
