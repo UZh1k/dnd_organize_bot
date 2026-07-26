@@ -14,7 +14,7 @@ from utils.other import POPULAR_SYSTEMS_MAP
 
 class GameRegistrationSystem(FormChoiceTextItem):
     state = GameRegistrationStates.system
-    message_length = 40
+    message_length = 30
     prepare_text = (
         "По какой игровой системе ты будешь проводить игру? "
         "Выбери из списка или напиши текстом, если твоей системы нет.\n\n"

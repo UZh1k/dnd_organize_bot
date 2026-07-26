@@ -1,7 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
-from telebot.types import Message
 
 from handlers.game_registration.states import GameRegistrationStates
 from models import User
@@ -10,7 +8,7 @@ from utils.form.form_text_item import FormTextItem
 
 class GameRegistrationTechRequirements(FormTextItem):
     state = GameRegistrationStates.tech_requirements
-    message_length = 70
+    message_length = 50
     prepare_text = (
         "Какие у тебя требования к игрокам? Есть ли требования к технике, например, "
         "наличие микрофона и камеры? Есть ли особые правила, например, запрет на "

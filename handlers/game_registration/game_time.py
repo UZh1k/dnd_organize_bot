@@ -8,7 +8,7 @@ from utils.form.form_text_item import FormTextItem
 
 class GameRegistrationTime(FormTextItem):
     state = GameRegistrationStates.time
-    message_length = 40
+    message_length = 30
     prepare_text = (
         "Когда ты планируешь провести игру? Есть конкретное время и дата? "
         "Может дни недели? При написании времени укажи, пожалуйста, часовой пояс. "

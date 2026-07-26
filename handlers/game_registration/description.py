@@ -8,7 +8,7 @@ from utils.form.form_text_item import FormTextItem
 
 class GameRegistrationDescription(FormTextItem):
     state = GameRegistrationStates.description
-    message_length = 450
+    message_length = 350
     prepare_text = (
         "Дай описание своей кампании. Что ждет игроков? С какими опасностями они "
         "столкнутся? Игра будет динамичной или детективной, мистической или геройской? "

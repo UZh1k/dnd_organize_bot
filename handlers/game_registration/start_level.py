@@ -8,7 +8,7 @@ from utils.form.form_text_item import FormTextItem
 
 class GameRegistrationStartLevel(FormTextItem):
     state = GameRegistrationStates.start_level
-    message_length = 20
+    message_length = 15
     prepare_text = (
         "Какой уровень будет искателей приключений в твоей игре на старте?\n\n"
         f"Пожалуйста, постарайся уместиться в {message_length} символов. "

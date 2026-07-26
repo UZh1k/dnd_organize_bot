@@ -8,7 +8,7 @@ from utils.form.form_text_item import FormTextItem
 
 class GameRegistrationAboutPrice(FormTextItem):
     state = GameRegistrationStates.about_price
-    message_length = 40
+    message_length = 30
     prepare_text = (
         "Укажи стоимость своей игры. Если стоимость не фиксированная, "
         "то опиши от чего она зависит.\n\n"
