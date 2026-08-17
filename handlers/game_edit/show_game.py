@@ -13,7 +13,7 @@ from handlers.game_edit.settings import (
 from models import User, Game
 from utils.game_text import create_game_text
 from utils.handlers.base_callback_handler import BaseCallbackHandler
-from utils.message_helpers import create_markup
+from utils.message_helpers import create_markup, is_caption_too_long_error
 
 
 class ShowGameHandler(BaseCallbackHandler):
@@ -30,12 +30,22 @@ class ShowGameHandler(BaseCallbackHandler):
         cls, chat_id: int, game: Game, bot: AsyncTeleBot
     ) -> str:
         text = create_game_text(game)
-        await bot.send_photo(
-            chat_id,
-            game.image,
-            text,
-            parse_mode="Markdown",
-        )
+        try:
+            await bot.send_photo(
+                chat_id,
+                game.image,
+                text,
+                parse_mode="Markdown",
+            )
+        except ApiTelegramException as error:
+            if not is_caption_too_long_error(error):
+                raise
+            await bot.send_message(
+                chat_id,
+                "Описание игры получилось слишком длинным, поэтому я не могу "
+                "показать его целиком. Сократи одно или несколько текстовых "
+                "полей с помощью кнопки «Редактировать».",
+            )
 
         markup = create_markup(
             (
@@ -48,7 +58,7 @@ class ShowGameHandler(BaseCallbackHandler):
         )
         await bot.send_message(
             chat_id,
-            f"Выбрана игра “{game.title}”. Вот ее описание. "
+            f"Выбрана игра “{game.title}”. "
             f"Ты хочешь что-то скорректировать?",
             reply_markup=markup,
         )

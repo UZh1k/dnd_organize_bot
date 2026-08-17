@@ -59,14 +59,28 @@ class GameController(CRUD):
 
     @classmethod
     async def get_games_for_edit(
-        cls, creator_id: int, session: AsyncSession
-    ) -> Sequence[Game]:
+        cls,
+        creator_id: int,
+        session: AsyncSession,
+        limit: int,
+        page: int = 0,
+    ) -> tuple[Sequence[Game], int]:
+        filters = (
+            Game.creator_id == creator_id,
+            Game.active.is_(True),
+        )
+        total_count = await session.scalar(
+            select(func.count(Game.id)).where(*filters)
+        )
         query = (
             select(Game)
-            .where(Game.creator_id == creator_id)
-            .where(Game.active.is_(True))
+            .where(*filters)
+            .order_by(Game.id)
+            .limit(limit)
+            .offset(page * limit)
         )
-        return (await session.execute(query)).scalars().all()
+        games = (await session.execute(query)).scalars().all()
+        return games, total_count or 0
 
     @classmethod
     async def get_games_to_review(

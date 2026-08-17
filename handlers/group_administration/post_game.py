@@ -10,6 +10,7 @@ from controllers.game import GameController
 from controllers.game_member import GameMemberController
 from models import Game, User
 from utils.game_text import create_game_text, create_game_markup
+from utils.message_helpers import is_caption_too_long_error
 
 
 async def create_game_post(
@@ -77,6 +78,8 @@ async def update_game_post(
         )
         return
 
+    was_done = bool(game.done)
+    previous_is_update = game.is_update
     try:
         players_count = await GameMemberController.count_game_members(game.id, session)
         game.is_update = True
@@ -96,7 +99,9 @@ async def update_game_post(
                         parse_mode="Markdown",
                         reply_markup=await create_game_markup(game, session),
                     )
-                except ApiTelegramException:
+                except ApiTelegramException as error:
+                    if is_caption_too_long_error(error):
+                        raise
                     await create_game_post(
                         bot,
                         game,
@@ -110,21 +115,34 @@ async def update_game_post(
                 )
                 return
 
+        previous_post_id = game.post_id
+        await create_game_post(bot, game, session, players_count=players_count)
+
         try:
             await bot.edit_message_caption(
                 f"*{game.title}*\n\n" "Пост пересоздан",
                 NEWS_CHANNEL_ID,
-                game.post_id,
+                previous_post_id,
                 parse_mode="Markdown",
             )
         except ApiTelegramException:
             pass
 
-        await create_game_post(bot, game, session, players_count=players_count)
         await bot.send_message(
             message.chat.id,
             "Я обновил твою публикацию. Постараюсь побыстрее найти игроков.",
         )
 
-    except ApiTelegramException:
-        pass
+    except ApiTelegramException as error:
+        if not is_caption_too_long_error(error):
+            raise
+        if was_done:
+            game.done = True
+            game.active = False
+        game.is_update = previous_is_update
+        await bot.send_message(
+            message.chat.id,
+            "Описание игры получилось слишком длинным для публикации. "
+            "Сократи его с помощью команды /edit в личных сообщениях со мной, "
+            "а затем снова отправь /update.",
+        )

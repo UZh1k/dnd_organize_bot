@@ -49,6 +49,13 @@ class ApplicantReviewHandler(BaseCallbackHandler):
         user: User,
         state: StateContext,
     ):
+        try:
+            await self.bot.answer_callback_query(call.id)
+        except ApiTelegramException:
+            # Callback queries expire quickly. Failure to acknowledge an old query
+            # should not prevent the requested review from being displayed.
+            pass
+
         first_message = False
         call_data_split = call.data.split(":")
         if len(call_data_split) == 5:
@@ -87,9 +94,16 @@ class ApplicantReviewHandler(BaseCallbackHandler):
                 call.message.chat.id, review_text, reply_markup=keyboard
             )
         else:
-            await self.bot.edit_message_text(
-                review_text,
-                call.message.chat.id,
-                call.message.id,
-                reply_markup=keyboard,
-            )
+            try:
+                await self.bot.edit_message_text(
+                    review_text,
+                    call.message.chat.id,
+                    call.message.id,
+                    reply_markup=keyboard,
+                )
+            except ApiTelegramException as error:
+                # Telegram can deliver two quick presses of the same pagination
+                # button. The first one updates the message, while the second one
+                # tries to apply exactly the same text and keyboard.
+                if "message is not modified" not in str(error).lower():
+                    raise

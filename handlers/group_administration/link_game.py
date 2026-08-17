@@ -15,6 +15,7 @@ from consts import MAX_ACTIVE_GAMES
 from controllers.game import GameController
 from handlers.group_administration.post_game import create_game_post
 from models import Game, User
+from utils.message_helpers import is_caption_too_long_error
 
 GAME_LINK_PREFIX = "GameLink"
 
@@ -139,9 +140,28 @@ async def handle_link_game(
         return
     game.group_id = call.message.chat.id
     game.first_post_datetime = datetime.now()
-    await bot.answer_callback_query(callback_query_id=call.id, text="Группа привязана")
 
-    await create_game_post(bot, game, session)
+    try:
+        await create_game_post(bot, game, session)
+    except ApiTelegramException as error:
+        if not is_caption_too_long_error(error):
+            raise
+        game.group_id = None
+        game.first_post_datetime = None
+        await bot.answer_callback_query(
+            callback_query_id=call.id,
+            text="Описание игры слишком длинное",
+            show_alert=True,
+        )
+        await bot.send_message(
+            call.message.chat.id,
+            "Описание игры получилось слишком длинным для публикации. "
+            "Сократи его с помощью команды /edit в личных сообщениях со мной, "
+            "а затем снова привяжи игру командой /link.",
+        )
+        return
+
+    await bot.answer_callback_query(callback_query_id=call.id, text="Группа привязана")
 
     await bot.send_message(
         call.message.chat.id,
