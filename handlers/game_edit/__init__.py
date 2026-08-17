@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
-from telebot.types import Message, InputMediaPhoto
+from telebot.types import CallbackQuery, InlineKeyboardButton, Message, InputMediaPhoto
 
 from consts import MAX_ACTIVE_GAMES, NEWS_CHANNEL_ID
 from controllers.game import GameController
@@ -48,9 +48,11 @@ from utils.form.form_item_group import FormItemGroup
 from utils.game_text import create_game_markup, create_game_text
 from utils.handler_groups.base_handler_group import BaseHandlerGroup
 from utils.handler_groups.registration_handler_group import RegistrationHandlerGroup
+from utils.message_helpers import get_pagination_row
 
 
 class GameEditHandlerGroup(RegistrationHandlerGroup):
+    page_size = 10
     handlers = [
         CancelEditHandler,
         ShowGameHandler,
@@ -91,6 +93,40 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
 
     edit_option_handler_map = {}
 
+    def create_games_markup(self, games, page: int, total_count: int):
+        games_markup = tuple(
+            (
+                f"🔎 {game.title}" if game.group_id is not None else game.title,
+                str(game.id),
+            )
+            for game in games
+        )
+        markup = self.create_markup(
+            games_markup,
+            GameEditCallbackPrefixes.choose_game.value,
+            row_width=1,
+        )
+        markup.add(
+            *get_pagination_row(
+                page,
+                total_count,
+                self.page_size,
+                f"{self.form_prefix}:{GameEditCallbackPrefixes.page.value}",
+            ),
+            row_width=2,
+        )
+        markup.add(
+            InlineKeyboardButton(
+                "Отмена",
+                callback_data=(
+                    f"{self.form_prefix}:"
+                    f"{GameEditCallbackPrefixes.choose_game.value}:"
+                    f"{GameEditActions.cancel.value}"
+                ),
+            )
+        )
+        return markup
+
     async def first_step(
         self,
         message: Message,
@@ -105,7 +141,9 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
                 message.chat.id, "Не узнаю тебя. Ты точно зарегистрировался?"
             )
             return
-        games = await GameController.get_games_for_edit(user.id, session)
+        games, total_count = await GameController.get_games_for_edit(
+            user.id, session, self.page_size
+        )
         if not games:
             await bot.send_message(
                 message.chat.id,
@@ -128,24 +166,37 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
             )
 
         await state.set(GameShowStates.show_games)
-        games_markup = tuple(
-            (
-                f"🔎 {game.title}" if game.group_id is not None else game.title,
-                str(game.id),
-            )
-            for game in games
-        )
-        markup = self.create_markup(
-            games_markup + (("Отмена", GameEditActions.cancel.value),),
-            GameEditCallbackPrefixes.choose_game.value,
-            row_width=1,
-        )
+        markup = self.create_games_markup(games, 0, total_count)
         await bot.send_message(
             message.chat.id,
             f"{active_games_text}\n\n"
             "Выбери, какую игру ты хочешь отредактировать.",
             reply_markup=markup,
         )
+
+    async def show_games_page(
+        self,
+        call: CallbackQuery,
+        user: User,
+        session: AsyncSession,
+        bot: AsyncTeleBot,
+        state: StateContext,
+    ):
+        page = int(call.data.split(":")[-1])
+        games, total_count = await GameController.get_games_for_edit(
+            user.id, session, self.page_size, page
+        )
+        if not games:
+            page = max(0, (total_count - 1) // self.page_size)
+            games, total_count = await GameController.get_games_for_edit(
+                user.id, session, self.page_size, page
+            )
+        await bot.edit_message_reply_markup(
+            call.message.chat.id,
+            call.message.message_id,
+            reply_markup=self.create_games_markup(games, page, total_count),
+        )
+        await bot.answer_callback_query(call.id)
 
     async def last_step(
         self,
@@ -212,6 +263,14 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
             self.first_step,
             chat_types=["private"],
             commands=[self.command],
+            pass_bot=True,
+        )
+
+        self.bot.register_callback_query_handler(
+            self.show_games_page,
+            func=lambda call: call.data.startswith(
+                f"{self.form_prefix}:{GameEditCallbackPrefixes.page.value}:"
+            ),
             pass_bot=True,
         )
 

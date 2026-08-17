@@ -12,6 +12,7 @@ class GameShowStates(StatesGroup):
 
 class GameEditCallbackPrefixes(Enum):
     choose_game = "choose_game"
+    page = "page"
     game_action = "game_action"
     choose_option = "choose_option"
 
