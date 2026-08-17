@@ -1,5 +1,6 @@
 from babel.dates import format_datetime
 from telebot.async_telebot import AsyncTeleBot
+from telebot.asyncio_helper import ApiTelegramException
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from consts import BOT_USERNAME, NEWS_CHANNEL_ID, ENVIRONMENT
@@ -13,6 +14,10 @@ from models import (
     ReviewReceiverTypeEnum,
 )
 from utils.other import utc_to_relative_msk
+
+
+def is_caption_too_long_error(error: ApiTelegramException) -> bool:
+    return "caption is too long" in error.description.lower()
 
 
 async def send_message_with_link_button(
