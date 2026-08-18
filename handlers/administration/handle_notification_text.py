@@ -10,8 +10,8 @@ from telebot.types import Message
 from consts import ADMIN_IDS
 from controllers.user import UserController
 from handlers.administration.settings import (
-    SendNotificationStates,
     NotificationTypeEnum,
+    SendNotificationStates,
 )
 from models import User
 from utils.handlers.base_message_handler import BaseMessageHandler

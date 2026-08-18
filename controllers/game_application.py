@@ -2,7 +2,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from controllers.crud import CRUD
-from models import GameApplication, Game
+from models import Game, GameApplication
 
 
 class GameApplicationController(CRUD):
@@ -33,13 +33,6 @@ class GameApplicationController(CRUD):
                 select(Game.id).where(Game.creator_id == creator_id)
             ),
             GameApplication.message_id == message_id,
-        )
-        return (await session.execute(query)).scalars().first()
-
-    @classmethod
-    async def get_one(cls, game_id: int, user_id: int, session: AsyncSession):
-        query = select(GameApplication).where(
-            GameApplication.game_id == game_id, GameApplication.user_id == user_id
         )
         return (await session.execute(query)).scalars().first()
 

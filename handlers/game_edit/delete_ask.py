@@ -4,8 +4,8 @@ from telebot.types import CallbackQuery
 
 from handlers.game_edit.settings import (
     GAME_EDIT_FORM_PREFIX,
-    GameEditCallbackPrefixes,
     GameEditActions,
+    GameEditCallbackPrefixes,
 )
 from models import User
 from utils.handlers.base_callback_handler import BaseCallbackHandler
@@ -16,11 +16,13 @@ class DeleteAskGameHandler(BaseCallbackHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: call.data
-            == (
-                f"{GAME_EDIT_FORM_PREFIX}:"
-                f"{GameEditCallbackPrefixes.game_action.value}:"
-                f"{GameEditActions.delete.value}"
+            func=lambda call: (
+                call.data
+                == (
+                    f"{GAME_EDIT_FORM_PREFIX}:"
+                    f"{GameEditCallbackPrefixes.game_action.value}:"
+                    f"{GameEditActions.delete.value}"
+                )
             ),
         )
 

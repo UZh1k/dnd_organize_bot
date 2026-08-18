@@ -102,7 +102,7 @@ POPULAR_PLATFORMS = (
 
 
 def generate_simple_choices(
-    choices: tuple[str | int, ...]
+    choices: tuple[str | int, ...],
 ) -> tuple[tuple[str, str], ...]:
     return tuple((choice, choice) for choice in choices)
 

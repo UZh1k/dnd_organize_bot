@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 
-from sqlalchemy import func, Index, ForeignKey
-from sqlalchemy.orm import mapped_column, Mapped, relationship
+from sqlalchemy import ForeignKey, Index, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models.user import User
 from models.base import Base
+from models.user import User
 
 
 class ReviewReceiverTypeEnum(Enum):

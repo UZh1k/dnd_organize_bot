@@ -11,16 +11,16 @@ from telebot.states.asyncio.context import StateContext
 from telebot.types import Message, Update
 
 from consts import (
-    BOT_TOKEN,
     ALLOWED_UPDATE_TYPES,
-    START_IMAGE,
     BOOSTY_LINK,
+    BOT_TOKEN,
     CRYPTO_LINK,
-    WEBHOOK_URL_PATH,
-    STATE_STORAGE,
     REDIS_HOST,
-    REDIS_PORT,
     REDIS_PASS,
+    REDIS_PORT,
+    START_IMAGE,
+    STATE_STORAGE,
+    WEBHOOK_URL_PATH,
 )
 from handlers.administration import AdministrationHandlerGroup
 from handlers.feedback import FeedbackHandlerGroup
@@ -36,7 +36,7 @@ from middlewares.exception import ExceptionMiddleware
 from middlewares.session import SessionMiddleware
 from middlewares.user import UserMiddleware
 from models.user import User
-from utils.message_helpers import send_message_with_link_button, get_channel_link
+from utils.message_helpers import get_channel_link, send_message_with_link_button
 
 state_storage = (
     StateRedisStorage(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASS)

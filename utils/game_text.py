@@ -1,23 +1,23 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from controllers.review import ReviewController
 from models import (
     Game,
-    GameFormatText,
     GameFormat,
+    GameFormatText,
     GameType,
     GameTypeText,
     ReviewReceiverTypeEnum,
 )
 from utils.message_helpers import generate_link_for_game_apply, review_statistic_text
 from utils.other import (
-    create_tag,
-    POPULAR_SYSTEMS,
-    POPULAR_DND_SETTINGS,
-    POPULAR_DND_REDACTIONS,
     CITY_TAGS,
+    POPULAR_DND_REDACTIONS,
+    POPULAR_DND_SETTINGS,
     POPULAR_PLATFORMS,
+    POPULAR_SYSTEMS,
+    create_tag,
 )
 
 

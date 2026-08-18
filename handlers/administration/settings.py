@@ -1,7 +1,6 @@
 from enum import Enum
 
-from telebot.states import StatesGroup, State
-
+from telebot.states import State, StatesGroup
 
 SEND_NOTIFICATION_CALLBACK_PREFIX = "SendNotification"
 

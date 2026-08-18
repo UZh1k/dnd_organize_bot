@@ -9,7 +9,6 @@ from utils.handlers.base_message_handler import BaseMessageHandler
 
 
 class NotificationCustomFilterHandler(BaseMessageHandler):
-
     def register_handler(self):
         self.bot.register_message_handler(
             self.handle_message,
@@ -25,7 +24,7 @@ class NotificationCustomFilterHandler(BaseMessageHandler):
         await self.bot.send_message(
             message.chat.id,
             "Напиши сообщение, которое отправится всем, "
-            "кого ты выбрал (без дупликатов)"
+            "кого ты выбрал (без дупликатов)",
         )
         await state.set(SendNotificationStates.handle_text)
         await state.add_data(custom_filter=message.text)

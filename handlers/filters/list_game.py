@@ -4,8 +4,8 @@ from telebot.states.asyncio import StateContext
 from telebot.types import (
     CallbackQuery,
     InlineKeyboardButton,
-    InputMediaPhoto,
     InlineKeyboardMarkup,
+    InputMediaPhoto,
 )
 
 from controllers.game import GameController
@@ -13,7 +13,7 @@ from controllers.game_member import GameMemberController
 from handlers.filters.settings import FILTERS_FORM_PREFIX, FiltersStages
 from handlers.game_application import GAME_APPLICATION_CALLBACK_PREFIX
 from models import User
-from utils.game_text import create_game_text, create_game_markup_text
+from utils.game_text import create_game_markup_text, create_game_text
 from utils.handlers.base_callback_handler import BaseCallbackHandler
 
 
@@ -21,10 +21,8 @@ class FiltersListGameHandler(BaseCallbackHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: (
-                call.data.startswith(
-                    f"{FILTERS_FORM_PREFIX}:{FiltersStages.search.value}"
-                )
+            func=lambda call: call.data.startswith(
+                f"{FILTERS_FORM_PREFIX}:{FiltersStages.search.value}"
             ),
         )
 

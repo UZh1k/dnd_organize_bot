@@ -11,10 +11,10 @@ class FormChoiceItem(FormChoiceTextItem):
     with_message = False
 
     async def handle_message(
-            self,
-            message: Message,
-            bot: AsyncTeleBot,
-            user: User,
-            session: AsyncSession,
-            state: StateContext,
+        self,
+        message: Message,
+        bot: AsyncTeleBot,
+        user: User,
+        session: AsyncSession,
+        state: StateContext,
     ): ...

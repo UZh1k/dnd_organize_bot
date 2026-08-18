@@ -4,11 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.types import (
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-    Update,
-    Message,
     CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+    Update,
 )
 
 from consts import MAX_ACTIVE_GAMES

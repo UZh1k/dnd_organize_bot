@@ -6,7 +6,7 @@ from handlers.game_registration.description import GameRegistrationDescription
 from handlers.game_registration.states import GameRegistrationStates
 from models import User
 from utils.form.form_choice_text_item import FormChoiceTextItem
-from utils.other import generate_simple_choices, POPULAR_DND_SETTINGS
+from utils.other import POPULAR_DND_SETTINGS, generate_simple_choices
 
 
 class GameRegistrationDndSetting(FormChoiceTextItem):

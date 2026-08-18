@@ -3,18 +3,18 @@ from telebot.states.asyncio import StateContext
 from telebot.types import CallbackQuery
 
 from handlers.filters.form_items import (
-    GameFilterPlayersAge,
     GameFilterCity,
     GameFilterDndRedaction,
     GameFilterDndSetting,
     GameFilterFormat,
     GameFilterFree,
-    GameFilterType,
+    GameFilterPlatform,
+    GameFilterPlayersAge,
     GameFilterSystem,
     GameFilterTag,
-    GameFilterPlatform,
+    GameFilterType,
 )
-from handlers.filters.settings import FilterOptions, FILTERS_FORM_PREFIX, FiltersStages
+from handlers.filters.settings import FILTERS_FORM_PREFIX, FilterOptions, FiltersStages
 from models import User
 from utils.handlers.base_callback_handler import BaseCallbackHandler
 
@@ -36,10 +36,12 @@ class FiltersPrepareQuestionHandler(BaseCallbackHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: call.data.startswith(
-                f"{FILTERS_FORM_PREFIX}:" f"{FiltersStages.choose_filter.value}"
-            )
-            and call.data.split(":")[-1] in FILTER_OPTION_HANDLER_MAP,
+            func=lambda call: (
+                call.data.startswith(
+                    f"{FILTERS_FORM_PREFIX}:{FiltersStages.choose_filter.value}"
+                )
+                and call.data.split(":")[-1] in FILTER_OPTION_HANDLER_MAP
+            ),
         )
 
     async def on_action(

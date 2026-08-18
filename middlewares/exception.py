@@ -1,6 +1,6 @@
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_handler_backends import BaseMiddleware
-from telebot.types import Update, Message
+from telebot.types import Message, Update
 
 from consts import ALLOWED_UPDATE_TYPES, EXCEPTION_CHAT_ID
 from utils.message_helpers import get_chunks

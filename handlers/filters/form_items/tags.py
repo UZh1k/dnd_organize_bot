@@ -24,7 +24,7 @@ class GameFilterTag(FilterItem, GameRegistrationTag):
             return name
 
         tag_objects = await GameTagController.get_list(session, ids=tags)
-        return f"{name}: {", ".join([tag.title for tag in tag_objects])}"
+        return f"{name}: {', '.join([tag.title for tag in tag_objects])}"
 
     async def on_clean(self, state: StateContext):
         await state.add_data(tags=None)

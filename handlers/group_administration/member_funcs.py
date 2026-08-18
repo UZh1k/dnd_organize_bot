@@ -10,7 +10,7 @@ from controllers.review_member import ReviewMemberController
 from controllers.user import UserController
 from handlers.group_administration.group_funcs import on_close_game
 from models import Game, ReviewMember
-from utils.game_text import create_game_text, create_game_markup
+from utils.game_text import create_game_markup, create_game_text
 
 
 async def on_players_count_change(

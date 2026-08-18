@@ -2,14 +2,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.states.asyncio import StateContext
 from telebot.types import Message
 
-from consts import FEEDBACK_CHAT_ID, BOT_USERNAME
+from consts import BOT_USERNAME, FEEDBACK_CHAT_ID
 from controllers.feedback_message import FeedbackMessageController
 from models import User
 from utils.handlers.base_message_handler import BaseMessageHandler
 
 
 class AnswerHandler(BaseMessageHandler):
-
     def register_handler(self):
         self.bot.register_message_handler(
             self.handle_message,

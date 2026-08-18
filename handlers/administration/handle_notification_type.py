@@ -2,8 +2,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.states.asyncio import StateContext
 from telebot.types import CallbackQuery
 
-from handlers.administration.settings import SEND_NOTIFICATION_CALLBACK_PREFIX, \
-    SendNotificationStates, NotificationTypeEnum
+from handlers.administration.settings import (
+    SEND_NOTIFICATION_CALLBACK_PREFIX,
+    NotificationTypeEnum,
+    SendNotificationStates,
+)
 from models import User
 from utils.handlers.base_callback_handler import BaseCallbackHandler
 
@@ -25,16 +28,13 @@ class NotificationTypeHandler(BaseCallbackHandler):
         notification_type = call.data.split(":")[-1]
 
         if notification_type == NotificationTypeEnum.custom_filter.value:
-            await self.bot.send_message(
-                call.message.chat.id,
-                "Напиши кастомный фильтр"
-            )
+            await self.bot.send_message(call.message.chat.id, "Напиши кастомный фильтр")
             await state.set(SendNotificationStates.custom_filter)
         else:
             await self.bot.send_message(
                 call.message.chat.id,
                 "Напиши сообщение, которое отправится всем, "
-                "кого ты выбрал (без дупликатов)"
+                "кого ты выбрал (без дупликатов)",
             )
             await state.set(SendNotificationStates.handle_text)
 

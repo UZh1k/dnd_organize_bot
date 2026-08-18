@@ -8,7 +8,7 @@ from handlers.filters.form_items.city import GameFilterCity
 from handlers.filters.form_items.filter_item import FilterItem
 from handlers.filters.settings import FiltersStates
 from handlers.game_registration import GameRegistrationFormat
-from models import User, GameFormatText, GameFormat
+from models import GameFormat, GameFormatText, User
 
 
 class GameFilterFormat(FilterItem, GameRegistrationFormat):

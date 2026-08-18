@@ -1,5 +1,5 @@
-from telebot.asyncio_helper import ApiTelegramException
 from telebot.async_telebot import AsyncTeleBot
+from telebot.asyncio_helper import ApiTelegramException
 
 from consts import EXCEPTION_CHAT_ID
 from models import Game

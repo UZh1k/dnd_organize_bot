@@ -10,11 +10,11 @@ from controllers.review import ReviewController
 from controllers.user import UserController
 from handlers.review.review_item import ReviewItemHandler
 from handlers.review.settings import (
-    REVIEW_CALLBACK_PREFIX,
     EMPTY_CALLBACK,
+    REVIEW_CALLBACK_PREFIX,
     ReviewStates,
 )
-from models import User, ReviewReceiverTypeEnum, Game
+from models import Game, ReviewReceiverTypeEnum, User
 from utils.game_text import create_game_markup
 from utils.handlers.base_handler import BaseHandler
 
@@ -23,9 +23,7 @@ class SaveReviewHandler(BaseHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: (
-                call.data == f"{REVIEW_CALLBACK_PREFIX}:{EMPTY_CALLBACK}"
-            ),
+            func=lambda call: call.data == f"{REVIEW_CALLBACK_PREFIX}:{EMPTY_CALLBACK}",
         )
         self.bot.register_message_handler(
             self.handle_message,
@@ -76,7 +74,6 @@ class SaveReviewHandler(BaseHandler):
         if not review:
             review = await ReviewController.create(review_data, session)
         else:
-
             if review.unchangeable:
                 await self.bot.send_message(
                     chat_id,

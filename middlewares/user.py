@@ -1,5 +1,6 @@
-from telebot.types import Message, Update, User as TGUser
 from telebot.asyncio_handler_backends import BaseMiddleware, SkipHandler
+from telebot.types import Message, Update
+from telebot.types import User as TGUser
 
 from consts import ALLOWED_UPDATE_TYPES
 from controllers.user import UserController
@@ -18,7 +19,7 @@ class UserMiddleware(BaseMiddleware):
                 user.id,
                 "id",
                 session,
-                {"username": getattr(user, "username")},
+                {"username": user.username},
             )
             if db_user.banned:
                 return SkipHandler()

@@ -36,7 +36,7 @@ class GameFilterFree(FilterItem, GameRegistrationFree):
     ) -> str:
         free = set_filters.get("free")
         return (
-            f"{name}: {"Платно" if not free else "Бесплатно"}"
+            f"{name}: {'Платно' if not free else 'Бесплатно'}"
             if free is not None
             else name
         )

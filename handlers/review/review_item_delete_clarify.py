@@ -17,10 +17,8 @@ class ReviewItemDeleteClarifyHandler(BaseCallbackHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: (
-                call.data.startswith(
-                    f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_ITEM_PREFIX}:{ReviewItemMenuChoices.delete_clarify.value}"
-                )
+            func=lambda call: call.data.startswith(
+                f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_ITEM_PREFIX}:{ReviewItemMenuChoices.delete_clarify.value}"
             ),
         )
 

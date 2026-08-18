@@ -1,13 +1,12 @@
+from collections.abc import Sequence
 from operator import or_
-from typing import Sequence
 
-from sqlalchemy import select, Select, distinct, func, text
+from sqlalchemy import Select, distinct, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from controllers.crud import CRUD
-from models import Game, GameMember, ReviewMember
-from models import Review, ReviewReceiverTypeEnum
+from models import Game, GameMember, Review, ReviewMember, ReviewReceiverTypeEnum
 from models.user import User
 
 

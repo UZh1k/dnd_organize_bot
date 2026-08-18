@@ -3,7 +3,7 @@ from abc import ABC
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
-from telebot.types import Message, CallbackQuery
+from telebot.types import CallbackQuery, Message
 
 from models import User
 from utils.handlers.base_handler import BaseHandler, FunctionType
@@ -32,8 +32,7 @@ class BaseCallbackHandler(BaseHandler, ABC):
         session: AsyncSession,
         user: User,
         state: StateContext,
-    ):
-        ...
+    ): ...
 
     async def handle_callback(
         self,

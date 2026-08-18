@@ -3,13 +3,13 @@ from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
-from telebot.types import Update, Message
+from telebot.types import Message, Update
 
-from consts import NEWS_CHANNEL_ID, BOOSTY_LINK, CRYPTO_LINK
+from consts import BOOSTY_LINK, CRYPTO_LINK, NEWS_CHANNEL_ID
 from controllers.game import GameController
 from controllers.game_member import GameMemberController
 from controllers.review_member import ReviewMemberController
-from models import User, Game, GameMember, ReviewMember
+from models import Game, GameMember, ReviewMember, User
 
 
 async def handle_bot_added_to_group(
@@ -49,7 +49,7 @@ async def on_close_game(bot: AsyncTeleBot, game: Game, session: AsyncSession):
     except ApiTelegramException:
         try:
             await bot.edit_message_caption(
-                f"*{game.title}*\n\n" f"Сбор на приключение прекращен.",
+                f"*{game.title}*\n\nСбор на приключение прекращен.",
                 NEWS_CHANNEL_ID,
                 game.post_id,
                 reply_markup=None,
@@ -118,7 +118,7 @@ async def done_game(
 
     try:
         await bot.edit_message_caption(
-            f"*{game.title}*\n\n" f"Команда собралась и отправилась в приключение!",
+            f"*{game.title}*\n\nКоманда собралась и отправилась в приключение!",
             NEWS_CHANNEL_ID,
             game.post_id,
             reply_markup=None,

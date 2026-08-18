@@ -10,18 +10,16 @@ from handlers.review.settings import (
 )
 from models import User
 from utils.handlers.base_callback_handler import BaseCallbackHandler
-from utils.message_helpers import generate_review_text, create_markup
+from utils.message_helpers import create_markup, generate_review_text
 
 
 class ReadReviewHandler(BaseCallbackHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: (
-                call.data.startswith(
-                    f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}"
-                    f":{ReviewMenuChoices.reviews_about_me.value}"
-                )
+            func=lambda call: call.data.startswith(
+                f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}"
+                f":{ReviewMenuChoices.reviews_about_me.value}"
             ),
         )
 
@@ -61,15 +59,14 @@ class ReadReviewHandler(BaseCallbackHandler):
             pagination_buttons.append(
                 InlineKeyboardButton(
                     "Предыдущий",
-                    callback_data=f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.reviews_about_me.value}:{review_num-1}",
+                    callback_data=f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.reviews_about_me.value}:{review_num - 1}",
                 )
             )
         if review_num != len(reviews) - 1:
-
             pagination_buttons.append(
                 InlineKeyboardButton(
                     "Следующий",
-                    callback_data=f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.reviews_about_me.value}:{review_num+1}",
+                    callback_data=f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.reviews_about_me.value}:{review_num + 1}",
                 )
             )
 

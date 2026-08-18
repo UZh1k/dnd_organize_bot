@@ -13,7 +13,6 @@ from utils.message_helpers import create_markup
 
 
 class MenuCreateReviewHandler(BaseCallbackHandler):
-
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,

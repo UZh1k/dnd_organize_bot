@@ -1,5 +1,5 @@
 from handlers.feedback.answer import AnswerHandler
-from handlers.feedback.funcs import handle_feedback, forward_to_admins, FeedbackStates
+from handlers.feedback.funcs import FeedbackStates, forward_to_admins, handle_feedback
 from utils.handler_groups.base_handler_group import BaseHandlerGroup
 from utils.other import is_command
 

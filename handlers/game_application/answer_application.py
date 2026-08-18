@@ -32,8 +32,11 @@ class AnswerApplicationHandler(BaseMessageHandler):
         ):
             game_id = application.game_id
             receiver_id = application.user_id
-        elif application_message := await GameApplicationMessageController.get_one_for_answer(
-            user.id, message.reply_to_message.id, session
+        elif (
+            application_message
+            := await GameApplicationMessageController.get_one_for_answer(
+                user.id, message.reply_to_message.id, session
+            )
         ):
             game_id = application_message.game_id
             receiver_id = application_message.sender_id
@@ -43,7 +46,7 @@ class AnswerApplicationHandler(BaseMessageHandler):
         game = await GameController.get_one(game_id, session)
         await self.bot.send_message(
             receiver_id,
-            f'Пришел ответ от {"мастера" if user.id == game.creator_id else "игрока"} '
+            f"Пришел ответ от {'мастера' if user.id == game.creator_id else 'игрока'} "
             f'{user.name} по игре "{game.title}". \n\n'
             "Чтобы переслать ему что-то, ответь на сообщение ниже. "
             "В сообщении можно прикрепить фото, войс или кружок.",

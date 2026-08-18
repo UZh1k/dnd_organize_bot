@@ -2,14 +2,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
-from telebot.types import Message, CallbackQuery
+from telebot.types import CallbackQuery, Message
 
 from handlers.user_profile.accept_minor import UserProfileAcceptMinor
 from handlers.user_profile.age import UserProfileAge
 from handlers.user_profile.bio import UserProfileBio
 from handlers.user_profile.city import UserProfileCity
 from handlers.user_profile.name import UserProfileName
-from handlers.user_profile.profile import handle_get_profile
 from handlers.user_profile.timezone import UserProfileTimezone
 from handlers.user_profile.user_type import UserProfileUserType
 from models import User
@@ -86,7 +85,7 @@ class UserProfileHandlerGroup(RegistrationHandlerGroup):
         )
         await bot.send_message(
             chat_id,
-            f"Анкета успешно обновлена.\n\n" f"{get_user_text(user)}",
+            f"Анкета успешно обновлена.\n\n{get_user_text(user)}",
             reply_markup=markup,
         )
 
@@ -189,16 +188,13 @@ class UserProfileHandlerGroup(RegistrationHandlerGroup):
         )
         self.bot.register_callback_query_handler(
             self.prepare_form_item,
-            func=lambda call: (
-                call.data.startswith(
-                    f"{self.form_prefix}:{self.form_item_name_edit_options}"
-                )
+            func=lambda call: call.data.startswith(
+                f"{self.form_prefix}:{self.form_item_name_edit_options}"
             ),
             pass_bot=True,
         )
 
         for current_item_group in self.form_item_groups:
-
             for current_item in (current_item_group.main, *current_item_group.side):
                 self.register_form_handlers(
                     current_item(self.last_step, self.form_prefix)

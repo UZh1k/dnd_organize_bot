@@ -3,10 +3,10 @@ from telebot.states.asyncio import StateContext
 from telebot.types import CallbackQuery
 
 from handlers.review.settings import (
-    REVIEW_CALLBACK_PREFIX,
-    RATE_STAGE,
-    ReviewStates,
     EMPTY_CALLBACK,
+    RATE_STAGE,
+    REVIEW_CALLBACK_PREFIX,
+    ReviewStates,
 )
 from models import User
 from utils.handlers.base_callback_handler import BaseCallbackHandler
@@ -17,8 +17,8 @@ class RateNumberHandler(BaseCallbackHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: (
-                call.data.startswith(f"{REVIEW_CALLBACK_PREFIX}:{RATE_STAGE}")
+            func=lambda call: call.data.startswith(
+                f"{REVIEW_CALLBACK_PREFIX}:{RATE_STAGE}"
             ),
         )
 

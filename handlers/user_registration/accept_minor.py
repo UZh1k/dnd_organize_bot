@@ -13,6 +13,4 @@ class UserRegistrationAcceptMinor(FormChoiceItem):
     form_item_name = "accept_minor"
 
     alert_message = None
-    choices = (
-        ("Я понял", "accept"),
-    )
+    choices = (("Я понял", "accept"),)

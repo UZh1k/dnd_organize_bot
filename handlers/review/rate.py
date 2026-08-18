@@ -3,12 +3,12 @@ from telebot.states.asyncio import StateContext
 from telebot.types import CallbackQuery
 
 from handlers.review.settings import (
+    RATE_STAGE,
     REVIEW_CALLBACK_PREFIX,
     ReviewMenuChoices,
-    RATE_STAGE,
     ReviewStates,
 )
-from models import User, ReviewReceiverTypeEnum
+from models import ReviewReceiverTypeEnum, User
 from utils.handlers.base_callback_handler import BaseCallbackHandler
 from utils.message_helpers import create_markup
 

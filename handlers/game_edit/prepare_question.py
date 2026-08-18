@@ -5,28 +5,28 @@ from telebot.types import CallbackQuery
 from controllers.game import GameController
 from handlers.game_edit import GameEditPlatform
 from handlers.game_edit.form_items import (
-    GameEditTitle,
-    GameEditFormat,
     GameEditCity,
-    GameEditSystem,
+    GameEditDescription,
     GameEditDndRedaction,
     GameEditDndSetting,
-    GameEditRedactionAndSetting,
-    GameEditType,
-    GameEditDescription,
-    GameEditStartLevel,
-    GameEditPlayersCount,
+    GameEditFormat,
     GameEditFree,
-    GameEditTime,
-    GameEditPlayersAge,
-    GameEditTechRequirements,
-    GameEditTag,
     GameEditImage,
+    GameEditPlayersAge,
+    GameEditPlayersCount,
+    GameEditRedactionAndSetting,
+    GameEditStartLevel,
+    GameEditSystem,
+    GameEditTag,
+    GameEditTechRequirements,
+    GameEditTime,
+    GameEditTitle,
+    GameEditType,
 )
 from handlers.game_edit.settings import (
-    GameEditOptions,
     GAME_EDIT_FORM_PREFIX,
     GameEditCallbackPrefixes,
+    GameEditOptions,
 )
 from models import User
 from utils.handlers.base_callback_handler import BaseCallbackHandler

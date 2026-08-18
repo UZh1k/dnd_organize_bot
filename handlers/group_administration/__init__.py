@@ -1,17 +1,17 @@
 from consts import BOT_USERNAME
 from handlers.group_administration.group_funcs import (
-    handle_bot_added_to_group,
-    handle_bot_removed_group,
     close_game,
     done_game,
+    handle_bot_added_to_group,
     handle_bot_added_to_supergroup,
+    handle_bot_removed_group,
 )
 from handlers.group_administration.help import GroupHelpHandler
 from handlers.group_administration.link_game import (
-    handle_bot_promoted_to_admin,
-    handle_link_game_command,
-    handle_link_game,
     GAME_LINK_PREFIX,
+    handle_bot_promoted_to_admin,
+    handle_link_game,
+    handle_link_game_command,
 )
 from handlers.group_administration.member_funcs import (
     handle_player_added_to_group,

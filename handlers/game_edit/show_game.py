@@ -6,11 +6,11 @@ from telebot.types import CallbackQuery
 
 from controllers.game import GameController
 from handlers.game_edit.settings import (
-    GameEditActions,
     GAME_EDIT_FORM_PREFIX,
+    GameEditActions,
     GameEditCallbackPrefixes,
 )
-from models import User, Game
+from models import Game, User
 from utils.game_text import create_game_text
 from utils.handlers.base_callback_handler import BaseCallbackHandler
 from utils.message_helpers import create_markup, is_caption_too_long_error
@@ -58,8 +58,7 @@ class ShowGameHandler(BaseCallbackHandler):
         )
         await bot.send_message(
             chat_id,
-            f"Выбрана игра “{game.title}”. "
-            f"Ты хочешь что-то скорректировать?",
+            f"Выбрана игра “{game.title}”. Ты хочешь что-то скорректировать?",
             reply_markup=markup,
         )
         return text
