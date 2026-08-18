@@ -5,6 +5,7 @@ description = "Telegram bot for finding and organizing tabletop RPG games (dnd-h
 requires-python = ">=3.12,<4.0"
 dependencies = [
     # --- Direct dependencies (imported or invoked by the app) ---
+    # Exact pins stay until test coverage exists; see CLAUDE.md.
     "fastapi==0.115.4",
     "SQLAlchemy==2.0.36",
     "pyTelegramBotAPI[aiohttp]==4.23.0",
@@ -15,35 +16,6 @@ dependencies = [
     "psycopg2-binary==2.9.10",
     "uvicorn==0.32.1",
     "redis==5.2.1",
-
-    # --- Transitive deps, held at their pre-Poetry versions ---
-    # This migration is a tooling swap only and must not change any installed
-    # version (audit-flagged deps stay deferred until test coverage exists).
-    # TEMPORARY: drop this block and loosen the direct pins to ranges in a
-    # follow-up PR once tests are in place, so `uv lock --upgrade` can move them.
-    "aiohttp==3.10.11",
-    "aiohappyeyeballs==2.4.3",
-    "aiosignal==1.3.1",
-    "annotated-types==0.7.0",
-    "anyio==4.6.2.post1",
-    "attrs==24.2.0",
-    "certifi==2024.8.30",
-    "charset-normalizer==3.4.0",
-    "frozenlist==1.5.0",
-    "greenlet==3.1.1",
-    "idna==3.10",
-    "Mako==1.3.6",
-    "MarkupSafe==3.0.2",
-    "multidict==6.1.0",
-    "propcache==0.2.0",
-    "pydantic==2.9.2",
-    "pydantic-core==2.23.4",
-    "requests==2.32.3",
-    "sniffio==1.3.1",
-    "starlette==0.41.2",
-    "typing-extensions==4.12.2",
-    "urllib3==2.2.3",
-    "yarl==1.17.1",
 ]
 
 # This is an app, not a distributable package: install only the dependencies,
