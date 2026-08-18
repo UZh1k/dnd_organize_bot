@@ -1,0 +1,7 @@
+# Revisions to skip in `git blame` — bulk mechanical reformats, no behavioural changes.
+#
+# GitHub's blame view honours this file automatically. For local `git blame`, run once:
+#     git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Apply Ruff format and autofixes (import sorting, pyupgrade, unused-import removal).
+f44a211339ac08d8dcecf93bd1c7f15d5e57ac60
