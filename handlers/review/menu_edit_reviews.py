@@ -6,11 +6,11 @@ from telebot.types import CallbackQuery, InlineKeyboardButton
 from controllers.review import ReviewController
 from handlers.review.settings import (
     REVIEW_CALLBACK_PREFIX,
+    REVIEW_ITEM_PREFIX,
     REVIEW_MENU_PREFIX,
     ReviewMenuChoices,
-    REVIEW_ITEM_PREFIX,
 )
-from models import User, ReviewReceiverTypeEnum
+from models import ReviewReceiverTypeEnum, User
 from utils.handlers.base_callback_handler import BaseCallbackHandler
 from utils.message_helpers import create_markup, get_pagination_row
 
@@ -21,10 +21,8 @@ class MenuEditReviewHandler(BaseCallbackHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: (
-                call.data.startswith(
-                    f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.edit_review.value}"
-                )
+            func=lambda call: call.data.startswith(
+                f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.edit_review.value}"
             ),
         )
 

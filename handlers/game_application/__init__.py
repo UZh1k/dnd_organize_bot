@@ -1,23 +1,22 @@
 from handlers.game_application.accept_form import (
-    handle_decline_application,
     ACCEPT_FORM_CALLBACK_PREFIX,
     ApplyAnswer,
     handle_accept_application,
+    handle_decline_application,
 )
 from handlers.game_application.answer_application import AnswerApplicationHandler
 from handlers.game_application.applicant_review import ApplicantReviewHandler
 from handlers.game_application.form import (
-    handle_apply_for_game,
-    GAME_APPLICATION_NO_DATA,
-    GAME_APPLICATION_CANCEL,
-    handle_message_apply_for_game,
-    handle_callback_apply_for_game,
     GAME_APPLICATION_CALLBACK_PREFIX,
+    GAME_APPLICATION_CANCEL,
+    GAME_APPLICATION_NO_DATA,
+    handle_callback_apply_for_game,
+    handle_message_apply_for_game,
 )
 from handlers.game_application.handle_form import (
-    handle_application_letter_no_data,
-    handle_application_letter,
     handle_application_cancel,
+    handle_application_letter,
+    handle_application_letter_no_data,
 )
 from handlers.game_application.states import GameApplicationStates
 from handlers.game_application.write_letter import ApplicationWriteLetterHandler
@@ -43,8 +42,8 @@ class GameApplicationHandlerGroup(BaseHandlerGroup):
         )
         self.bot.register_callback_query_handler(
             handle_callback_apply_for_game,
-            func=lambda call: (
-                call.data.startswith(f"{GAME_APPLICATION_CALLBACK_PREFIX}:apply")
+            func=lambda call: call.data.startswith(
+                f"{GAME_APPLICATION_CALLBACK_PREFIX}:apply"
             ),
             pass_bot=True,
         )

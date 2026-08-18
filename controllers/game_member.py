@@ -1,4 +1,4 @@
-from sqlalchemy import select, func, delete
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from controllers.crud import CRUD

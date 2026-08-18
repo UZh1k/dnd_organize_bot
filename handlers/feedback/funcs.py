@@ -1,10 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
-from telebot.states import StatesGroup, State
+from telebot.states import State, StatesGroup
 from telebot.states.asyncio import StateContext
 from telebot.types import Message, User
 
-from consts import FEEDBACK_IMAGE, FEEDBACK_CHAT_ID
+from consts import FEEDBACK_CHAT_ID, FEEDBACK_IMAGE
 from controllers.feedback_message import FeedbackMessageController
 
 

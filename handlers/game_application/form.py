@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
-from telebot.types import Message, CallbackQuery
+from telebot.types import CallbackQuery, Message
 
 from controllers.game import GameController
 from controllers.game_application import GameApplicationController
@@ -12,13 +12,13 @@ from controllers.review import ReviewController
 from controllers.user import UserController
 from handlers.game_application.invite import send_invite
 from handlers.game_application.states import GameApplicationStates
-from models import User, ReviewReceiverTypeEnum
+from models import ReviewReceiverTypeEnum, User
 from utils.message_helpers import (
-    send_message_with_link_button,
+    create_markup,
     generate_link_for_game_apply,
     get_user_text,
     review_statistic_text,
-    create_markup,
+    send_message_with_link_button,
 )
 
 GAME_APPLICATION_CALLBACK_PREFIX = "GameApplication"

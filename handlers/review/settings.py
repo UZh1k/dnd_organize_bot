@@ -1,6 +1,6 @@
 from enum import Enum
 
-from telebot.states import StatesGroup, State
+from telebot.states import State, StatesGroup
 
 REVIEW_CALLBACK_PREFIX = "Review"
 REVIEW_MENU_PREFIX = "review_menu"

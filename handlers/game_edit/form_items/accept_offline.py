@@ -19,7 +19,7 @@ class GameEditAcceptOffline(GameRegistrationAcceptOffline):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
-        **kwargs
+        **kwargs,
     ):
         await GameEditAcceptCity.prepare(
             chat_id, user, session, bot, state, self.form_prefix

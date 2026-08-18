@@ -6,7 +6,7 @@ from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
 from telebot.types import InlineKeyboardButton
 
-from handlers.filters.settings import FiltersStages, FILTERS_FORM_PREFIX
+from handlers.filters.settings import FILTERS_FORM_PREFIX, FiltersStages
 from models import User
 from utils.form.form_choice_text_item import FormChoiceTextItem
 

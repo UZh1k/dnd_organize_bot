@@ -5,11 +5,11 @@ from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.types import Message
 
-from consts import NEWS_CHANNEL_ID, MAX_ACTIVE_GAMES
+from consts import MAX_ACTIVE_GAMES, NEWS_CHANNEL_ID
 from controllers.game import GameController
 from controllers.game_member import GameMemberController
 from models import Game, User
-from utils.game_text import create_game_text, create_game_markup
+from utils.game_text import create_game_markup, create_game_text
 from utils.message_helpers import is_caption_too_long_error
 
 
@@ -54,7 +54,6 @@ async def update_game_post(
             "Публикацию можно поднимать не чаще, чем раз в 5 дней. Попробуй позже.",
         )
         return
-
 
     active_games_count = None
     if game.done:
@@ -120,7 +119,7 @@ async def update_game_post(
 
         try:
             await bot.edit_message_caption(
-                f"*{game.title}*\n\n" "Пост пересоздан",
+                f"*{game.title}*\n\nПост пересоздан",
                 NEWS_CHANNEL_ID,
                 previous_post_id,
                 parse_mode="Markdown",

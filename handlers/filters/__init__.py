@@ -7,16 +7,16 @@ from telebot.types import (
 
 from handlers.filters.clean_filters import FiltersCleanHandler
 from handlers.filters.form_items import (
-    GameFilterPlayersAge,
-    GameFilterFormat,
     GameFilterCity,
-    GameFilterSystem,
-    GameFilterType,
-    GameFilterDndSetting,
     GameFilterDndRedaction,
+    GameFilterDndSetting,
+    GameFilterFormat,
     GameFilterFree,
-    GameFilterTag,
     GameFilterPlatform,
+    GameFilterPlayersAge,
+    GameFilterSystem,
+    GameFilterTag,
+    GameFilterType,
 )
 from handlers.filters.list_game import FiltersListGameHandler
 from handlers.filters.menu import FiltersMenuHandler
@@ -81,7 +81,6 @@ class FiltersHandlerGroup(RegistrationHandlerGroup):
         BaseHandlerGroup.register_handlers(self)
 
         for current_item_group in self.form_item_groups:
-
             for current_item in (current_item_group.main, *current_item_group.side):
                 self.register_form_handlers(
                     current_item(self.last_step, self.form_prefix)

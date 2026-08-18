@@ -14,6 +14,7 @@ class GameTagLink(Base):
         ForeignKey("game_tag.id", ondelete="CASCADE"), primary_key=True
     )
 
+
 class GameTag(Base):
     __tablename__ = "game_tag"
 

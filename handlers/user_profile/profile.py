@@ -19,6 +19,4 @@ async def handle_get_profile(
             message.chat.id, "Ты еще не зарегистрирован, нажми /register"
         )
     else:
-        await bot.send_message(
-            message.chat.id, get_user_text(user)
-        )
+        await bot.send_message(message.chat.id, get_user_text(user))

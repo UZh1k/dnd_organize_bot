@@ -4,7 +4,6 @@ from telebot.types import CallbackQuery
 
 from handlers.filters.menu import FiltersMenuHandler
 from handlers.filters.settings import FILTERS_FORM_PREFIX, FiltersStages
-
 from models import User
 from utils.handlers.base_callback_handler import BaseCallbackHandler
 
@@ -13,8 +12,10 @@ class FiltersCleanHandler(BaseCallbackHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: call.data
-            == (f"{FILTERS_FORM_PREFIX}:{FiltersStages.clear_filters.value}"),
+            func=lambda call: (
+                call.data
+                == (f"{FILTERS_FORM_PREFIX}:{FiltersStages.clear_filters.value}")
+            ),
         )
 
     async def handle_callback(

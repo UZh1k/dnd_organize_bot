@@ -4,11 +4,11 @@ from telebot.states.asyncio import StateContext
 from telebot.types import Message
 
 from controllers.city import CityController
-from handlers.user_registration.timezone import UserRegistrationTimezone
 from handlers.user_registration.states import UserRegistrationStates
+from handlers.user_registration.timezone import UserRegistrationTimezone
 from models import User
 from utils.form.form_choice_text_item import FormChoiceTextItem
-from utils.other import generate_city_choices, CITY_TO_TIMEZONE
+from utils.other import CITY_TO_TIMEZONE, generate_city_choices
 
 
 class UserRegistrationCity(FormChoiceTextItem):

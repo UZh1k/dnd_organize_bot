@@ -1,16 +1,16 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from telebot.asyncio_helper import ApiTelegramException
 from telebot.async_telebot import AsyncTeleBot
+from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
-from telebot.types import CallbackQuery, Message, InlineKeyboardButton
+from telebot.types import CallbackQuery, InlineKeyboardButton, Message
 
 from controllers.game import GameController
 from controllers.game_application import GameApplicationController
 from controllers.review import ReviewController
+from handlers.game_application.accept_form import generate_accept_form_markup
 from handlers.game_application.form import GAME_APPLICATION_CALLBACK_PREFIX
 from handlers.game_application.states import GameApplicationStates
-from handlers.game_application.accept_form import generate_accept_form_markup
-from models import User, ReviewReceiverTypeEnum
+from models import ReviewReceiverTypeEnum, User
 from utils.message_helpers import get_user_text, review_statistic_text
 
 

@@ -5,9 +5,9 @@ from telebot.types import CallbackQuery
 
 from controllers.game import GameController
 from handlers.review.settings import (
+    REVIEW_CALLBACK_PREFIX,
     REVIEW_MENU_PREFIX,
     ReviewMenuChoices,
-    REVIEW_CALLBACK_PREFIX,
 )
 from models import User
 from utils.handlers.base_callback_handler import BaseCallbackHandler
@@ -20,10 +20,8 @@ class ReviewChooseGameHandler(BaseCallbackHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: (
-                call.data.startswith(
-                    f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.review_dm.value}"
-                )
+            func=lambda call: call.data.startswith(
+                f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_MENU_PREFIX}:{ReviewMenuChoices.review_dm.value}"
             ),
         )
 

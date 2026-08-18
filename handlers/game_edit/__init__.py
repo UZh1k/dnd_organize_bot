@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
-from telebot.types import CallbackQuery, InlineKeyboardButton, Message, InputMediaPhoto
+from telebot.types import CallbackQuery, InlineKeyboardButton, InputMediaPhoto, Message
 
 from consts import MAX_ACTIVE_GAMES, NEWS_CHANNEL_ID
 from controllers.game import GameController
@@ -13,33 +13,33 @@ from handlers.game_edit.delete_ask import DeleteAskGameHandler
 from handlers.game_edit.delete_confirm import DeleteConfirmGameHandler
 from handlers.game_edit.edit_confirm import GameEditConfirmHandler
 from handlers.game_edit.form_items import (
-    GameEditTitle,
-    GameEditFormat,
-    GameEditAcceptOffline,
+    GameEditAboutPrice,
     GameEditAcceptCity,
+    GameEditAcceptOffline,
     GameEditCity,
-    GameEditPlayersCount,
-    GameEditFree,
-    GameEditTime,
-    GameEditSystem,
+    GameEditDescription,
     GameEditDndRedaction,
     GameEditDndSetting,
-    GameEditRedactionAndSetting,
-    GameEditType,
-    GameEditStartLevel,
-    GameEditDescription,
-    GameEditPlayersAge,
-    GameEditTechRequirements,
-    GameEditTag,
-    GameEditAboutPrice,
+    GameEditFormat,
+    GameEditFree,
     GameEditImage,
+    GameEditPlayersAge,
+    GameEditPlayersCount,
+    GameEditRedactionAndSetting,
+    GameEditStartLevel,
+    GameEditSystem,
+    GameEditTag,
+    GameEditTechRequirements,
+    GameEditTime,
+    GameEditTitle,
+    GameEditType,
 )
 from handlers.game_edit.form_items.platform import GameEditPlatform
 from handlers.game_edit.prepare_question import PrepareQuestionHandler
 from handlers.game_edit.settings import (
-    GameEditCallbackPrefixes,
     GAME_EDIT_FORM_PREFIX,
     GameEditActions,
+    GameEditCallbackPrefixes,
     GameShowStates,
 )
 from handlers.game_edit.show_game import ShowGameHandler
@@ -169,8 +169,7 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
         markup = self.create_games_markup(games, 0, total_count)
         await bot.send_message(
             message.chat.id,
-            f"{active_games_text}\n\n"
-            "Выбери, какую игру ты хочешь отредактировать.",
+            f"{active_games_text}\n\nВыбери, какую игру ты хочешь отредактировать.",
             reply_markup=markup,
         )
 
@@ -275,7 +274,6 @@ class GameEditHandlerGroup(RegistrationHandlerGroup):
         )
 
         for current_item_group in self.form_item_groups:
-
             for current_item in (current_item_group.main, *current_item_group.side):
                 self.register_form_handlers(
                     current_item(self.last_step, self.form_prefix)

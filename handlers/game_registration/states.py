@@ -1,4 +1,4 @@
-from telebot.states import StatesGroup, State
+from telebot.states import State, StatesGroup
 
 
 class GameRegistrationStates(StatesGroup):

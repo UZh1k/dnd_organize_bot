@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum, IntEnum
 
-from sqlalchemy import BIGINT, SMALLINT, ForeignKey, JSON
+from sqlalchemy import BIGINT, JSON, SMALLINT, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base

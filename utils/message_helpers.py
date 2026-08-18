@@ -1,17 +1,17 @@
 from babel.dates import format_datetime
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from consts import BOT_USERNAME, NEWS_CHANNEL_ID, ENVIRONMENT
+from consts import BOT_USERNAME, ENVIRONMENT, NEWS_CHANNEL_ID
 from models import (
     Game,
-    User,
-    UserTypeText,
-    UserType,
-    ReviewStatistic,
     Review,
     ReviewReceiverTypeEnum,
+    ReviewStatistic,
+    User,
+    UserType,
+    UserTypeText,
 )
 from utils.other import utc_to_relative_msk
 

@@ -1,7 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
-from telebot.types import Message
 
 from handlers.user_registration.states import UserRegistrationStates
 from models import User

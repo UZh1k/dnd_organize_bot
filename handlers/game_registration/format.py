@@ -5,7 +5,7 @@ from telebot.states.asyncio import StateContext
 from handlers.game_registration.accept_offline import GameRegistrationAcceptOffline
 from handlers.game_registration.platform import GameRegistrationPlatform
 from handlers.game_registration.states import GameRegistrationStates
-from models import User, GameFormat
+from models import GameFormat, User
 from utils.form.form_choice_item import FormChoiceItem
 
 

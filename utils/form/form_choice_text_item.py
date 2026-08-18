@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+from telebot.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 
 from models import User
 from utils.form.form_text_item import FormTextItem

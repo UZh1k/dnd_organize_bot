@@ -1,14 +1,14 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.states.asyncio import StateContext
-from telebot.types import Message, CallbackQuery
+from telebot.types import CallbackQuery, Message
 
 from controllers.review import ReviewController
 from handlers.review.settings import (
-    ReviewMenuChoices,
-    REVIEW_MENU_PREFIX,
     REVIEW_CALLBACK_PREFIX,
+    REVIEW_MENU_PREFIX,
+    ReviewMenuChoices,
 )
-from models import User, ReviewReceiverTypeEnum
+from models import ReviewReceiverTypeEnum, User
 from utils.handlers.base_handler import BaseHandler
 from utils.message_helpers import create_markup, review_statistic_text
 

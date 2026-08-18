@@ -7,11 +7,11 @@ from controllers.review import ReviewController
 from handlers.review.settings import (
     REVIEW_CALLBACK_PREFIX,
     REVIEW_ITEM_PREFIX,
-    ReviewMenuChoices,
     REVIEW_MENU_PREFIX,
     ReviewItemMenuChoices,
+    ReviewMenuChoices,
 )
-from models import User, ReviewReceiverTypeEnum
+from models import ReviewReceiverTypeEnum, User
 from utils.handlers.base_callback_handler import BaseCallbackHandler
 from utils.message_helpers import create_markup
 
@@ -20,8 +20,8 @@ class ReviewItemHandler(BaseCallbackHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: (
-                call.data.startswith(f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_ITEM_PREFIX}:")
+            func=lambda call: call.data.startswith(
+                f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_ITEM_PREFIX}:"
             ),
         )
 

@@ -5,11 +5,11 @@ from telebot.types import CallbackQuery
 from controllers.game import GameController
 from handlers.game_edit.settings import (
     GAME_EDIT_FORM_PREFIX,
-    GameEditCallbackPrefixes,
     GameEditActions,
+    GameEditCallbackPrefixes,
     GameEditOptionsStr,
 )
-from models import User, GameFormat
+from models import GameFormat, User
 from utils.handlers.base_callback_handler import BaseCallbackHandler
 from utils.message_helpers import create_markup
 
@@ -18,11 +18,13 @@ class GameEditConfirmHandler(BaseCallbackHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: call.data
-            == (
-                f"{GAME_EDIT_FORM_PREFIX}:"
-                f"{GameEditCallbackPrefixes.game_action.value}:"
-                f"{GameEditActions.edit.value}"
+            func=lambda call: (
+                call.data
+                == (
+                    f"{GAME_EDIT_FORM_PREFIX}:"
+                    f"{GameEditCallbackPrefixes.game_action.value}:"
+                    f"{GameEditActions.edit.value}"
+                )
             ),
         )
 

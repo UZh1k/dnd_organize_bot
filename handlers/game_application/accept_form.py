@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+from telebot.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 
 from controllers.game import GameController
 from controllers.game_application import GameApplicationController
@@ -14,7 +14,6 @@ from models import User
 
 ACCEPT_FORM_CALLBACK_PREFIX = "AcceptForm"
 
-from telebot.async_telebot import AsyncTeleBot
 
 class ApplyAnswer(Enum):
     yes = "yes"

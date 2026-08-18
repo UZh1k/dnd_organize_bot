@@ -1,17 +1,16 @@
 from abc import ABC, abstractmethod
-from typing import Type, Any, Sequence
+from collections.abc import Sequence
 
-from sqlalchemy import select, Row, RowMapping, BinaryExpression
+from sqlalchemy import BinaryExpression, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import Base
 
 
 class CRUD(ABC):
-
     @property
     @abstractmethod
-    def model(self) -> Type[Base]:
+    def model(self) -> type[Base]:
         pass
 
     @classmethod

@@ -29,7 +29,7 @@ class GameRegistrationAcceptOffline(FormChoiceItem):
         session: AsyncSession,
         bot: AsyncTeleBot,
         state: StateContext,
-        **kwargs
+        **kwargs,
     ):
         await GameRegistrationAcceptCity.prepare(
             chat_id, user, session, bot, state, self.form_prefix

@@ -1,5 +1,5 @@
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.orm import Mapped, mapped_column
 
 from models import Base
 
@@ -8,6 +8,7 @@ class ReviewMember(Base):
     """
     The ones who can review game
     """
+
     __tablename__ = "review_member"
 
     user_id: Mapped[int] = mapped_column(

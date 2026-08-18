@@ -6,7 +6,7 @@ from handlers.game_registration.dnd_setting import GameRegistrationDndSetting
 from handlers.game_registration.states import GameRegistrationStates
 from models import User
 from utils.form.form_choice_item import FormChoiceItem
-from utils.other import generate_simple_choices, POPULAR_DND_REDACTIONS
+from utils.other import POPULAR_DND_REDACTIONS, generate_simple_choices
 
 
 class GameRegistrationDndRedaction(FormChoiceItem):

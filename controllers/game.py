@@ -1,6 +1,6 @@
-from typing import Sequence
+from collections.abc import Sequence
 
-from sqlalchemy import select, update, func
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
@@ -69,9 +69,7 @@ class GameController(CRUD):
             Game.creator_id == creator_id,
             Game.active.is_(True),
         )
-        total_count = await session.scalar(
-            select(func.count(Game.id)).where(*filters)
-        )
+        total_count = await session.scalar(select(func.count(Game.id)).where(*filters))
         query = (
             select(Game)
             .where(*filters)
@@ -112,7 +110,7 @@ class GameController(CRUD):
         session: AsyncSession,
         offset: int = 0,
         tags: list[int] | None = None,
-        **filters
+        **filters,
     ) -> tuple[Game | None, int]:
         query = cls.common_query()
 

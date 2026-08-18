@@ -1,11 +1,11 @@
 from abc import ABC
-from typing import Callable, Awaitable
+from collections.abc import Awaitable, Callable
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot import State
 from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
-from telebot.types import Message, CallbackQuery
+from telebot.types import CallbackQuery, Message
 
 from models import User
 from utils.other import contains_link
@@ -109,7 +109,9 @@ class FormTextItem(ABC):
                 )
         return False
 
-    async def save_answer(
+    # Optional hook: handle_message() calls this unconditionally, so an @abstractmethod
+    # here would force every form item to implement it. Empty by design.
+    async def save_answer(  # noqa: B027
         self, text: str, user: User, session: AsyncSession, state: StateContext
     ): ...
 
@@ -141,7 +143,8 @@ class FormTextItem(ABC):
                 message.text, message.chat.id, user, session, bot, state
             )
 
-    async def handle_photo(
+    # Optional hook: only overridden by form items that accept an image (FormPhotoItem).
+    async def handle_photo(  # noqa: B027
         self,
         message: Message,
         bot: AsyncTeleBot,
@@ -150,7 +153,8 @@ class FormTextItem(ABC):
         state: StateContext,
     ): ...
 
-    async def handle_callback(
+    # Optional hook: only overridden by the inline-keyboard form items.
+    async def handle_callback(  # noqa: B027
         self,
         call: CallbackQuery,
         bot: AsyncTeleBot,

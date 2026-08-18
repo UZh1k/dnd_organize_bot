@@ -9,7 +9,7 @@ from handlers.review.settings import (
     REVIEW_ITEM_PREFIX,
     ReviewItemMenuChoices,
 )
-from models import User, ReviewReceiverTypeEnum
+from models import ReviewReceiverTypeEnum, User
 from utils.handlers.base_callback_handler import BaseCallbackHandler
 
 
@@ -17,10 +17,8 @@ class ReviewItemDeleteHandler(BaseCallbackHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: (
-                call.data.startswith(
-                    f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_ITEM_PREFIX}:{ReviewItemMenuChoices.delete.value}"
-                )
+            func=lambda call: call.data.startswith(
+                f"{REVIEW_CALLBACK_PREFIX}:{REVIEW_ITEM_PREFIX}:{ReviewItemMenuChoices.delete.value}"
             ),
         )
 

@@ -2,10 +2,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.states.asyncio import StateContext
 
+from handlers.game_registration.dnd_redaction import GameRegistrationDndRedaction
 from handlers.game_registration.redaction_and_setting import (
     GameRegistrationRedactionAndSetting,
 )
-from handlers.game_registration.dnd_redaction import GameRegistrationDndRedaction
 from handlers.game_registration.states import GameRegistrationStates
 from models import User
 from utils.form.form_choice_text_item import FormChoiceTextItem

@@ -13,8 +13,8 @@ class ApplicationWriteLetterHandler(BaseCallbackHandler):
     def register_handler(self):
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: (
-                call.data.startswith(f"{GAME_APPLICATION_CALLBACK_PREFIX}:letter")
+            func=lambda call: call.data.startswith(
+                f"{GAME_APPLICATION_CALLBACK_PREFIX}:letter"
             ),
         )
 

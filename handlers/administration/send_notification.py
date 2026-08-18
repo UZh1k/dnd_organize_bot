@@ -4,9 +4,9 @@ from telebot.types import Message
 
 from consts import ADMIN_IDS
 from handlers.administration.settings import (
-    SendNotificationStates,
-    NotificationTypeEnum,
     SEND_NOTIFICATION_CALLBACK_PREFIX,
+    NotificationTypeEnum,
+    SendNotificationStates,
 )
 from models import User
 from utils.handlers.base_message_handler import BaseMessageHandler

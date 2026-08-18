@@ -3,20 +3,20 @@ from telebot.async_telebot import AsyncTeleBot
 from telebot.asyncio_helper import ApiTelegramException
 from telebot.states.asyncio import StateContext
 from telebot.types import (
-    Message,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
     CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
 )
 
 from handlers.filters.prepare_question import FILTER_OPTION_HANDLER_MAP
 from handlers.filters.settings import (
-    FiltersStates,
-    FilterOptions,
     FILTERS_FORM_PREFIX,
+    FilterOptions,
     FiltersStages,
+    FiltersStates,
 )
-from models import User, GameFormat
+from models import GameFormat, User
 from utils.handlers.base_handler import BaseHandler
 from utils.message_helpers import get_channel_link
 
@@ -30,8 +30,9 @@ class FiltersMenuHandler(BaseHandler):
         )
         self.bot.register_callback_query_handler(
             self.handle_callback,
-            func=lambda call: call.data
-            == f"{FILTERS_FORM_PREFIX}:{FiltersStages.menu.value}",
+            func=lambda call: (
+                call.data == f"{FILTERS_FORM_PREFIX}:{FiltersStages.menu.value}"
+            ),
         )
 
     @classmethod
