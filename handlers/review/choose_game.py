@@ -63,10 +63,7 @@ class ReviewChooseGameHandler(BaseCallbackHandler):
                 form_prefix=REVIEW_CALLBACK_PREFIX,
             )
             await self.bot.edit_message_text(
-                "Похоже, что ты уже оценил всех мастеров, с кем играл, "
-                "или вышел из группы с уже прошедшей игрой. "
-                "Чтобы сохранить возможность оценить сопартийцев или мастера игры, "
-                "не выходи из чата вашего завершенного приключения.",
+                "Похоже, что ты уже оставил отзывы всем доступным мастерам.",
                 call.message.chat.id,
                 message_id=call.message.id,
                 reply_markup=markup,
@@ -93,7 +90,7 @@ class ReviewChooseGameHandler(BaseCallbackHandler):
 
         if first_message:
             await self.bot.edit_message_text(
-                "Выбери игру, мастера которой хочешь оценить.",
+                "Выбери игру, мастеру которой хочешь оставить отзыв.",
                 call.message.chat.id,
                 message_id=call.message.id,
                 reply_markup=markup,

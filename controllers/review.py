@@ -48,7 +48,8 @@ class ReviewController(CRUD):
         cls, user_id: int, session: AsyncSession, receiver_type: str
     ) -> ReviewStatistic:
         reviews = await cls.get_user_reviews(user_id, session, receiver_type)
-        total_count = len(reviews)
+        rated_reviews = [review for review in reviews if review.value is not None]
+        total_count = len(rated_reviews)
 
         rating_sum = 0
         comments_count = 0
@@ -56,7 +57,8 @@ class ReviewController(CRUD):
         for review in reviews:
             if review.comment:
                 comments_count += 1
-            rating_sum += review.value
+            if review.value is not None:
+                rating_sum += review.value
 
         return ReviewStatistic(
             total_count=total_count,

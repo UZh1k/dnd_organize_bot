@@ -22,7 +22,7 @@ class Review(Base):
     to_user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     receiver_type: Mapped[ReviewReceiverTypeEnum]
 
-    value: Mapped[int]
+    value: Mapped[int | None]
     comment: Mapped[str | None]
 
     unchangeable: Mapped[bool] = mapped_column(default=False)

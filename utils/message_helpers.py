@@ -102,6 +102,8 @@ def pluralize_review(count: int) -> str:
 
 def review_statistic_text(statistic: ReviewStatistic, with_comments_count: bool = True):
     if not statistic.total_count:
+        if with_comments_count and statistic.comments_count:
+            return f"нет оценок, с комментарием - {statistic.comments_count}"
         return "нет отзывов"
 
     comments_part = ""
@@ -113,6 +115,11 @@ def review_statistic_text(statistic: ReviewStatistic, with_comments_count: bool 
 
 def generate_review_text(review: Review, review_index: int, total_count: int):
     comment_text = f"Комментарий: {review.comment}\n" if review.comment else ""
+    rating_text = (
+        f"Оценка: {review.value}⭐️\n"
+        if review.value is not None
+        else "Комментарий без оценки\n"
+    )
     formatted_date = format_datetime(
         review.created, format="dd MMMM, yyyy, HH:mm", locale="ru"
     )
@@ -121,7 +128,7 @@ def generate_review_text(review: Review, review_index: int, total_count: int):
         f"{review.to_user.name} "
         f"{review_index + 1}/{total_count}\n\n"
         f"Пользователь: {review.from_user.name}\n"
-        f"Оценка: {review.value}⭐️\n"
+        f"{rating_text}"
         f"{comment_text}\n"
         f"Дата: {formatted_date}\n"
     )

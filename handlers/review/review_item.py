@@ -65,10 +65,15 @@ class ReviewItemHandler(BaseCallbackHandler):
             else "мастеру"
         )
         comment = f"Комментарий: {review.comment}\n\n" if review.comment else "\n"
+        rating = (
+            f"Оценка: {review.value}⭐️\n"
+            if review.value is not None
+            else "Комментарий без оценки\n"
+        )
 
         text = (
             f"*Отзыв {prefix} {review.to_user.name}*\n\n"
-            f"Оценка: {review.value}⭐️\n"
+            f"{rating}"
             f"{comment}"
             f"Что ты хочешь сделать с отзывом?"
         )

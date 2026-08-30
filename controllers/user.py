@@ -1,7 +1,6 @@
-from operator import or_
 from typing import Sequence
 
-from sqlalchemy import select, Select, distinct, func, text
+from sqlalchemy import and_, exists, or_, select, Select, distinct, func, text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
@@ -81,6 +80,21 @@ class UserController(CRUD):
     async def get_players_to_review(
         cls, user_id: int, session: AsyncSession, limit: int, page: int = 0
     ) -> tuple[Sequence[tuple[User, Game]], int]:
+        existing_review = exists(
+            select(Review.id).where(
+                Review.from_user_id == user_id,
+                Review.to_user_id == User.id,
+                Review.receiver_type == ReviewReceiverTypeEnum.player.value,
+            )
+        )
+        comment_without_rating = exists(
+            select(Review.id).where(
+                Review.from_user_id == user_id,
+                Review.to_user_id == User.id,
+                Review.receiver_type == ReviewReceiverTypeEnum.player.value,
+                Review.value.is_(None),
+            )
+        )
         query = (
             select(User, Game)
             .join(ReviewMember, User.id == ReviewMember.user_id)
@@ -96,11 +110,9 @@ class UserController(CRUD):
                     ),
                 ),
                 User.id != user_id,
-                User.id.not_in(
-                    select(Review.to_user_id).where(
-                        Review.from_user_id == user_id,
-                        Review.receiver_type == ReviewReceiverTypeEnum.player.value,
-                    )
+                or_(
+                    ~existing_review,
+                    and_(Game.done.is_(True), comment_without_rating),
                 ),
             )
         )

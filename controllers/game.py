@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlalchemy import select, update, func
+from sqlalchemy import and_, exists, or_, select, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
@@ -86,17 +86,30 @@ class GameController(CRUD):
     async def get_games_to_review(
         cls, user_id: int, session: AsyncSession, limit: int = 19, page: int = 0
     ) -> tuple[Sequence[Game], int]:
+        existing_review = exists(
+            select(Review.id).where(
+                Review.from_user_id == user_id,
+                Review.to_user_id == Game.creator_id,
+                Review.receiver_type == ReviewReceiverTypeEnum.dm,
+            )
+        )
+        comment_without_rating = exists(
+            select(Review.id).where(
+                Review.from_user_id == user_id,
+                Review.to_user_id == Game.creator_id,
+                Review.receiver_type == ReviewReceiverTypeEnum.dm,
+                Review.value.is_(None),
+            )
+        )
         query = (
             select(Game)
             .join(ReviewMember, ReviewMember.game_id == Game.id)
             .options(joinedload(Game.creator))
             .where(
                 ReviewMember.user_id == user_id,
-                Game.creator_id.not_in(
-                    select(Review.to_user_id).where(
-                        Review.from_user_id == user_id,
-                        Review.receiver_type == ReviewReceiverTypeEnum.dm,
-                    )
+                or_(
+                    ~existing_review,
+                    and_(Game.done.is_(True), comment_without_rating),
                 ),
             )
         )
@@ -105,6 +118,41 @@ class GameController(CRUD):
         )
         total_count = await session.scalar(query.with_only_columns(func.count(Game.id)))
         return (await session.execute(paginated_query)).scalars().all(), total_count
+
+    @classmethod
+    async def get_game_for_review(
+        cls,
+        from_user_id: int,
+        to_user_id: int,
+        receiver_type: ReviewReceiverTypeEnum,
+        session: AsyncSession,
+    ) -> Game | None:
+        reviewer_membership = exists(
+            select(ReviewMember.user_id).where(
+                ReviewMember.game_id == Game.id,
+                ReviewMember.user_id == from_user_id,
+            )
+        )
+
+        if receiver_type == ReviewReceiverTypeEnum.dm:
+            query = select(Game).where(
+                Game.creator_id == to_user_id,
+                reviewer_membership,
+            )
+        else:
+            receiver_membership = exists(
+                select(ReviewMember.user_id).where(
+                    ReviewMember.game_id == Game.id,
+                    ReviewMember.user_id == to_user_id,
+                )
+            )
+            query = select(Game).where(
+                receiver_membership,
+                or_(Game.creator_id == from_user_id, reviewer_membership),
+            )
+
+        query = query.order_by(Game.done.desc().nulls_last(), Game.id.desc()).limit(1)
+        return (await session.execute(query)).scalar_one_or_none()
 
     @classmethod
     async def search_one(

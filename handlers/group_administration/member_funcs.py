@@ -53,9 +53,10 @@ async def handle_player_added_to_group(
             {"game_id": game.id, "user_id": user_id}, session
         )
 
-    if game.done and not await ReviewMemberController.get_list(
+    if not await ReviewMemberController.get_list(
         session,
-        ReviewMember.game_id == game.id and ReviewMember.user_id == user_id,
+        ReviewMember.game_id == game.id,
+        ReviewMember.user_id == user_id,
         apply_default_order=False,
     ):
         await ReviewMemberController.create(
