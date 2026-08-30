@@ -66,9 +66,12 @@ class MenuEditReviewHandler(BaseCallbackHandler):
                 else "Мастер"
             )
             comment_text = "с комментарием" if review.comment else "без комментария"
+            rating_text = (
+                f"{review.value}⭐️" if review.value is not None else "без оценки"
+            )
             keyboard_choices.append(
                 (
-                    f"{prefix} {review.to_user.name}: {review.value}⭐️, {comment_text}",
+                    f"{prefix} {review.to_user.name}: {rating_text}, {comment_text}",
                     review.id,
                 )
             )

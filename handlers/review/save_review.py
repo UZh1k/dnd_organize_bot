@@ -59,16 +59,44 @@ class SaveReviewHandler(BaseHandler):
         edit_message_id: int | None = None,
     ):
         async with state.data() as data:
-            review_data = data
+            review_data = dict(data)
 
         if not await UserController.get_one(review_data["to_user_id"], session):
             await self.bot.send_message(
                 chat_id, "Такого пользователя не существует. Попробуй начать сначала."
             )
+            return
+
+        game = await GameController.get_game_for_review(
+            user.id,
+            review_data["to_user_id"],
+            ReviewReceiverTypeEnum(review_data["receiver_type"]),
+            session,
+        )
+        if not game:
+            await self.bot.send_message(chat_id, "Игра не найдена. Попробуй начать сначала.")
+            return
+
+        if review_data["to_user_id"] == user.id:
+            await self.bot.send_message(chat_id, "Нельзя оставить отзыв самому себе.")
+            return
 
         review_data["comment"] = comment
-        if "game_id" in review_data:
-            del review_data["game_id"]
+        value = review_data.get("value")
+        if game.done is not True:
+            if value is not None:
+                await self.bot.send_message(
+                    chat_id, "Оценку можно поставить только после завершения игры."
+                )
+                return
+            if not comment or not comment.strip():
+                await self.bot.send_message(
+                    chat_id, "До завершения игры необходимо написать комментарий."
+                )
+                return
+        elif value is None or not 1 <= value <= 5:
+            await self.bot.send_message(chat_id, "Выбери оценку от 1 до 5.")
+            return
 
         review = await ReviewController.find_one(
             user.id, review_data["to_user_id"], review_data["receiver_type"], session
@@ -85,8 +113,8 @@ class SaveReviewHandler(BaseHandler):
                 )
                 return
 
-            review.value = review_data["value"]
-            review.comment = review_data.get("comment")
+            review.value = review_data.get("value")
+            review.comment = comment
             await session.flush()
 
         await state.delete()
