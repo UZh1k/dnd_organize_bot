@@ -46,7 +46,7 @@ class MenuCreateReviewHandler(BaseCallbackHandler):
         )
 
         await self.bot.edit_message_text(
-            "Выбери, кого ты хочешь оценить.",
+            "Выбери, кому ты хочешь оставить отзыв.",
             call.message.chat.id,
             message_id=call.message.id,
             reply_markup=keyboard,
