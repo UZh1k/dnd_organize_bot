@@ -1,0 +1,41 @@
+version: 2
+updates:
+  # Python deps. Ecosystem `uv` (not `pip`) reads pyproject.toml + uv.lock natively:
+  # it moves the `==` pins in the manifest and re-locks, in a single PR.
+  - package-ecosystem: uv
+    directory: "/"
+    schedule:
+      # Dependabot has no bimonthly interval, so this uses cron: 09:00 on the 1st
+      # of Jan/Mar/May/Jul/Sep/Nov. The key is `cronjob` (not `cron`), 5 fields,
+      # and the timezone must live in `timezone:`, never inside the expression.
+      interval: cron
+      cronjob: "0 9 1 */2 *"
+      timezone: "Europe/Moscow"
+    open-pull-requests-limit: 2
+    commit-message:
+      prefix: deps
+    cooldown:
+      # Don't offer a release younger than a week — fresh releases break more often.
+      # Security updates ignore cooldown and arrive immediately.
+      default-days: 7
+    groups:
+      # One PR instead of one-per-dependency. Groups apply to version updates only,
+      # so security PRs stay separate and individually mergeable — which is what we
+      # want for those.
+      python-deps:
+        patterns:
+          - "*"
+
+  # Actions pinned in .github/workflows/ci.yml (checkout@v4, setup-uv@v5).
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: cron
+      cronjob: "0 9 1 */2 *"
+      timezone: "Europe/Moscow"
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns:
+          - "*"
